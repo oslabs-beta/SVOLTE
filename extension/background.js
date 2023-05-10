@@ -1,8 +1,11 @@
-chrome.runtime.onInstalled.addListener(()=>{
-  console.log('hello');
-})
+console.log('hello');
 
-chrome.runtime.onMessage.addListener((req,sender,res)=>{
-  console.log(req,sender,res)
+// chrome.runtime.onInstalled.addListener(()=>{
+//   console.log('hello');
 
-})
+// })
+
+// chrome.runtime.onMessage.addListener((message,sender,res)=>{
+//   console.log(message, sender);
+//   res({response:'Bye'});
+// })
