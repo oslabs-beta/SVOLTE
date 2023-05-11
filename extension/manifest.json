@@ -3,8 +3,9 @@
   "name": "Svelte Dev Tools",
   "version": "1.3.0",
   "description": "Browser devtools extension for debugging Svelte applications.",
-  "permissions": ["tabs", "activeTab"],
+  "permissions": ["tabs", "activeTab", "nativeMessaging"],
   "content_scripts": [{
+    "world": "MAIN", 
     "matches": ["https://*/*", "http://*/*"],
     "js": ["content.js"],
     "run_at": "document_start"
@@ -13,5 +14,8 @@
     "type": "module",
     "service_worker": "background.js"
   },
-  "devtools_page": "devtools/index.html"
+  "devtools_page": "devtools/index.html",
+  "externally_connectable": {
+    "matches": ["http://localhost/*"]
+  }
 }
