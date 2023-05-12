@@ -1,8 +1,8 @@
 window.addEventListener("message", (msg) => {
   if (
-    typeof message !== "object" ||
-    message === null ||
-    message.data?.source !== "content.js"
+    typeof msg !== "object" ||
+    msg === null ||
+    msg.data?.source !== "content.js"
   ) {
     return;
   } else {
