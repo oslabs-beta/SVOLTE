@@ -1,7 +1,22 @@
-import App from './App.svelte'
+import App from "./App.svelte";
 
 const app = new App({
-  target: document.getElementById('app'),
-})
+  target: document.getElementById("app"),
+});
+const backgroundPageConnection = chrome.runtime.connect({
+  name: "panel",
+});
 
-export default app
+// report back with tabId to identify devtools location in chrome
+backgroundPageConnection.postMessage({
+  name: "init",
+  tabId: chrome.devtools.inspectedWindow.tabId,
+});
+
+// background.js -> here
+
+backgroundPageConnection.onMessage.addListener((message) => {
+  console.log("main.ts: message received at its destination!", message);
+});
+
+export default app;
