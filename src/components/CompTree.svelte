@@ -21,10 +21,7 @@
   console.log('this is tree data: ', $treeData)
 
 
-  const hierarchy = d3.hierarchy($treeData);
-
-  let margin = { top: 20, right: 90, bottom: 30, left: 150 };
-
+  let margin = { top: 20, right: 90, bottom: 20, left: 90 };
   let width = 960 - margin.left - margin.right;
   let height = 500 - margin.top - margin.bottom;
 
@@ -32,10 +29,18 @@
   const treeLayout = d3.tree()
     .size([height, width]);
 
-  // defining nodes from your dataset, child nodes are nested
-  let nodes = d3.hierarchy($treeData, d => d.children);
-  nodes = treeLayout(nodes);
-  console.log(nodes);
+  // defining nodes array from your dataset, child nodes are nested, returns a root
+  let root = d3.hierarchy($treeData, d => d.children);
+  root = treeLayout(root);
+  console.log(root);
+  root.x0 = height / 2;
+  root.y0 = 0
+
+  
+  // transition duration
+  let i = 0;
+  const duration = 750;
+
 
 //append the svg object to the body of the page
 //appends a 'group' element to 'svg'
@@ -47,11 +52,13 @@ onMount(() => {
     .attr("width", width + margin.right + margin.left)
     .attr("height", height + margin.top + margin.bottom)
 
-    const g = svg.append("g");
+    const g = svg.append("g")
+      .attr("transform", "translate(" + margin.left + ", " + margin.top + ")")
+;
 
     // generates nodes from an array of all nodes
     const node = g.selectAll(".node")
-      .data(nodes.descendants())
+      .data(root.descendants())
       .enter().append("g")
       .attr("class", d => "node" + (d.children ? " node--internal"
          : " node--leaf"))
@@ -63,11 +70,11 @@ onMount(() => {
     // links between nodes
     // descendants().slice(1)
     const link = g.selectAll(".link")
-      .data(nodes.links())
+      .data(root.links())
       .enter().append("path")
       .attr("class", "link")
       .style('opacity', '1')
-      .style("stroke", "red")
+      .style("stroke", "black")
       .style("fill", "none")
       .style("stroke-width", "1px")
       .attr("d", d3.linkHorizontal()
@@ -87,10 +94,10 @@ onMount(() => {
 
     // adds a circle to represent each node
     node.append("circle")
-      // .attr("r", d => d.data.value)
-      .attr("r", 5)
+      .attr("class", "node")
+      .attr("r", 10)
       .style("stroke", d => d.data.type)
-      .style("fill", d => d.data.level)
+      .style("fill", d => d.children ? "red" : "black")
       
 
     node.append("text")
