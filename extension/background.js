@@ -1,3 +1,5 @@
+//SERVICE WORKER
+
 console.log(chrome.runtime.id);
 let ext;
 let tabid;
@@ -9,12 +11,7 @@ chrome.runtime.onMessage.addListener((message, sender, res) => {
       : "from the extension"
   );
   console.log(connections);
-  if (ext) {
-    console.log("ext id is", ext);
-  }
-  if (tabid) {
-    console.log("tabid is ", tabid);
-  }
+  
   res({ crikey: "m8" });
 });
 
@@ -27,6 +24,7 @@ chrome.runtime.onConnect.addListener(function (port) {
     // DevTools page, so we need to send it explicitly.
     if (message.name == "init") {
       console.log("something came from main.ts", message);
+      port.postMessage({ dingo: "ate my baby" });
       connections[message.tabId] = port;
       tabid = message.tabId;
       ext = sender.id;

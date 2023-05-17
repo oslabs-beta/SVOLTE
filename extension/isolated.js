@@ -1,3 +1,5 @@
+//ISOLATED WORLD
+
 window.addEventListener("message", (msg) => {
   if (
     typeof msg !== "object" ||
