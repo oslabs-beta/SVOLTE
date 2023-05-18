@@ -1,7 +1,7 @@
 <script>
   import * as d3 from 'd3';
   import { treeData } from "../stores";
-  import { onMount } from 'svelte'
+  import { onMount, afterUpdate } from 'svelte'
 
   treeData.set({
         "name": "Eve",
@@ -45,7 +45,7 @@
 //append the svg object to the body of the page
 //appends a 'group' element to 'svg'
 let svg;
-onMount(() => {
+afterUpdate(() => {
   svg = d3
     .select("#body")
     .append("svg")
@@ -160,10 +160,28 @@ onMount(() => {
       if (d.children) {
         d._children = d.children;
         d.children = null;
+        // console.log('node this:', nodeUpdate.select('circle.node'))
+        // console.log('d3this lv 3: ', d3.select(this)._groups[0][0])
+        console.log('d3this lv 3: ', d3.select(this)._groups[0][0].querySelector('circle').style.fill = 'yellow')
+        console.log('d3this lv 2: ', d3.select(this)._groups[0][0])
+        console.log('d3this lv 1: ', d3.select(this)._groups[0])
+        console.log('d3this lv 0: ', d3.select(this)._groups)
+        console.log('d3 this no level: ', d3.select(this))
+        // d3.select(this)._groups[0][0].style.fill = 'yellow';
       } else {
         d.children = d._children;
         d._children = null;
+        // d3.select(this).select('circle.node').style('fill', 'yellow')
+        // console.log('node this:', nodeUpdate.select('circle.node'))
+        // console.log('d3this lv 3: ', d3.select(this)._groups[0][0])
+        console.log('d3this lv 3: ', d3.select(this)._groups[0][0].querySelector('circle').style.fill = 'black')
+        console.log('d3this lv 2: ', d3.select(this)._groups[0][0])
+        console.log('d3this lv 1: ', d3.select(this)._groups[0])
+        console.log('d3this lv 0: ', d3.select(this)._groups)
+        console.log('d3 this no level: ', d3.select(this))
+        // d3.select(this)._groups[0][0].style.fill = 'black';
       }
+      console.log('d: ', d);
       update(d);
     }
 
