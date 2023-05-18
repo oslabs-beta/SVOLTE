@@ -3,22 +3,36 @@
   import { treeData } from "../stores";
   import { onMount, afterUpdate } from 'svelte'
 
+  // treeData.set({
+  //       "name": "Eve",
+  //       "children": [
+  //       {"name": "Cain"},
+  //       {"name": "Seth",
+  //           "children": [
+  //               {"name": "Enos"}, {"name": "Noam"}
+  //           ]
+  //       },
+  //       {"name": "Abel"},
+  //       {"name": "Awan",
+  //           "children": [{"name": "Enoch"}]
+  //       },
+  //       {"name": "Azura"}]
+  //   })
+  // console.log('this is tree data: ', $treeData)
+
+
   treeData.set({
-        "name": "Eve",
-        "children": [
-        {"name": "Cain"},
-        {"name": "Seth",
-            "children": [
-                {"name": "Enos"}, {"name": "Noam"}
-            ]
-        },
-        {"name": "Abel"},
-        {"name": "Awan",
-            "children": [{"name": "Enoch"}]
-        },
-        {"name": "Azura"}]
-    })
-  console.log('this is tree data: ', $treeData)
+    "name": "Root",
+    "children": [
+    {"name": "Counter1",
+    "children": [
+      {"name": "Increment"}, 
+      {"name": "Decrement"}
+      ]
+    },
+    {"name": "Counter2"}
+  ]
+  })
 
 
   let margin = { top: 20, right: 90, bottom: 20, left: 90 };
@@ -131,6 +145,7 @@ afterUpdate(() => {
       })
       .style('opacity', '0.6')
       .style("stroke", "purple")
+      .style('stroke-width', '3px')
       .style('fill', 'none')
 
     const linkUpdate = linkEnter.merge(link);
@@ -188,76 +203,12 @@ afterUpdate(() => {
 
   }
 
-
-    // // generates nodes from an array of all nodes
-    // const node = svg.selectAll("g.node")
-    //   .data(root.descendants())
-    //   .enter().append("g")
-    //   .attr("class", d => "node" + (d.children ? " node--internal"
-    //      : " node--leaf"))
-    //   .attr("transform", d => "translate(" + d.y + "," +
-    //      d.x + ")");
-    // console.log('these are nodes: ', node);
-
-
-    // // links between nodes
-    // // descendants().slice(1)
-    // const link = svg.selectAll("g.link")
-    //   .data(root.links())
-    //   .enter().append("path")
-    //   .attr("class", "link")
-    //   .style('opacity', '0.6')
-    //   .style("stroke", "purple")
-    //   .style("fill", "none")
-    //   .style("stroke-width", "3px")
-    //   .attr("d", d3.linkHorizontal()
-    //     .x(d => d.y)
-    //     .y(d => d.x))
-    //   // .style('opacity', '0.5')
-    //   // .style("stroke", "red")
-    //   // .attr("d", d => {
-    //   //     return "M" + d.y + "," + d.x
-    //   //        + "C" + (d.y + d.parent.y) / 2 + "," + d.x
-    //   //        + " " + (d.y + d.parent.y) / 2 + "," + d.parent.x
-    //   //        + " " + d.parent.y + "," + d.parent.x;
-    //   // });
-    // console.log('these are the links: ', link);
-
-    // d3.selectAll(".link")
-
-    // // adds a circle to represent each node
-    // node.append("circle")
-    //   .attr("class", "node")
-    //   .attr("r", 10)
-    //   .style("stroke", d => d.data.type)
-    //   .style("fill", d => d.children ? "red" : "black")
-      
-
-    // node.append("text")
-    //   .attr("x", 10)
-    //   .attr("y", 5)
-    //   .text(d => d.data.name)
-    //   // .style("opacity", "0")
-    //   // .on("mouseover", function () {
-    //   //   d3.select(this)
-    //   //   .style('opacity', '1')
-    //   // })
-    //   // .on("mouseout", function () {
-    //   //   d3.select(this)
-    //   //   .style('opacity', '1')
-    //   // })
-
-
 })
 
 
 
 </script>
 
-
-
-
  <main id='body'>
-  component tree
   
  </main>

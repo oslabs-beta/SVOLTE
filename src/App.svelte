@@ -34,17 +34,20 @@
 <main>
   <!-- <Header setUrl={setUrl}/> -->
   <div class="card">
-    <Counter />
+    <!-- <Counter /> -->
   </div>
   <!-- <Body url={url}/> -->
   <button on:click={$pathStore.setPath}>switch view</button>
   {#if $pathStore.path === 'tree'}
-    <h1> currently at tree </h1>
+    <h1> Component Tree </h1>
     <CompTree />
     {:else if $pathStore.path === 'time'}
-    <h1> currently at time travel</h1>
+    <h1> States </h1>
   {/if}
 </main>
 
 <style>
+  /* main {
+    background-color: gray;
+  } */
 </style>
