@@ -43,7 +43,12 @@
   const treeLayout = d3.tree()
     .size([height, width]);
 
-  // defining nodes array from your dataset, child nodes are nested, returns a root
+
+  //assigns parent, child, height, depth
+  //d3.hierarchy(data,[children])
+  //used to construct a root node data from a given hierarchial data
+  //data MUST be of an object and represent a root node
+  //returns an array of object(s)
   let root = d3.hierarchy($treeData, d => d.children);
   root.x0 = height / 2;
   root.y0 = 0
@@ -53,7 +58,7 @@
   
   // transition duration
   let i = 0;
-  const duration = 750;
+  const duration = 500;
 
 
 //append the svg object to the body of the page
@@ -89,6 +94,7 @@ afterUpdate(() => {
       .attr('transform', d => "translate(" + source.y0 + ", " + source.x0 + ")")
       .on('click', click)
 
+    // adding component name to each node
     nodeEnter
       .append('text')
       .attr('dy', '.35em')
@@ -97,10 +103,27 @@ afterUpdate(() => {
       .attr('text-anchor', d => d.children || d._children ? "end" : "start")
       .text(d => d.data.name)
 
+    // attaching a circle to represent each node
     nodeEnter
       .append('circle')
       .attr('r', 8)
       .style("fill", d => d._children ? "yellow" : "black")
+      .attr('cursor', 'pointer')
+
+    nodeEnter
+      .append('rect')
+      .attr('width', 100)
+      .attr('height', 100)
+      .style('fill', 'darkgray')
+
+    nodeEnter
+      .append('text')
+      .text('TEST')
+      // .attr('y', d => d.y0 + 20)
+      .style('fill', 'white')
+      
+
+
 
     const nodeUpdate = nodeEnter.merge(node);
 
@@ -111,7 +134,6 @@ afterUpdate(() => {
       .select('circle.node')
       .attr('r', 8)
       .style('fill', d => d._children ? "yellow" : "black")
-      .attr('cursor', 'pointer')
 
     const nodeExit = node
       .exit()
@@ -159,7 +181,7 @@ afterUpdate(() => {
       .transition()
       .duration(duration)
       .attr('d', d => {
-        let o = { x: source.x0, y: source.y0 };
+        let o = { x: source.x, y: source.y };
         return diagonal(o, o);
       })
       .remove();
@@ -175,26 +197,15 @@ afterUpdate(() => {
       if (d.children) {
         d._children = d.children;
         d.children = null;
-        // console.log('node this:', nodeUpdate.select('circle.node'))
-        // console.log('d3this lv 3: ', d3.select(this)._groups[0][0])
-        console.log('d3this lv 3: ', d3.select(this)._groups[0][0].querySelector('circle').style.fill = 'yellow')
-        console.log('d3this lv 2: ', d3.select(this)._groups[0][0])
-        console.log('d3this lv 1: ', d3.select(this)._groups[0])
-        console.log('d3this lv 0: ', d3.select(this)._groups)
-        console.log('d3 this no level: ', d3.select(this))
-        // d3.select(this)._groups[0][0].style.fill = 'yellow';
+        d3.select(this)._groups[0][0].querySelector('circle').style.fill = 'yellow';
+        // console.log('d3this lv 2: ', d3.select(this)._groups[0][0])
+        // console.log('d3 this no level: ', d3.select(this))
       } else {
         d.children = d._children;
         d._children = null;
-        // d3.select(this).select('circle.node').style('fill', 'yellow')
-        // console.log('node this:', nodeUpdate.select('circle.node'))
-        // console.log('d3this lv 3: ', d3.select(this)._groups[0][0])
-        console.log('d3this lv 3: ', d3.select(this)._groups[0][0].querySelector('circle').style.fill = 'black')
-        console.log('d3this lv 2: ', d3.select(this)._groups[0][0])
-        console.log('d3this lv 1: ', d3.select(this)._groups[0])
-        console.log('d3this lv 0: ', d3.select(this)._groups)
-        console.log('d3 this no level: ', d3.select(this))
-        // d3.select(this)._groups[0][0].style.fill = 'black';
+        d3.select(this)._groups[0][0].querySelector('circle').style.fill = 'black';
+        // console.log('d3this lv 2: ', d3.select(this)._groups[0][0])
+        // console.log('d3 this no level: ', d3.select(this))
       }
       console.log('d: ', d);
       update(d);
