@@ -1,23 +1,26 @@
 import App from "./App.svelte";
-// import './styles.css';
+import { writable, get } from 'svelte/store';
+
+const targetNode = writable({});
 
 const app = new App({
   target: document.getElementById("app"),
 });
-// const backgroundPageConnection = chrome.runtime.connect({
-//   name: "panel",
-// });
 
-// // report back with tabId to identify devtools location in chrome
-// backgroundPageConnection.postMessage({
-//   name: "init",
-//   tabId: chrome.devtools.inspectedWindow.tabId,
-// });
+const backgroundPageConnection = chrome.runtime.connect();
 
-// // background.js -> here
+// report back with tabId to identify devtools location in chrome
+backgroundPageConnection.postMessage({
+  name: "INIT",
+  tabId: chrome.devtools.inspectedWindow.tabId,
+});
 
-// backgroundPageConnection.onMessage.addListener((message:Object) => {
-//   console.log("main.ts: message received at its destination!", message);
-// });
+// background.js -> here
+
+backgroundPageConnection.onMessage.addListener((message: Object) => {
+  if (message.type === 'addNode') {
+    console.log('message received: ' message);
+  }
+});
 
 export default app;

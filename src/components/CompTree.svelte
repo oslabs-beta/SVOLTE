@@ -1,6 +1,6 @@
 <script>
   import * as d3 from 'd3';
-  import { treeData } from "../stores";
+  import { treeData } from '../store';
   import { onMount, afterUpdate } from 'svelte'
 
   // treeData.set({
