@@ -3,4 +3,4 @@ This script is run whenever the devtools are open.
 In here, we can create our panel.
 */
 
-chrome.devtools.panels.create('Svelte DT', null, './devtools/panel/panel.html');
+chrome.devtools.panels.create('SVOLTE', null, './devtools/panel/panel.html');

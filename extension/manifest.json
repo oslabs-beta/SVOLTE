@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Svelte Dev Tools",
+  "name": "SVOLTE",
   "version": "1.3.0",
   "description": "Browser devtools extension for debugging Svelte applications.",
   "permissions": ["tabs", "activeTab"],

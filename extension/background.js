@@ -12,7 +12,10 @@ chrome.runtime.onMessage.addListener((message, sender, res) => {
   );
   console.log(connections);
   
-  res({ crikey: "m8" });
+  res({ 
+    source: "background.js",
+    type: "response"
+  });
 });
 
 const connections = {};
@@ -22,9 +25,12 @@ chrome.runtime.onConnect.addListener(function (port) {
   const extensionListener = function (message, sender, sendResponse) {
     // The original connection event doesn't include the tab ID of the
     // DevTools page, so we need to send it explicitly.
-    if (message.name == "init") {
-      console.log("something came from main.ts", message);
-      port.postMessage({ dingo: "ate my baby" });
+    if (message.name == "INIT") {
+      console.log("Source: background.js - message received: ", message);
+      port.postMessage({ 
+        source: "background.js",
+        type: "postMessage"
+      });
       connections[message.tabId] = port;
       tabid = message.tabId;
       ext = sender.id;
