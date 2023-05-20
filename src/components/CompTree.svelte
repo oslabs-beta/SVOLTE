@@ -110,11 +110,26 @@ afterUpdate(() => {
       .style("fill", d => d._children ? "yellow" : "black")
       .attr('cursor', 'pointer')
 
-    nodeEnter
-      .append('rect')
-      .attr('width', 100)
-      .attr('height', 100)
-      .style('fill', 'darkgray')
+    const enterSVG = nodeEnter.append("svg")
+      .attr("width", 400)
+      .attr("height", 200);
+
+    const rect = enterSVG.append("rect")
+      .attr("width", 200)
+      .attr("height", 100)
+      .attr("fill", "lightgray")
+      // .style("opacity", 0); 
+
+    const text = enterSVG.append("text")
+      .attr("x", 100)
+      .attr("y", 60)
+      .attr("text-anchor", "middle")
+      .text("hello world")
+      .style("font-size", "20px")
+      .style("fill", "black")
+      // .style("opacity", 0); 
+    
+    
 
     nodeEnter
       .append('text')
