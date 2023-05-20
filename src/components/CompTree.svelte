@@ -111,16 +111,17 @@ afterUpdate(() => {
       .attr('cursor', 'pointer')
 
     nodeEnter
-      .append('rect')
-      .attr('width', 100)
-      .attr('height', 100)
-      .style('fill', 'darkgray')
+      .append('svg')
+      .attr('width', 500)
+      .attr('height', 500)
+      .attr('class', 'nodeText')
+      .text('TESTING')
 
-    nodeEnter
-      .append('text')
-      .text('TEST')
-      // .attr('y', d => d.y0 + 20)
-      .style('fill', 'white')
+    // nodeEnter
+    //   .append('text')
+    //   .text('TEST')
+    //   // .attr('y', d => d.y0 + 20)
+    //   .style('fill', 'white')
       
 
 
