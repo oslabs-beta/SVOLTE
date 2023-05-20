@@ -19,7 +19,7 @@ backgroundPageConnection.postMessage({
 
 backgroundPageConnection.onMessage.addListener((message: Object) => {
   if (message.type === 'addNode') {
-    console.log('message received: ' message);
+    console.log('message received: ', message);
   }
 });
 
