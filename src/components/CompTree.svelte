@@ -1,6 +1,6 @@
 <script>
   import * as d3 from 'd3';
-  import { treeData } from "../stores";
+  import { treeData } from '../store';
   import { onMount, afterUpdate } from 'svelte'
 
   // treeData.set({
@@ -131,11 +131,11 @@ afterUpdate(() => {
     
     
 
-    nodeEnter
-      .append('text')
-      .text('TEST')
-      // .attr('y', d => d.y0 + 20)
-      .style('fill', 'white')
+    // nodeEnter
+    //   .append('text')
+    //   .text('TEST')
+    //   // .attr('y', d => d.y0 + 20)
+    //   .style('fill', 'white')
       
 
 

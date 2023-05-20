@@ -4,7 +4,7 @@
   import Counter from './components/Counter.svelte'
   import Header from './components/Header.svelte'
   import Body from './components/Body.svelte'
-  import { pathStore } from './stores.js'
+  import { pathStore } from './store'
 //use the store subscription prefix '$' in order to access the value from a store element
 //this must be done any time you have a reference to the store
 
