@@ -118,7 +118,7 @@ afterUpdate(() => {
       .attr("width", 200)
       .attr("height", 100)
       .attr("fill", "lightgray")
-      // .style("opacity", 0); 
+      .style("opacity", 0); 
 
     const text = enterSVG.append("text")
       .attr("x", 100)
@@ -127,9 +127,16 @@ afterUpdate(() => {
       .text("hello world")
       .style("font-size", "20px")
       .style("fill", "black")
-      // .style("opacity", 0); 
+      .style("opacity", 0); 
     
-    
+      enterSVG.on("mouseover", function(event, d){
+        d3.select(this).select("rect").style("opacity", 1);
+        d3.select(this).select("text").style("opacity", 1);
+      });
+      enterSVG.on("mouseout", function(event, d) {
+        d3.select(this).select("rect").style("opacity", 0);
+        d3.select(this).select("text").style("opacity", 0);
+      });
 
     // nodeEnter
     //   .append('text')
