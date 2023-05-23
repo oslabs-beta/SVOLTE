@@ -3,22 +3,15 @@
 console.log(chrome.runtime.id);
 let ext;
 let tabid;
+let key;
 
 chrome.runtime.onMessage.addListener((message, sender, res) => {
-  console.log(
-    sender.tab
-      ? "from a content script: " + sender.tab.url
-      : "from the extension"
-  );
-  console.log(connections);
-  
-  res({ 
-    source: "background.js",
-    type: "response"
-  });
+  connections[key].postMessage(message);
+  res('success');
 });
 
 const connections = {};
+
 
 chrome.runtime.onConnect.addListener(function (port) {
   console.log("On connect add listener");
@@ -26,12 +19,12 @@ chrome.runtime.onConnect.addListener(function (port) {
     // The original connection event doesn't include the tab ID of the
     // DevTools page, so we need to send it explicitly.
     if (message.name == "INIT") {
-      console.log("Source: background.js - message received: ", message);
       port.postMessage({ 
         source: "background.js",
         type: "postMessage"
       });
-      connections[message.tabId] = port;
+      key = message.tabId;
+      connections[key] = port;
       tabid = message.tabId;
       ext = sender.id;
       return;

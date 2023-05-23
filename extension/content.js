@@ -1,5 +1,6 @@
 //MAIN WORLD
 
+
 // ========================================================================================
 //          DATA STORAGE & VARIABLES
 // ========================================================================================
@@ -14,12 +15,15 @@ let _id = 0;
 //          MESSAGE FUNCTIONS
 // ========================================================================================
 
+
+
 // sends message which triggers adding of node
 function addViaMessage(node) {
   window.postMessage({
     target: node.parent ? node.parent.id : null,
     type: 'addNode',
-    node: processNode(node)
+    node: processNode(node),
+    source: 'content.js'
   });
 }
 
@@ -27,7 +31,8 @@ function addViaMessage(node) {
 function updateViaMessage(node) {
   window.postMessage({
     type: 'updateNode',
-    node: processNode(node)
+    node: processNode(node),
+    source: 'content.js'
   });
 }
 
@@ -57,9 +62,7 @@ function processNode(node) {
       const props = Array.isArray(internal.props)
         ? internal.props // Svelte < 3.13.0 stored props names as an array
         : Object.keys(internal.props);
-      let ctx = clone(
-        shouldUseCapture() ? node.detail.$capture_state() : internal.ctx
-      );
+      let ctx = clone(node.detail.$capture_state());
       if (ctx === undefined) ctx = {};
 
       processedNode.detail = {
@@ -98,6 +101,30 @@ function processNode(node) {
   return processedNode;
 }
 
+function clone(value, seen = new Map()) {
+  switch (typeof value) {
+    case 'function':
+      return { __isFunction: true, source: value.toString(), name: value.name }
+    case 'symbol':
+      return { __isSymbol: true, name: value.toString() }
+    case 'object':
+      if (value === window || value === null) return null
+      if (Array.isArray(value)) return value.map(o => clone(o, seen))
+      if (seen.has(value)) return {}
+
+      const o = {}
+      seen.set(value, o)
+
+      for (const [key, v] of Object.entries(value)) {
+        o[key] = clone(v, seen)
+      }
+
+      return o
+    default:
+      return value
+  }
+}
+
 // array to hold root nodes (not useful yet)
 const rootNodes = [];
 
@@ -117,10 +144,9 @@ function insert(element, target, anchor) {
         : 'anchor',
     detail: element,
     tagName: element.nodeName.toLowerCase(),
-    // parentBlock: currentBlock,
+    parentBlock: currentBlock,
     children: []
   }
-  console.log('node is ', node);
   addNode(node, target, anchor);
 
   for (const child of element.childNodes) {
@@ -134,6 +160,10 @@ function addNode(node, target, anchor) {
   nodeMap.set(node.detail, node);
 
   let targetNode = nodeMap.get(target);
+
+  if (!targetNode || targetNode.parentBlock != node.parentBlock) {
+    targetNode = node.parentBlock
+  }
 
   node.parent = targetNode;
 
@@ -158,6 +188,123 @@ function addNode(node, target, anchor) {
 //          EVENT CALLBACK FUNCTIONS
 // ========================================================================================
 
+let currentBlock;
+function EVENT_CALLBACK_SvelteRegisterBlock (e) {
+  const { type, id, block, ...detail } = e.detail
+  const tagName = type == 'pending' ? 'await' : type
+  const nodeId = _id++
+
+  if (block.m) {
+    const mountFn = block.m
+    block.m = (target, anchor) => {
+      const parentBlock = currentBlock
+      let node = {
+        id: nodeId,
+        type: 'block',
+        detail,
+        tagName,
+        parentBlock,
+        children: []
+      }
+
+      switch (type) {
+        case 'then':
+        case 'catch':
+          if (!node.parentBlock) node.parentBlock = lastPromiseParent
+          break
+
+        case 'slot':
+          node.type = 'slot'
+          break
+
+        case 'component':
+          const componentNode = nodeMap.get(block)
+          if (componentNode) {
+            nodeMap.delete(block)
+            Object.assign(node, componentNode)
+          } else {
+            Object.assign(node, {
+              type: 'component',
+              tagName: 'Unknown',
+              detail: {}
+            })
+            nodeMap.set(block, node)
+          }
+
+          Promise.resolve().then(
+            () =>
+              node.detail.$$ &&
+              Object.keys(node.detail.$$.bound).length &&
+              updateViaMessage(node)
+          )
+          break
+      }
+
+      if (type == 'each') {
+        let group = nodeMap.get(parentBlock.id + id)
+        if (!group) {
+          group = {
+            id: _id++,
+            type: 'block',
+            detail: {
+              ctx: {},
+              source: detail.source
+            },
+            tagName: 'each',
+            parentBlock,
+            children: []
+          }
+          nodeMap.set(parentBlock.id + id, group)
+          addNode(group, target, anchor)
+        }
+        node.parentBlock = group
+        node.type = 'iteration'
+        addNode(node, group, anchor)
+      } else {
+        addNode(node, target, anchor)
+      }
+
+      currentBlock = node
+      updateProfile(node, 'mount', mountFn, target, anchor)
+      currentBlock = parentBlock
+    }
+  }
+
+  if (block.p) {
+    const patchFn = block.p
+    block.p = (changed, ctx) => {
+      const parentBlock = currentBlock
+      currentBlock = nodeMap.get(nodeId)
+
+      updateViaMessage(currentBlock)
+
+      updateProfile(currentBlock, 'patch', patchFn, changed, ctx);
+
+      currentBlock = parentBlock
+    }
+  }
+
+  if (block.d) {
+    const detachFn = block.d
+    block.d = detaching => {
+      const node = nodeMap.get(nodeId)
+
+      if (node) {
+        if (node.tagName == 'await') lastPromiseParent = node.parentBlock
+
+        removeNode(node)
+      }
+
+      updateProfile(node, 'detach', detachFn, detaching)
+    }
+  }
+}
+
+function updateProfile(node, type, fn, ...args) {
+  fn(...args);
+}
+
+
 //function is called when the 'SvelteRegisterComponent' event is dispatched
 function EVENT_CALLBACK_SvelteRegisterComponent (event) {
   const { component, tagName } = event.detail
@@ -174,14 +321,12 @@ function EVENT_CALLBACK_SvelteRegisterComponent (event) {
 
     updateViaMessage(node)
   } else {
-    console.log('component is ', component);
     nodeMap.set(component.$$.fragment, {
       type: 'component',
       detail: component,
       tagName
     })
   }
-  console.log('nodeMap is ', nodeMap);
 }
 
 //function is called when the 'SvelteDOMInsert' event is dispatched
@@ -191,30 +336,13 @@ function EVENT_CALLBACK_SvelteDOMInsert (event) {
   insert(element, target, anchor);
 }
 
-//function is called when the 'SvelteDOMSetData' event is dispatched
-// function EVENT_CALLBACK_SvelteDOMSetData (event) {
-//   console.log('EVENT_CALLBACK_SvelteDOMSetData: event is ', event);
-//   const node = nodeMap.get(event)
-//   console.log('EVENT_CALLBACK_SvelteDOMSetData: node is ', node);
-//   if (!node) return
-
-//   if (node.type == 'anchor') node.type = 'text'
-
-//   updateViaMessage(node);
-// }
-
-// function svelteUpdateNode (e) {
-//   console.log('svelteUpdateNode: e is ', e);
-//   updateElement(e.detail.node);
-// }
-
 function EVENT_CALLBACK_SvelteDOMSetData(event) {
+  // sendRoot(rootNodes[0]);
   const node = nodeMap.get(event.detail.node)
   if (!node) return;
 
   if (node.type == 'anchor') node.type = 'text';
 
-  console.log('EVENT_CALLBACK_SvelteDOMSetData: node is ', node);
   updateViaMessage(node);
 }
 
@@ -224,8 +352,8 @@ function EVENT_CALLBACK_SvelteDOMSetData(event) {
 
 //run at launch of debugger tool
 function SVOLTE_SETUP (root) {
-  console.log('dummy');
 
+  root.addEventListener('SvelteRegisterBlock', EVENT_CALLBACK_SvelteRegisterBlock);
   root.addEventListener('SvelteRegisterComponent', EVENT_CALLBACK_SvelteRegisterComponent);
   root.addEventListener('SvelteDOMInsert', EVENT_CALLBACK_SvelteDOMInsert);
   root.addEventListener('SvelteDOMSetData', EVENT_CALLBACK_SvelteDOMSetData);
