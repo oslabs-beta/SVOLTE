@@ -36,6 +36,15 @@ function updateViaMessage(node) {
   });
 }
 
+// sends message which triggers removal of node
+function removeViaMessage(node) {
+  window.postMessage({
+    type: 'removeNode',
+    node: processNode(node),
+    source: 'content.js'
+  });
+}
+
 // ========================================================================================
 //          NODE PROCESSING
 // ========================================================================================
@@ -182,6 +191,19 @@ function addNode(node, target, anchor) {
     rootNodes.push(node);
   }
   addViaMessage(node, anchorNode);
+}
+
+function removeNode(node) {
+  if (!node) return
+
+  nodeMap.delete(node.id)
+  nodeMap.delete(node.detail)
+
+  const index = node.parent.children.indexOf(node)
+  node.parent.children.splice(index, 1)
+  node.parent = null
+
+  removeViaMessage(node)
 }
 
 // ========================================================================================
@@ -346,17 +368,24 @@ function EVENT_CALLBACK_SvelteDOMSetData(event) {
   updateViaMessage(node);
 }
 
+function EVENT_CALLBACK_SvelteDOMRemove (event) {
+  const node = nodeMap.get(event.detail.node);
+  if (!node) return;
+
+  removeNode(node);
+}
+
 // ========================================================================================
 //          SETUP
 // ========================================================================================
 
-//run at launch of debugger tool
-function SVOLTE_SETUP (root) {
 
+function SVOLTE_SETUP (root) {
   root.addEventListener('SvelteRegisterBlock', EVENT_CALLBACK_SvelteRegisterBlock);
   root.addEventListener('SvelteRegisterComponent', EVENT_CALLBACK_SvelteRegisterComponent);
   root.addEventListener('SvelteDOMInsert', EVENT_CALLBACK_SvelteDOMInsert);
   root.addEventListener('SvelteDOMSetData', EVENT_CALLBACK_SvelteDOMSetData);
+  root.addEventListener('SvelteDOMRemove', EVENT_CALLBACK_SvelteDOMRemove);
 }
 
 SVOLTE_SETUP(window.document)
