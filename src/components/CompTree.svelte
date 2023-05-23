@@ -20,19 +20,44 @@
   //   })
   // console.log('this is tree data: ', $treeData)
 
-
   treeData.set({
     "name": "Root",
+    "age":10,
+    "nickname":'Tanner',
     "children": [
     {"name": "Counter1",
+    "age":11,
+    "nickname":'Jake',
     "children": [
-      {"name": "Increment"}, 
-      {"name": "Decrement"}
+      {"name": "Increment",
+      "age":12,
+      "nickname":'Alison'
+    }, 
+      {"name": "Decrement",
+      "age":13,
+      "nickname":'Demetri',
+    }
       ]
     },
-    {"name": "Counter2"}
+    {"name": "Counter2",
+    "age":14,
+    "nickname":'Tyson'
+  }
   ]
   })
+
+  // treeData.set({
+  //   "name": "Root",
+  //   "children": [
+  //   {"name": "Counter1",
+  //   "children": [
+  //     {"name": "Increment"}, 
+  //     {"name": "Decrement"}
+  //     ]
+  //   },
+  //   {"name": "Counter2"}
+  // ]
+  // })
 
 
   let margin = { top: 20, right: 90, bottom: 20, left: 90 };
@@ -93,6 +118,7 @@ afterUpdate(() => {
     //      : " node--leaf"))
       .attr('transform', d => "translate(" + source.y0 + ", " + source.x0 + ")")
       .on('click', click)
+      .style('z-index', '1');
 
     // adding component name to each node
     nodeEnter
@@ -102,23 +128,27 @@ afterUpdate(() => {
       .attr('x', 14)
       .attr('text-anchor', d => d.children || d._children ? "end" : "start")
       .text(d => d.data.name)
+      .style('fill', 'aliceblue')
+
 
     // attaching a circle to represent each node
-    nodeEnter
-      .append('circle')
+    const circleSVG = nodeEnter.append('circle')
       .attr('r', 8)
       .style("fill", d => d._children ? "yellow" : "black")
       .attr('cursor', 'pointer')
+    
+    const gSVG = nodeEnter.append('g')
+      .attr("transform", "translate(-6, 4)");
 
-    const enterSVG = nodeEnter.append("svg")
+    const enterSVG = gSVG.append("svg")
       .attr("width", 400)
-      .attr("height", 200);
-
+      .attr("height", 200)
+      
     const rect = enterSVG.append("rect")
       .attr("width", 200)
       .attr("height", 100)
       .attr("fill", "lightgray")
-      .style("opacity", 0); 
+      .style("opacity", 0)
 
     const text = enterSVG.append("text")
       .attr("x", 100)
@@ -127,26 +157,31 @@ afterUpdate(() => {
       .text("hello world")
       .style("font-size", "20px")
       .style("fill", "black")
-      .style("opacity", 0); 
+      .style("opacity", 0)
+      .attr("class", "wrapped-text");
+
+    circleSVG.on("mouseover", function(event, d){
+      //vanilla DOM way 
+      // d3.select(this.parentNode)._groups[0][0].querySelector('svg').querySelector('text').style.opacity = 1;
+      // d3.select(this.parentNode)._groups[0][0].querySelector('svg').querySelector('text').textContent = `Age: ${d.data.age}`;
+
+      //D3 way of changing style/text content
+      d3.select(this.parentNode).select('svg').select('text').style('opacity', 1).text(`Age: ${d.data.age}`)
+      // d3.select(this.parentNode).select('rect').style('opacity', 1);
+      d3.select(this.parentNode).select('rect').style('opacity', 1);
+      console.log(d3.select(this.parentNode))
+
+      // d3.select(this.parentNode).select("rect").select("text").style("opacity", 1).text(`Age: ${d.data.age}`)
+      // d3.select(this).select("text").style("opacity", 1).text(`Age: ${d.data.age} Hello Hello Nickname: ${d.data.nickname}`);
+    });
+    circleSVG.on("mouseout", function(event, d) {
+      // console.log('d3.select(this.parentNode): ', d3.select(this.parentNode))
+      d3.select(this.parentNode).select('svg').select('text').style("opacity", 0);
+      d3.select(this.parentNode).select('rect').style('opacity', 0);
+    });
+
     
-      enterSVG.on("mouseover", function(event, d){
-        d3.select(this).select("rect").style("opacity", 1);
-        d3.select(this).select("text").style("opacity", 1);
-      });
-      enterSVG.on("mouseout", function(event, d) {
-        d3.select(this).select("rect").style("opacity", 0);
-        d3.select(this).select("text").style("opacity", 0);
-      });
-
-    // nodeEnter
-    //   .append('text')
-    //   .text('TEST')
-    //   // .attr('y', d => d.y0 + 20)
-    //   .style('fill', 'white')
-      
-
-
-
+    
     const nodeUpdate = nodeEnter.merge(node);
 
     nodeUpdate
@@ -239,9 +274,11 @@ afterUpdate(() => {
 })
 
 
-
 </script>
 
- <main id='body'>
+
+
+
+<main id='body'>
   
- </main>
+</main>
