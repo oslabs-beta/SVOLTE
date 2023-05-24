@@ -1,5 +1,6 @@
+import "./app.postcss";
 import App from "./App.svelte";
-import { writable, get } from 'svelte/store';
+import { writable, get } from "svelte/store";
 
 const targetNode = writable({});
 
@@ -18,8 +19,8 @@ backgroundPageConnection.postMessage({
 // background.js -> here
 
 backgroundPageConnection.onMessage.addListener((message: Object) => {
-  if (message.type === 'addNode') {
-    console.log('message received: ', message);
+  if (message.type === "addNode") {
+    console.log("message received: ", message);
   }
 });
 

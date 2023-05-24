@@ -98,10 +98,12 @@ afterUpdate(() => {
     nodeEnter
       .append('text')
       .attr('dy', '.35em')
-      .attr('y', d => d.children || d._children ? -15 : 0)
+      .attr('y', d => d.children || d._children ? -20 : 0)
       .attr('x', 14)
       .attr('text-anchor', d => d.children || d._children ? "end" : "start")
       .text(d => d.data.name)
+      .style('fill', 'aliceblue')
+
 
     // attaching a circle to represent each node
     nodeEnter
@@ -110,19 +112,34 @@ afterUpdate(() => {
       .style("fill", d => d._children ? "yellow" : "black")
       .attr('cursor', 'pointer')
 
-    nodeEnter
-      .append('svg')
-      .attr('width', 500)
-      .attr('height', 500)
-      .attr('class', 'nodeText')
-      .text('TESTING')
 
-    // nodeEnter
-    //   .append('text')
-    //   .text('TEST')
-    //   // .attr('y', d => d.y0 + 20)
-    //   .style('fill', 'white')
-      
+
+    const enterSVG = nodeEnter.append("svg")
+      .attr('class', 'textBoxSVG')
+      .attr("width", 400)
+      .attr("height", 200);
+
+    const rect = enterSVG.append("rect")
+      .attr('class', 'rect')
+      .attr("width", 200)
+      .attr("height", 100)
+      .attr("fill", "lightgray")
+      .style("opacity", 1)
+
+
+    const text = enterSVG.append("text")
+      .attr("x", 100)
+      .attr("y", 60)
+      .attr("text-anchor", "middle")
+      .text("hello world")
+      .style("font-size", "20px")
+      .style("fill", "black")
+      .style("opacity", 0); 
+
+    console.log('enterSVG, ', enterSVG);
+    console.log('enterSVG textBoxSVG, ', enterSVG.select('textBoxSVG'));
+    console.log('enterSVG textBoxSVG this, ', enterSVG.select(this));
+    console.log('enterSVG rect, ', enterSVG.select('rect'));
 
 
 
