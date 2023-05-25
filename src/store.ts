@@ -2,7 +2,8 @@ import { writable, get } from "svelte/store";
 import type { Writable } from "svelte/store";
 
 const nodeMap = new Map();
-const rootNodes:Writable<[]> = writable([]);
+export const rootNodes:Writable<[]> = writable([]);
+
 //we want to dynamically add to treeData
 export const treeData = writable({});
 
@@ -60,7 +61,7 @@ backgroundPageConnection.onMessage.addListener((message: object) => {
         delete node._timeout;
         const targetNode = nodeMap.get(message.target);
         if (targetNode) insertNode(node, targetNode, message.anchor);
-        else rootNodes.update(o => (o.push(node), o));
+        else rootNodes.update(o => ((node.tagName = "Root"), o.push(node), o));
       }, 100)
 
       break
@@ -70,11 +71,11 @@ backgroundPageConnection.onMessage.addListener((message: object) => {
       const node = nodeMap.get(message.node.id);
       const parentComponent = eventBubble(node);
 
-      console.log('before is ', parentComponent);
+      // console.log('before is ', parentComponent);
       Object.assign(node, message.node);
 
       const test = eventBubble(node);
-      console.log('after is ', test);
+      // console.log('after is ', test);
       
 
       // const selected = get(selectedNode);

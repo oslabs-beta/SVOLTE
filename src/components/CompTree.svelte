@@ -1,24 +1,116 @@
 <script>
   import * as d3 from 'd3';
-  import { treeData } from '../store';
+  import { treeData, rootNodes } from '../store';
   import { onMount, afterUpdate } from 'svelte'
 
-  // treeData.set({
-  //       "name": "Eve",
-  //       "children": [
-  //       {"name": "Cain"},
-  //       {"name": "Seth",
-  //           "children": [
-  //               {"name": "Enos"}, {"name": "Noam"}
-  //           ]
-  //       },
-  //       {"name": "Abel"},
-  //       {"name": "Awan",
-  //           "children": [{"name": "Enoch"}]
-  //       },
-  //       {"name": "Azura"}]
-  //   })
-  // console.log('this is tree data: ', $treeData)
+
+  console.log('imported root: ', $rootNodes);
+
+  /* Tree data template from root node
+  {
+    "name": "Root",
+    "variables": {},
+    "children": [
+      {
+        "name": "Layout",
+        "variables": {},
+        "children": [
+          {
+            "name": "Header",
+            "variables": {},
+            "children": [],
+          }
+          {
+            "name": "Page",
+            "variables": {},
+            "children": [
+              {
+                "name": "Counter",
+                "variables": { count: 0 },
+                "children": []
+              }
+            ]
+          }
+        ]
+      }
+    ]
+
+  }
+  */
+
+class Node {
+  constructor(name, variables, children) {
+    this.name = name;
+    this.variables = variables;
+    this.children = children;
+  }
+}
+
+function parseRoot(node){
+  //inputs:  tree (bst with variable number of children)
+  //outputs: object (similar, but only containing components)
+    //follows tree template outlined above
+  //this.name: node.tagName
+  const name = node.tagName;
+  //this.variables: every element in node.detail.ctx //for in
+  //this.children: originally empty array we append to as the number
+      //of registered components increases
+  const children = [];
+  
+  //base case
+  //if node.children.length === 0
+  if (node.children.length!==0){
+    if (name === 'component'){
+      for (let el in node.detail.ctx){
+        
+      }
+      children.push(new Node(name,))
+    }
+  }
+    //stop parsing
+  
+  //recursive case
+  //if name is a component
+    // children.push(new Node(name, variables, [])
+  //else, if name is NOT a component
+    //recurse
+
+}
+
+
+
+// NOTE: rootNodes from store is an array with the root node object as its only element
+  function rootParser(root) {
+    // root is an object
+    // output is an object
+    const output = {};
+    output.name = root.tagName;
+    // placeholder line to set variables property (ctx)
+    output.children = []; //array of child objects
+
+    if (root.children.length === 0) return output;
+
+    for (let node in root.children) {
+      //if node.type === 'component' ??
+      //else
+    }
+
+
+
+    let curr = root;
+    // iterate through our root array
+
+    // base case: if children.length is 0, return
+    
+    //while //some condition (curr.length!==0)
+      //curr = (child of curr)
+
+
+
+    // output: tree data (see tree data template above)
+    console.log(output);
+    return output;
+  }
 
   treeData.set({
     "name": "Root",
@@ -45,19 +137,6 @@
   }
   ]
   })
-
-  // treeData.set({
-  //   "name": "Root",
-  //   "children": [
-  //   {"name": "Counter1",
-  //   "children": [
-  //     {"name": "Increment"}, 
-  //     {"name": "Decrement"}
-  //     ]
-  //   },
-  //   {"name": "Counter2"}
-  // ]
-  // })
 
 
   let margin = { top: 20, right: 90, bottom: 20, left: 90 };
@@ -89,7 +168,7 @@
 //append the svg object to the body of the page
 //appends a 'group' element to 'svg'
 let svg;
-afterUpdate(() => {
+onMount(() => {
   svg = d3
     .select("#body")
     .append("svg")
