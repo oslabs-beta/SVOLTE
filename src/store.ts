@@ -5,7 +5,7 @@ const { devtools, runtime } = chrome;
 
 const nodeMap = new Map();
 const rootNodes: Writable<Node[]> = writable([]);
-export const snapShotHistory: Writable<SnapShot[]> = writable([]);
+export let snapShotHistory: Writable<SnapShot[]> = writable([]);
 //we want to dynamically add to treeData
 export const treeData = writable({});
 
@@ -166,10 +166,8 @@ function addState(prevNode, message) {
     compareObjects(prevNode.detail.ctx, node.detail.ctx, differences);
     if (differences.length) {
       node.diff = differences;
-      snapShotHistory.update((prev)=> { 
-        console.log('test');
-        return [...prev, node]});
-
+      node._id = get(snapShotHistory).length;
+      snapShotHistory.update((prev) => [...prev, node]);
       console.log("snap shot history is:", get(snapShotHistory));
     }
   }
