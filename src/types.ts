@@ -15,7 +15,7 @@ export interface Node {
   type: string;
   detail?: {
     attributes: any[];
-    listeners: [];
+    listeners: any[];
     ctx: any[];
   };
 }
@@ -23,6 +23,11 @@ export interface SnapShot {
   id: string;
   tagName: string;
   type: string;
+  detail: {
+    attributes: any[];
+    listeners: any[];
+    ctx: any[];
+  };
   diff: Array<Difference>;
 }
 
