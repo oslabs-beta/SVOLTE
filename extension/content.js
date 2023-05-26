@@ -15,8 +15,6 @@ let _id = 0;
 //          MESSAGE FUNCTIONS
 // ========================================================================================
 
-
-
 // sends message which triggers adding of node
 function addViaMessage(node) {
   window.postMessage({
@@ -134,7 +132,7 @@ function clone(value, seen = new Map()) {
   }
 }
 
-// array to hold root nodes (not useful yet)
+// array to hold root node
 const rootNodes = [];
 
 // ========================================================================================
@@ -379,7 +377,6 @@ function EVENT_CALLBACK_SvelteDOMRemove (event) {
 //          SETUP
 // ========================================================================================
 
-
 function SVOLTE_SETUP (root) {
   root.addEventListener('SvelteRegisterBlock', EVENT_CALLBACK_SvelteRegisterBlock);
   root.addEventListener('SvelteRegisterComponent', EVENT_CALLBACK_SvelteRegisterComponent);
@@ -389,3 +386,7 @@ function SVOLTE_SETUP (root) {
 }
 
 SVOLTE_SETUP(window.document)
+
+window.SVOLTE_INJECT_STATE = function (component, state) {
+  component.$inject_state(state);
+}

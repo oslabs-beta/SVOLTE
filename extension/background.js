@@ -14,11 +14,11 @@ const connections = {};
 
 
 chrome.runtime.onConnect.addListener(function (port) {
-  console.log("On connect add listener");
   const extensionListener = function (message, sender, sendResponse) {
     // The original connection event doesn't include the tab ID of the
     // DevTools page, so we need to send it explicitly.
-    if (message.name == "INIT") {
+    if (message.type === 'INIT') {
+      console.log('message type INIT received in background.js')
       port.postMessage({ 
         source: "background.js",
         type: "postMessage"

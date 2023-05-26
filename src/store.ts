@@ -24,23 +24,39 @@ export const pathStore = writable({
   },
 });
 
+
+// ================================================================================
+//              MESSAGING
+// ================================================================================
+
+// establish connection
 const backgroundPageConnection = runtime.connect();
 
-// report back with tabId to identify devtools location in chrome
+// message background with tabID 
 backgroundPageConnection.postMessage({
-  name: "INIT",
+  type: 'INIT',
   tabId: devtools.inspectedWindow.tabId,
 });
 
-// background.js -> here
+function JumpUpdatePage () {
+  backgroundPageConnection.postMessage({
+    type: 'INJECT',
 
+  })
+}
+
+// listen for messages from background
 backgroundPageConnection.onMessage.addListener((message: Message) => {
+
   switch (message.type) {
+    
+    // used when refreshing page or disconnecting
     case "clear": {
       rootNodes.set([]);
       break;
     }
 
+    // add nodes to the nodeMap
     case "addNode": {
       const node: Node = message.node;
       node.children = [];
@@ -71,6 +87,7 @@ backgroundPageConnection.onMessage.addListener((message: Message) => {
       break;
     }
 
+    // update nodes within the nodeMap
     case "updateNode": {
       const node = nodeMap.get(message.node.id);
       // const parentComponent = eventBubble(node);
@@ -86,6 +103,7 @@ backgroundPageConnection.onMessage.addListener((message: Message) => {
       break;
     }
 
+    // remove nodes from the nodeMap
     case "removeNode": {
       const node = nodeMap.get(message.node.id);
       nodeMap.delete(node.id);
@@ -101,6 +119,11 @@ backgroundPageConnection.onMessage.addListener((message: Message) => {
     }
   }
 });
+
+// ================================================================================
+//              MESSAGING
+// ================================================================================
+
 
 function insertNode(node, target, anchorId) {
   node.parent = target;
@@ -143,7 +166,10 @@ function addState(prevNode, message) {
     compareObjects(prevNode.detail.ctx, node.detail.ctx, differences);
     if (differences.length) {
       node.diff = differences;
-      snapShotHistory.set([...get(snapShotHistory), node]);
+      snapShotHistory.update((prev)=> { 
+        console.log('test');
+        return [...prev, node]});
+
       console.log("snap shot history is:", get(snapShotHistory));
     }
   }
@@ -166,6 +192,7 @@ function compareObjects(
     } else {
       if (node1[key] !== node2[key]) {
         differences.push({
+          id: differences.length,
           path: [...path, key],
           value1: node1[key],
           value2: node2[key],
