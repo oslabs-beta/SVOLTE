@@ -39,86 +39,46 @@
   }
   */
 
-class Node {
-  constructor(name, variables, children) {
-    this.name = name;
-    this.variables = variables;
-    this.children = children;
-  }
-}
-
-function parseRoot(node){
-  //inputs:  tree (bst with variable number of children)
-  //outputs: object (similar, but only containing components)
-    //follows tree template outlined above
-  //this.name: node.tagName
-  //this.variables: every element in node.detail.ctx //for of
-  //this.children: originally empty array we append to as the number
-      //of registered components increases
-       //if node.children.length === 0 stop parsing
-  //recursive case
-  //if name is a component
-    // children.push(new Node(name, variables, [])
-  //else, if name is NOT a component
-  //or even if it is, honestly
-  //recurse
-  /*conditional statement is required, in order for background to pass messages to populate our rootNode tree before proceeding*/
-  if (node) {
-    let output = {};
-    function inner(node){
-      const name = node.type;
-      let children = [];
-      console.log('node.children: ', node.children)
-      if (node.children.length === 0){
-        return;
-      }
+  /* iterates through children array of each node, if a child is a component then 
+  calls rootParser on that component to add it as a child object to the parent node's children array.
+  If not a component, continues down branch until it reaches a component or a node with no children.
+  */
+  function nodeTraverse(arr, childrenArr = []) {
+    if (arr.length === 0) return;
+    for (let node of arr) {
+      if (node.type === 'component') childrenArr.push(rootParser(node));
       else {
-        if (name === 'component'){
-          let variables = node.detail.ctx;
-          children.push(new Node(name, variables, []))
-        }
-        for (const child of node.children) {
-          // inner(child);
-          console.log('child: ', child)
-        }
+        nodeTraverse(node.children, childrenArr);
       }
     }
-    inner(node);
-    console.log('children output: ', output);
-    return output;
+
+    return childrenArr;
   }
-}
-console.log('parse output: ', parseRoot(rootNode))
-
-
-
 
 // NOTE: rootNodes from store is an array with the root node object as its only element
-  // function rootParser(root) {
-  //   // root is an object
-  //   // output is an object
-  //   const output = {};
-  //   output.name = root.tagName;
-  //   // placeholder line to set variables property (ctx)
-  //   output.children = []; //array of child objects
+  function rootParser(root) {
+    // root is an object
+    // output is an object
+    if (root) {
+      const output = {};
+      output.name = root.tagName;
+      // placeholder line to set variables property (ctx)
+  
+      
+      output.children = nodeTraverse(root.children); //array of child objects
+  
+  
+      // output: this is the tree data we will use (see tree data template above)
+      console.log('root parser output: ', output);
+      return output;
+    }
+  }
+
+  const parsedData = rootParser($rootNodes[0])
+  console.log('result of parsing ', parsedData);
 
 
 
-
-  //   let curr = root;
-  //   // iterate through our root array
-
-  //   // base case: if children.length is 0, return
-    
-  //   //while //some condition (curr.length!==0)
-  //     //curr = (child of curr)
-
-
-
-  //   // output: tree data (see tree data template above)
-  //   console.log(output);
-  //   return output;
-  // }
 
   treeData.set({
     "name": "Root",
