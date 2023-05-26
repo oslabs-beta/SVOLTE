@@ -20,6 +20,7 @@ export interface Node {
   };
 }
 export interface SnapShot {
+  _id: number;
   id: string;
   tagName: string;
   type: string;

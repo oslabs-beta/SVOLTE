@@ -2,14 +2,11 @@
   import { snapShotHistory } from "../store";
   import TimeSlice from "./TimeSlice.svelte";
 
-  let snapArr
-  snapShotHistory.subscribe(value => {
-		snapArr = value;
-	});
 </script>
 
 <div class="column">
-  {#each snapArr as snap (snap.id)}
-    <TimeSlice {snap}/>
+  <h1>{JSON.stringify($snapShotHistory.length)}</h1>
+  {#each $snapShotHistory as snap (snap._id)}
+    <TimeSlice {...snap}/>
   {/each}
 </div>

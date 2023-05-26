@@ -1,15 +1,13 @@
 <script lang="ts">
-  import type {SnapShot} from '../types'
-  export let snap:SnapShot;
-
-  
-
+  export let diff;
+  export let tagName;
+  export let detail;
   
 </script>
 <div>
-  <h1>{snap.tagName}</h1>
-  {#each snap.diff as diff (diff.id)}
-    <h1>Key is {snap.detail.ctx[Number(diff.path[0])].key}</h1>
-    <h2>{diff.value1} changed to {diff.value2} </h2>
+  <h1>{tagName}</h1>
+  {#each diff as change (change.id)}
+    <h1>Key is {detail.ctx[Number(change.path[0])].key}</h1>
+    <h2>{change.value1} changed to {change.value2} </h2>
   {/each}
 </div>
