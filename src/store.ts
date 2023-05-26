@@ -73,8 +73,6 @@ backgroundPageConnection.onMessage.addListener((message: Message) => {
     case "updateNode": {
       const node = nodeMap.get(message.node.id);
 
-      // const parentComponent = eventBubble(node);
-
       addState(node, message);
 
       Object.assign(node, message.node);
