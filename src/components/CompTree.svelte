@@ -4,7 +4,8 @@
   import { onMount, afterUpdate } from 'svelte'
 
 
-  console.log('imported root: ', $rootNodes);
+  console.log('imported root: ', $rootNodes[0]);
+  const rootNode = $rootNodes[0];
 
   /* Tree data template from root node
   {
@@ -51,66 +52,73 @@ function parseRoot(node){
   //outputs: object (similar, but only containing components)
     //follows tree template outlined above
   //this.name: node.tagName
-  const name = node.tagName;
-  //this.variables: every element in node.detail.ctx //for in
+  //this.variables: every element in node.detail.ctx //for of
   //this.children: originally empty array we append to as the number
       //of registered components increases
-  const children = [];
-  
-  //base case
-  //if node.children.length === 0
-  if (node.children.length!==0){
-    if (name === 'component'){
-      for (let el in node.detail.ctx){
-        
-      }
-      children.push(new Node(name,))
-    }
-  }
-    //stop parsing
-  
+       //if node.children.length === 0 stop parsing
   //recursive case
   //if name is a component
     // children.push(new Node(name, variables, [])
   //else, if name is NOT a component
-    //recurse
-
+  //or even if it is, honestly
+  //recurse
+  /*conditional statement is required, in order for background to pass messages to populate our rootNode tree before proceeding*/
+  if (node) {
+    let output = {};
+    function inner(node){
+      const name = node.type;
+      let children = [];
+      console.log('node.children: ', node.children)
+      if (node.children.length === 0){
+        return;
+      }
+      else {
+        if (name === 'component'){
+          let variables = node.detail.ctx;
+          children.push(new Node(name, variables, []))
+        }
+        for (const child of node.children) {
+          // inner(child);
+          console.log('child: ', child)
+        }
+      }
+    }
+    inner(node);
+    console.log('children output: ', output);
+    return output;
+  }
 }
+console.log('parse output: ', parseRoot(rootNode))
+
 
 
 
 // NOTE: rootNodes from store is an array with the root node object as its only element
-  function rootParser(root) {
-    // root is an object
-    // output is an object
-    const output = {};
-    output.name = root.tagName;
-    // placeholder line to set variables property (ctx)
-    output.children = []; //array of child objects
-
-    if (root.children.length === 0) return output;
-
-    for (let node in root.children) {
-      //if node.type === 'component' ??
-      //else
-    }
+  // function rootParser(root) {
+  //   // root is an object
+  //   // output is an object
+  //   const output = {};
+  //   output.name = root.tagName;
+  //   // placeholder line to set variables property (ctx)
+  //   output.children = []; //array of child objects
 
 
 
-    let curr = root;
-    // iterate through our root array
 
-    // base case: if children.length is 0, return
+  //   let curr = root;
+  //   // iterate through our root array
+
+  //   // base case: if children.length is 0, return
     
-    //while //some condition (curr.length!==0)
-      //curr = (child of curr)
+  //   //while //some condition (curr.length!==0)
+  //     //curr = (child of curr)
 
 
 
-    // output: tree data (see tree data template above)
-    console.log(output);
-    return output;
-  }
+  //   // output: tree data (see tree data template above)
+  //   console.log(output);
+  //   return output;
+  // }
 
   treeData.set({
     "name": "Root",
