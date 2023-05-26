@@ -4,8 +4,9 @@ import type { Message, Node, SnapShot } from "./types";
 const { devtools, runtime } = chrome;
 
 const nodeMap = new Map();
-const rootNodes: Writable<Node[]> = writable([]);
+export const rootNodes:Writable<[]> = writable([]);
 export let snapShotHistory: Writable<SnapShot[]> = writable([]);
+
 //we want to dynamically add to treeData
 export const treeData = writable({});
 
@@ -62,17 +63,16 @@ backgroundPageConnection.onMessage.addListener((message: Message) => {
         delete node._timeout;
         const targetNode = nodeMap.get(message.target);
         if (targetNode) insertNode(node, targetNode, message.anchor);
-        else {
-          node.tagName = "Root";
-          rootNodes.set([node]);
-        }
-      }, 100);
+        else rootNodes.update(o => ((node.tagName = "Root"), o.push(node), o));
+      }, 100)
+
 
       break;
     }
 
     case "updateNode": {
       const node = nodeMap.get(message.node.id);
+
       // const parentComponent = eventBubble(node);
 
       addState(node, message);
