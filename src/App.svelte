@@ -42,7 +42,7 @@
     <h1> Component Tree </h1>
     <CompTree />
     {:else if $pathStore.path === 'time'}
-    <h1> States </h1>
+    <Time/>
   {/if}
 </main>
 
