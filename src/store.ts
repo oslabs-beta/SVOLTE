@@ -143,7 +143,7 @@ function addState(prevNode, message) {
     compareObjects(prevNode.detail.ctx, node.detail.ctx, differences);
     if (differences.length) {
       node.diff = differences;
-      snapShotHistory.set([...get(snapShotHistory), node]);
+      snapShotHistory.update((prev)=>[...prev, node]);
       console.log("snap shot history is:", get(snapShotHistory));
     }
   }
@@ -166,6 +166,7 @@ function compareObjects(
     } else {
       if (node1[key] !== node2[key]) {
         differences.push({
+          id: differences.length,
           path: [...path, key],
           value1: node1[key],
           value2: node2[key],

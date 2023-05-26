@@ -32,6 +32,7 @@ export interface SnapShot {
 }
 
 interface Difference {
+  id: number;
   path: Array<string>;
   value1: any;
   value2: any;
