@@ -36,8 +36,8 @@
       }
     ]
 
-  }
-  */
+  }*/
+  
 
   /* iterates through children array of each node, if a child is a component then 
   calls rootParser on that component to add it as a child object to the parent node's children array.
@@ -59,9 +59,10 @@
   function rootParser(root) {
     // root is an object
     // output is an object
-    if (root) {
+    // if (root) {
       const output = {};
       output.name = root.tagName;
+      output.variables = root.detail.ctx; // array of objs
       // placeholder line to set variables property (ctx)
   
       
@@ -69,42 +70,44 @@
   
   
       // output: this is the tree data we will use (see tree data template above)
-      console.log('root parser output: ', output);
+      // console.log('root parser output: ', output);
       return output;
-    }
+    // }
   }
 
-  const parsedData = rootParser($rootNodes[0])
-  console.log('result of parsing ', parsedData);
+  if ( $rootNodes[0]) {
+    const parsedData = rootParser($rootNodes[0]);
+    console.log('result of parsing ', parsedData);
+    treeData.set(parsedData);
+  };
+  console.log('tree data after parsing ', $treeData);
 
-
-
-
-  treeData.set({
-    "name": "Root",
-    "age":10,
-    "nickname":'Tanner',
-    "children": [
-    {"name": "Counter1",
-    "age":11,
-    "nickname":'Jake',
-    "children": [
-      {"name": "Increment",
-      "age":12,
-      "nickname":'Alison'
-    }, 
-      {"name": "Decrement",
-      "age":13,
-      "nickname":'Demetri',
-    }
-      ]
-    },
-    {"name": "Counter2",
-    "age":14,
-    "nickname":'Tyson'
-  }
-  ]
-  })
+// dummy data
+  // treeData.set({
+  //   "name": "Root",
+  //   "age": 10,
+  //   "nickname":'Tanner',
+  //   "children": [
+  //     { "name": "Counter1",
+  //       "age": 11,
+  //       "nickname":'Jake',
+  //       "children": [
+  //         { "name": "Increment",
+  //           "age": 12,
+  //           "nickname":'Alison'
+  //         }, 
+  //         { "name": "Decrement",
+  //           "age": 13,
+  //           "nickname":'Demetri',
+  //         }
+  //       ]
+  //     },
+  //     { "name": "Counter2",
+  //       "age": 14,
+  //       "nickname":'Tyson'
+  //     }
+  //   ]
+  // })
 
 
   let margin = { top: 20, right: 90, bottom: 20, left: 90 };
@@ -213,11 +216,20 @@ onMount(() => {
       // d3.select(this.parentNode)._groups[0][0].querySelector('svg').querySelector('text').textContent = `Age: ${d.data.age}`;
 
       //D3 way of changing style/text content
-      d3.select(this.parentNode).select('svg').select('text').style('opacity', 1).text(`Age: ${d.data.age}`)
+      let str = ''
+      const arr = []
+      for (const el of d.data.variables){
+        console.log('el: ', el)
+        // str+=JSON.stringify(el).split('}{')
+        arr.push(el);
+      }
+      console.log('d.data.variables: ', d.data.variables)
+      d3.select(this.parentNode).select('svg').select('text').style('opacity', 1).text(`Variables: ${d.data.variables}`)
       // d3.select(this.parentNode).select('rect').style('opacity', 1);
       d3.select(this.parentNode).select('rect').style('opacity', 1);
       console.log(d3.select(this.parentNode))
-
+      console.log('d.data: ', d.data)
+      console.log('circ svg string: ', d.data.variables);
       // d3.select(this.parentNode).select("rect").select("text").style("opacity", 1).text(`Age: ${d.data.age}`)
       // d3.select(this).select("text").style("opacity", 1).text(`Age: ${d.data.age} Hello Hello Nickname: ${d.data.nickname}`);
     });
