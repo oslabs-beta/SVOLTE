@@ -4,8 +4,9 @@ import type { Message, Node, SnapShot } from "./types";
 const { devtools, runtime } = chrome;
 
 const nodeMap = new Map();
-export const rootNodes:Writable<[]> = writable([]);
-export let snapShotHistory: Writable<SnapShot[]> = writable([]);
+export const rootNodes: Writable<Node[]> = writable([]);
+export const snapShotHistory: Writable<SnapShot[]> = writable([]);
+export const selected: Writable<SnapShot> = writable(null);
 
 //we want to dynamically add to treeData
 export const treeData = writable({});
@@ -63,9 +64,11 @@ backgroundPageConnection.onMessage.addListener((message: Message) => {
         delete node._timeout;
         const targetNode = nodeMap.get(message.target);
         if (targetNode) insertNode(node, targetNode, message.anchor);
-        else rootNodes.update(o => ((node.tagName = "Root"), o.push(node), o));
-      }, 100)
-
+        else {
+          node.tagName = "Root";
+          rootNodes.set([node]);
+        }
+      }, 100);
 
       break;
     }
@@ -73,7 +76,7 @@ backgroundPageConnection.onMessage.addListener((message: Message) => {
     case "updateNode": {
       const node = nodeMap.get(message.node.id);
 
-      addState(node, message);
+      addSnapShot(node, message);
 
       Object.assign(node, message.node);
       // const selected = get(selectedNode);
@@ -130,7 +133,7 @@ function eventBubble(node) {
   }
   return node.parent;
 }
-function addState(prevNode, message) {
+function addSnapShot(prevNode, message) {
   const { node } = message;
   if (
     node.type === "component" &&
