@@ -1,38 +1,116 @@
 <script>
   import * as d3 from 'd3';
-  import { treeData } from '../store';
+  import { treeData, rootNodes } from '../store';
   import { onMount, afterUpdate } from 'svelte'
 
-  // treeData.set({
-  //       "name": "Eve",
-  //       "children": [
-  //       {"name": "Cain"},
-  //       {"name": "Seth",
-  //           "children": [
-  //               {"name": "Enos"}, {"name": "Noam"}
-  //           ]
-  //       },
-  //       {"name": "Abel"},
-  //       {"name": "Awan",
-  //           "children": [{"name": "Enoch"}]
-  //       },
-  //       {"name": "Azura"}]
-  //   })
-  // console.log('this is tree data: ', $treeData)
 
+  console.log('imported root: ', $rootNodes[0]);
+  const rootNode = $rootNodes[0];
 
-  treeData.set({
+  /* states and locally defined variables are in ctx property
+  props from a parent component are in attributes property */
+
+  /* Tree data template from root node
+  {
     "name": "Root",
+    "variables": {},
     "children": [
-    {"name": "Counter1",
-    "children": [
-      {"name": "Increment"}, 
-      {"name": "Decrement"}
-      ]
-    },
-    {"name": "Counter2"}
-  ]
-  })
+      {
+        "name": "Layout",
+        "variables": {},
+        "children": [
+          {
+            "name": "Header",
+            "variables": {},
+            "children": [],
+          }
+          {
+            "name": "Page",
+            "variables": {},
+            "children": [
+              {
+                "name": "Counter",
+                "variables": { count: 0 },
+                "children": []
+              }
+            ]
+          }
+        ]
+      }
+    ]
+
+  }*/
+  
+
+  /* iterates through children array of each node, if a child is a component then 
+  calls rootParser on that component to add it as a child object to the parent node's children array.
+  If not a component, continues down branch until it reaches a component or a node with no children.
+  */
+  function nodeTraverse(arr, childrenArr = []) {
+    if (arr.length === 0) return;
+    for (let node of arr) {
+      if (node.type === 'component') childrenArr.push(rootParser(node));
+      else {
+        nodeTraverse(node.children, childrenArr);
+      }
+    }
+
+    return childrenArr;
+  }
+
+// NOTE: rootNodes from store is an array with the root node object as its only element
+  function rootParser(root) {
+    // root is an object
+    // output is an object
+    // if (root) {
+      const output = {};
+      output.name = root.tagName;
+      output.variables = root.detail.ctx; // array of objs
+      // placeholder line to set variables property (ctx)
+  
+      
+      output.children = nodeTraverse(root.children); //array of child objects
+  
+  
+      // output: this is the tree data we will use (see tree data template above)
+      // console.log('root parser output: ', output);
+      return output;
+    // }
+  }
+
+  if ( $rootNodes[0]) {
+    const parsedData = rootParser($rootNodes[0]);
+    console.log('result of parsing ', parsedData);
+    treeData.set(parsedData);
+  };
+  console.log('tree data after parsing ', $treeData);
+
+// dummy data
+  // treeData.set({
+  //   "name": "Root",
+  //   "age": 10,
+  //   "nickname":'Tanner',
+  //   "children": [
+  //     { "name": "Counter1",
+  //       "age": 11,
+  //       "nickname":'Jake',
+  //       "children": [
+  //         { "name": "Increment",
+  //           "age": 12,
+  //           "nickname":'Alison'
+  //         }, 
+  //         { "name": "Decrement",
+  //           "age": 13,
+  //           "nickname":'Demetri',
+  //         }
+  //       ]
+  //     },
+  //     { "name": "Counter2",
+  //       "age": 14,
+  //       "nickname":'Tyson'
+  //     }
+  //   ]
+  // })
 
 
   let margin = { top: 20, right: 90, bottom: 20, left: 90 };
@@ -64,7 +142,7 @@
 //append the svg object to the body of the page
 //appends a 'group' element to 'svg'
 let svg;
-afterUpdate(() => {
+onMount(() => {
   svg = d3
     .select("#body")
     .append("svg")
@@ -93,6 +171,7 @@ afterUpdate(() => {
     //      : " node--leaf"))
       .attr('transform', d => "translate(" + source.y0 + ", " + source.x0 + ")")
       .on('click', click)
+      .style('z-index', '1');
 
     // adding component name to each node
     nodeEnter
@@ -106,26 +185,23 @@ afterUpdate(() => {
 
 
     // attaching a circle to represent each node
-    nodeEnter
-      .append('circle')
+    const circleSVG = nodeEnter.append('circle')
       .attr('r', 8)
       .style("fill", d => d._children ? "yellow" : "black")
       .attr('cursor', 'pointer')
+    
+    const gSVG = nodeEnter.append('g')
+      .attr("transform", "translate(-6, 4)");
 
-
-
-    const enterSVG = nodeEnter.append("svg")
-      .attr('class', 'textBoxSVG')
+    const enterSVG = gSVG.append("svg")
       .attr("width", 400)
-      .attr("height", 200);
-
+      .attr("height", 200)
+      
     const rect = enterSVG.append("rect")
-      .attr('class', 'rect')
       .attr("width", 200)
       .attr("height", 100)
       .attr("fill", "lightgray")
-      .style("opacity", 1)
-
+      .style("opacity", 0)
 
     const text = enterSVG.append("text")
       .attr("x", 100)
@@ -134,15 +210,38 @@ afterUpdate(() => {
       .text("hello world")
       .style("font-size", "20px")
       .style("fill", "black")
-      .style("opacity", 0); 
+      .style("opacity", 0)
+      .attr("class", "wrapped-text");
 
-    console.log('enterSVG, ', enterSVG);
-    console.log('enterSVG textBoxSVG, ', enterSVG.select('textBoxSVG'));
-    console.log('enterSVG textBoxSVG this, ', enterSVG.select(this));
-    console.log('enterSVG rect, ', enterSVG.select('rect'));
+    circleSVG.on("mouseover", function(event, d){
+      //vanilla DOM way 
+      // d3.select(this.parentNode)._groups[0][0].querySelector('svg').querySelector('text').style.opacity = 1;
+      // d3.select(this.parentNode)._groups[0][0].querySelector('svg').querySelector('text').textContent = `Age: ${d.data.age}`;
 
+      //D3 way of changing style/text content
+      let str = ''
+      for (const el of d.data.variables){
+        console.log('el: ', el)
+        if (!el.value.source){str+=JSON.stringify(el)}
+      }
+      console.log('d.data.variables: ', d.data.variables)
+      d3.select(this.parentNode).select('svg').select('text').style('opacity', 1).text(`Variables: ${str}`)
+      // d3.select(this.parentNode).select('rect').style('opacity', 1);
+      d3.select(this.parentNode).select('rect').style('opacity', 1);
+      console.log(d3.select(this.parentNode))
+      console.log('d.data: ', d.data)
+      console.log('circ svg string: ', d.data.variables);
+      // d3.select(this.parentNode).select("rect").select("text").style("opacity", 1).text(`Age: ${d.data.age}`)
+      // d3.select(this).select("text").style("opacity", 1).text(`Age: ${d.data.age} Hello Hello Nickname: ${d.data.nickname}`);
+    });
+    circleSVG.on("mouseout", function(event, d) {
+      // console.log('d3.select(this.parentNode): ', d3.select(this.parentNode))
+      d3.select(this.parentNode).select('svg').select('text').style("opacity", 0);
+      d3.select(this.parentNode).select('rect').style('opacity', 0);
+    });
 
-
+    
+    
     const nodeUpdate = nodeEnter.merge(node);
 
     nodeUpdate
@@ -235,9 +334,11 @@ afterUpdate(() => {
 })
 
 
-
 </script>
 
- <main id='body'>
+
+
+
+<main id='body'>
   
- </main>
+</main>
