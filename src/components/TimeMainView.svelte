@@ -1,18 +1,23 @@
-<script>
+<script lang="ts">
 import { selected } from "../store";
 
 const arr = [];
-for(const obj of $selected?.detail.ctx){
-  if(typeof obj.value !== "function"){
-    if(typeof obj.value === "object"){
-      for (const key in obj.value){
-        if(!obj.value[key]._isFunction){
-          arr.push(obj);
+
+if($selected){
+  for(const obj of $selected.detail.ctx){
+    if(typeof obj.value !== "function"){
+      if(typeof obj.value === "object"){
+        const newObj = {}
+        for (const key in obj.value){
+          if(!obj.value[key]._isFunction){
+            newObj[key] 
+          }
         }
       }
+      arr.push(obj);
     }
-    arr.push(obj);
   }
+
 }
 
 </script>
