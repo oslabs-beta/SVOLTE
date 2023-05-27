@@ -1,9 +1,13 @@
 <script lang="ts">
 	import { spring } from 'svelte/motion';
 	import { count } from './store';
+	export let testProp;
 	// const displayed_count = spring();
 	// $: displayed_count.set(count);
 	// $: offset = modulo($displayed_count, 1);
+
+	let testVar = 'hello';
+	console.log(testProp);
 
 	// function modulo(n: number, m: number) {
 	// 	// handle negative numbers
