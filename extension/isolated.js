@@ -8,6 +8,7 @@ window.addEventListener('message', (msg) => {
   ) {
     return;
   } else {
+    console.log('entering isolated addEventListener for message');
     chrome.runtime.sendMessage(msg.data, (res) => {
       return
     });
@@ -16,3 +17,4 @@ window.addEventListener('message', (msg) => {
 
 window.addEventListener('unload', () => chrome.runtime.sendMessage({ type: 'clear' }));
 
+chrome.runtime.onMessage.addListener()
