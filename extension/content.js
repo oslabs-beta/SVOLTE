@@ -385,8 +385,12 @@ function SVOLTE_SETUP (root) {
   root.addEventListener('SvelteDOMRemove', EVENT_CALLBACK_SvelteDOMRemove);
 }
 
-SVOLTE_SETUP(window.document)
+SVOLTE_SETUP(window.document);
 
-window.SVOLTE_INJECT_STATE = function (component, state) {
-  component.$inject_state(state);
+window.SVOLTE_INJECT_STATE = function (component_id, state) {
+  console.log('component_id is ', component_id);
+  console.log('typeof state is ', typeof JSON.parse(state))
+  console.log('state is ', JSON.parse(state));
+  // component.$inject_state(state);
 }
+

@@ -1,7 +1,7 @@
 import { writable, get } from "svelte/store";
 import type { Writable } from "svelte/store";
 import type { Message, Node, SnapShot } from "./types";
-const { devtools, runtime } = chrome;
+const { devtools, runtime, scripting } = chrome;
 
 const nodeMap = new Map();
 export const rootNodes:Writable<[]> = writable([]);
@@ -203,10 +203,21 @@ export function jump(snapshotID) {
   const component_id = get(snapShotHistory)[currentSnapShot].id;
   const targetState = get(snapShotHistory)[currentSnapShot].detail;
   // const targetNode = nodeMap.get(component_id);
-
+ 
+  console.log('entering jump');
   sendJumpMessage(component_id, targetState);
-  
+  // const result = JSON.stringify(targetState);
+  // console.log('typeof result is ', typeof result);
+  // console.log('result is ', result);
+  console.log('targetState is ', targetState.ctx);
+
+  const test = JSON.stringify(targetState.ctx);
+  console.log('test is ', test);
+
+  devtools.inspectedWindow.eval(`window.SVOLTE_INJECT_STATE(${component_id}, '${test}')`, (result, error) => console.log('result is ', result, 'error is ', error));
   }
+  // devtools.inspectedWindow.eval(`funcname()`, 
+
 }
 
 function sendJumpMessage(componentID, newState) {
@@ -216,3 +227,4 @@ function sendJumpMessage(componentID, newState) {
     newState: newState
   })
 }
+

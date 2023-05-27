@@ -8,7 +8,6 @@ window.addEventListener('message', (msg) => {
   ) {
     return;
   } else {
-    console.log('entering isolated addEventListener for message');
     chrome.runtime.sendMessage(msg.data, (res) => {
       return
     });
