@@ -6,6 +6,7 @@
   export let _id;
   export let setSelected;
   
+  
 </script>
 <div on:click={()=>setSelected(_id)} aria-current={!$selected ? false : $selected._id === _id}>
   <h1>{tagName}</h1>

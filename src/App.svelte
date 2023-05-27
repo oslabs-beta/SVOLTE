@@ -1,9 +1,6 @@
 <script lang="ts">
   import CompTree from './components/CompTree.svelte'
   import Time from './components/Time.svelte'
-  import Counter from './components/Counter.svelte'
-  import Header from './components/Header.svelte'
-  import Body from './components/Body.svelte'
   import { TabGroup, Tab } from '@skeletonlabs/skeleton';
   import { pathStore } from './store.js'
 //use the store subscription prefix '$' in order to access the value from a store element
