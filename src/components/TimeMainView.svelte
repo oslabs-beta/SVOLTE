@@ -3,22 +3,7 @@ import { selected } from "../store";
 
 const arr = [];
 
-if($selected){
-  for(const obj of $selected.detail.ctx){
-    if(typeof obj.value !== "function"){
-      if(typeof obj.value === "object"){
-        const newObj = {}
-        for (const key in obj.value){
-          if(!obj.value[key]._isFunction){
-            newObj[key] 
-          }
-        }
-      }
-      arr.push(obj);
-    }
-  }
-
-}
+if($selected){}
 
 </script>
 
