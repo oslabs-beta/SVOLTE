@@ -4,8 +4,10 @@ import type { Message, Node, SnapShot } from "./types";
 const { devtools, runtime } = chrome;
 
 const nodeMap = new Map();
-const rootNodes: Writable<Node[]> = writable([]);
+export const rootNodes:Writable<[]> = writable([]);
 export let snapShotHistory: Writable<SnapShot[]> = writable([]);
+let currentSnapShot: number = 0;
+
 //we want to dynamically add to treeData
 export const treeData = writable({});
 
@@ -37,13 +39,6 @@ backgroundPageConnection.postMessage({
   type: 'INIT',
   tabId: devtools.inspectedWindow.tabId,
 });
-
-function JumpUpdatePage () {
-  backgroundPageConnection.postMessage({
-    type: 'INJECT',
-
-  })
-}
 
 // listen for messages from background
 backgroundPageConnection.onMessage.addListener((message: Message) => {
@@ -78,11 +73,9 @@ backgroundPageConnection.onMessage.addListener((message: Message) => {
         delete node._timeout;
         const targetNode = nodeMap.get(message.target);
         if (targetNode) insertNode(node, targetNode, message.anchor);
-        else {
-          node.tagName = "Root";
-          rootNodes.set([node]);
-        }
-      }, 100);
+        else rootNodes.update(o => ((node.tagName = "Root"), o.push(node), o));
+      }, 100)
+
 
       break;
     }
@@ -90,6 +83,7 @@ backgroundPageConnection.onMessage.addListener((message: Message) => {
     // update nodes within the nodeMap
     case "updateNode": {
       const node = nodeMap.get(message.node.id);
+
       // const parentComponent = eventBubble(node);
 
       addState(node, message);
@@ -121,9 +115,8 @@ backgroundPageConnection.onMessage.addListener((message: Message) => {
 });
 
 // ================================================================================
-//              MESSAGING
+//              
 // ================================================================================
-
 
 function insertNode(node, target, anchorId) {
   node.parent = target;
@@ -155,6 +148,7 @@ function eventBubble(node) {
   }
   return node.parent;
 }
+
 function addState(prevNode, message) {
   const { node } = message;
   if (
@@ -169,6 +163,7 @@ function addState(prevNode, message) {
       node._id = get(snapShotHistory).length;
       snapShotHistory.update((prev) => [...prev, node]);
       console.log("snap shot history is:", get(snapShotHistory));
+      currentSnapShot = get(snapShotHistory).length - 1;
     }
   }
 }
@@ -198,4 +193,26 @@ function compareObjects(
       }
     }
   }
+}
+
+// this function is used to jump to the user selected slice of time in state history
+export function jump(snapshotID) {
+  // iterate through the history array from the current snapshot backwards to the desired snapshot
+  // as we iterate through, undo the state changes from slice to slice
+  for (let i = currentSnapShot; i > snapshotID; i--) {
+  const component_id = get(snapShotHistory)[currentSnapShot].id;
+  const targetState = get(snapShotHistory)[currentSnapShot].detail;
+  // const targetNode = nodeMap.get(component_id);
+
+  sendJumpMessage(component_id, targetState);
+  
+  }
+}
+
+function sendJumpMessage(componentID, newState) {
+  backgroundPageConnection.postMessage({
+    type: 'INJECT',
+    componentID: componentID,
+    newState: newState
+  })
 }

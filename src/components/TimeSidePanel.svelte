@@ -7,6 +7,6 @@
 <div class="column">
   <h1>{JSON.stringify($snapShotHistory.length)}</h1>
   {#each $snapShotHistory as snap (snap._id)}
-    <TimeSlice {...snap}/>
+    <TimeSlice {snap}/>
   {/each}
 </div>

@@ -1,6 +1,6 @@
 //ISOLATED WORLD
 
-window.addEventListener("message", (msg) => {
+window.addEventListener('message', (msg) => {
   if (
     typeof msg !== "object" ||
     msg === null ||
