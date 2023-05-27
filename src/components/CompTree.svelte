@@ -7,6 +7,9 @@
   console.log('imported root: ', $rootNodes[0]);
   const rootNode = $rootNodes[0];
 
+  /* states and locally defined variables are in ctx property
+  props from a parent component are in attributes property */
+
   /* Tree data template from root node
   {
     "name": "Root",
@@ -217,14 +220,12 @@ onMount(() => {
 
       //D3 way of changing style/text content
       let str = ''
-      const arr = []
       for (const el of d.data.variables){
         console.log('el: ', el)
-        // str+=JSON.stringify(el).split('}{')
-        arr.push(el);
+        if (!el.value.source){str+=JSON.stringify(el)}
       }
       console.log('d.data.variables: ', d.data.variables)
-      d3.select(this.parentNode).select('svg').select('text').style('opacity', 1).text(`Variables: ${d.data.variables}`)
+      d3.select(this.parentNode).select('svg').select('text').style('opacity', 1).text(`Variables: ${str}`)
       // d3.select(this.parentNode).select('rect').style('opacity', 1);
       d3.select(this.parentNode).select('rect').style('opacity', 1);
       console.log(d3.select(this.parentNode))
