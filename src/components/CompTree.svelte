@@ -193,23 +193,15 @@ onMount(() => {
     const gSVG = nodeEnter.append('g')
       .attr("transform", "translate(-6, 4)");
 
-    const enterSVG = gSVG.append("svg")
+    const enterSVG = gSVG.append("foreignObject")
       .attr("width", 400)
       .attr("height", 200)
       
-    const rect = enterSVG.append("rect")
-      .attr("width", 200)
-      .attr("height", 100)
-      .attr("fill", "lightgray")
-      .style("opacity", 0)
-
-    const text = enterSVG.append("text")
-      .attr("x", 100)
-      .attr("y", 60)
-      .attr("text-anchor", "middle")
+    const textDiv = enterSVG.append("xhtml:div")
+      .style("font-size", "12px")
+      .style("overflow-wrap", "break-word") //
+      .style("background-color", "dark-gray")
       .text("hello world")
-      .style("font-size", "20px")
-      .style("fill", "black")
       .style("opacity", 0)
       .attr("class", "wrapped-text");
 
@@ -225,8 +217,7 @@ onMount(() => {
         if (!el.value.source){str+=JSON.stringify(el)}
       }
       console.log('d.data.variables: ', d.data.variables)
-      d3.select(this.parentNode).select('svg').select('text').style('opacity', 1).text(`Variables: ${str}`)
-      // d3.select(this.parentNode).select('rect').style('opacity', 1);
+      d3.select(this.parentNode).select('foreignObject').select('div').style('opacity', 1).text(`Variables: ${str}`)
       d3.select(this.parentNode).select('rect').style('opacity', 1);
       console.log(d3.select(this.parentNode))
       console.log('d.data: ', d.data)
@@ -236,7 +227,7 @@ onMount(() => {
     });
     circleSVG.on("mouseout", function(event, d) {
       // console.log('d3.select(this.parentNode): ', d3.select(this.parentNode))
-      d3.select(this.parentNode).select('svg').select('text').style("opacity", 0);
+      d3.select(this.parentNode).select('foreignObject').select('div').style("opacity", 0);
       d3.select(this.parentNode).select('rect').style('opacity', 0);
     });
 
