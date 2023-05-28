@@ -1,26 +1,26 @@
 <script lang="ts">
-  import { snapShotHistory, selected } from "../store";
-  import type { SnapShot } from "../types";
-  import TimeSlice from "./TimeSlice.svelte";
-  let snap:SnapShot
-  function setSelected (id:number):void {
-    selected.set($snapShotHistory[id]);
-  }
+  import { snapShotHistory, selected } from '../store'
+  import type { SnapShot } from '../types'
+  import { ListBox } from '@skeletonlabs/skeleton'
+  import TimeSlice from './TimeSlice.svelte'
 
+  let singleValue
+  $: {
+    if ($selected) {
+      singleValue = $selected._id
+    }
+  }
+  let snap: SnapShot
+  function setSelected(id: number): void {
+    selected.set($snapShotHistory[id])
+  }
 </script>
 
-<div class="column">
+<ListBox class="h-full">
   {#each $snapShotHistory as snap (snap._id)}
-    <TimeSlice {setSelected} {...snap}/>
+    <TimeSlice {singleValue} {setSelected} {...snap} />
   {/each}
-</div>
+</ListBox>
 
 <style>
-  .column {
-    display: flex;
-    flex-direction: column;
-    width: 10em;
-    gap: 1em;
-  }
-
 </style>
