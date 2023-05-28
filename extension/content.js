@@ -388,9 +388,12 @@ function SVOLTE_SETUP (root) {
 SVOLTE_SETUP(window.document);
 
 window.SVOLTE_INJECT_STATE = function (component_id, state) {
-  console.log('component_id is ', component_id);
-  console.log('typeof state is ', typeof JSON.parse(state))
+  // console.log('component_id is ', component_id);
   console.log('state is ', JSON.parse(state));
+  // console.log('nodeMap.get(component_id) is ', nodeMap.get(component_id));
+  const original_node_ctx = nodeMap.get(component_id).detail;
+  console.log('original_node_ctx is ', original_node_ctx);
+  // state.forEach((el) => {})
   // component.$inject_state(state);
 }
 

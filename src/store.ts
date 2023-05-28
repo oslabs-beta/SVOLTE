@@ -195,6 +195,38 @@ function compareObjects(
   }
 }
 
+// function takes as input a ctx array and returns a processed ctx without functions
+function process_ctx(ctx_array) {
+
+  // helper function that returns boolean based on if the element contains a function
+  function hasFunction(obj) {
+    if (typeof obj !== "object" || obj === null) {
+      return false;
+    }
+  
+    if (obj.__isFunction) {
+      return true;
+    }
+  
+    for (const key in obj) {
+      if (typeof obj[key] === 'function' || hasFunction(obj[key])) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  // new array to hold processed ctx elements
+  const processed_ctx = [];
+
+  // iterate through the given ctx array and check for functions
+  for (let i = 0; i < ctx_array.length; i++) {
+    if (!hasFunction(ctx_array[i])) processed_ctx.push(ctx_array[i]);
+  }
+  return processed_ctx;
+}
+
+
 // this function is used to jump to the user selected slice of time in state history
 export function jump(snapshotID) {
   // iterate through the history array from the current snapshot backwards to the desired snapshot
@@ -202,23 +234,18 @@ export function jump(snapshotID) {
   for (let i = currentSnapShot; i > snapshotID; i--) {
   const component_id = get(snapShotHistory)[currentSnapShot].id;
   const targetState = get(snapShotHistory)[currentSnapShot].detail;
-  // const targetNode = nodeMap.get(component_id);
- 
-  console.log('entering jump');
-  sendJumpMessage(component_id, targetState);
-  // const result = JSON.stringify(targetState);
-  // console.log('typeof result is ', typeof result);
-  // console.log('result is ', result);
-  console.log('targetState is ', targetState.ctx);
 
-  const test = JSON.stringify(targetState.ctx);
-  console.log('test is ', test);
+  const processed_state = process_ctx(targetState.ctx);
+  const json_processed = JSON.stringify(processed_state);
+  console.log('process_ctx(targetState.ctx) is ', process_ctx(targetState.ctx));
+  console.log('JSON.stringify(processed_state) is ', JSON.stringify(processed_state));
 
-  devtools.inspectedWindow.eval(`window.SVOLTE_INJECT_STATE(${component_id}, '${test}')`, (result, error) => console.log('result is ', result, 'error is ', error));
+  devtools.inspectedWindow.eval(`window.SVOLTE_INJECT_STATE(${component_id}, '${json_processed}')`, (result, error) => console.log('result is ', result, 'error is ', error));
   }
-  // devtools.inspectedWindow.eval(`funcname()`, 
+  // devtools.inspectedWindow.eval(`funcname()`,  
 
 }
+
 
 function sendJumpMessage(componentID, newState) {
   backgroundPageConnection.postMessage({
