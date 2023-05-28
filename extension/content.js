@@ -389,11 +389,19 @@ SVOLTE_SETUP(window.document);
 
 window.SVOLTE_INJECT_STATE = function (component_id, state) {
   // console.log('component_id is ', component_id);
-  console.log('state is ', JSON.parse(state));
-  // console.log('nodeMap.get(component_id) is ', nodeMap.get(component_id));
-  const original_node_ctx = nodeMap.get(component_id).detail;
-  console.log('original_node_ctx is ', original_node_ctx);
-  // state.forEach((el) => {})
-  // component.$inject_state(state);
+  // console.log('JSON.parsed ctx from store.ts jump() is ', JSON.parse(state));
+
+  const updated_ctx = JSON.parse(state);
+  const targetComponentDetail = nodeMap.get(component_id).detail;
+
+  console.log('targetComponentDetail is ', targetComponentDetail);
+  console.log('updated_ctx is ', updated_ctx);
+
+  // console.log('targetComponentDetail.$capture_state() before is ', targetComponentDetail.$capture_state());
+  // for (let i = 0; i < updated_ctx.length; i++) {
+  //   targetComponentDetail.$inject_state({ key: updated_ctx[i].key });
+  //   targetComponentDetail.$inject_state({ value: updated_ctx[i].value });
+  // }
+  // console.log('targetComponentDetail.$capture_state() after is ', targetComponentDetail.$capture_state());
 }
 

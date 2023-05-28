@@ -233,17 +233,15 @@ export function jump(snapshotID) {
   // as we iterate through, undo the state changes from slice to slice
   for (let i = currentSnapShot; i > snapshotID; i--) {
   const component_id = get(snapShotHistory)[currentSnapShot].id;
-  const targetState = get(snapShotHistory)[currentSnapShot].detail;
+  const targetState = get(snapShotHistory)[currentSnapShot].detail.ctx;
 
-  const processed_state = process_ctx(targetState.ctx);
-  const json_processed = JSON.stringify(processed_state);
-  console.log('process_ctx(targetState.ctx) is ', process_ctx(targetState.ctx));
-  console.log('JSON.stringify(processed_state) is ', JSON.stringify(processed_state));
+  // this looks strange but the json string that is returned from stringify contains \n to mark a new line
+  // but because we are placing this string inside of another string (eval(str)), we need to escape it again
+  // this means that all the single escapes ( \ ) must be replaced with double escapes ( \\ ) -- weird af ikno
+  const JSONd_state = JSON.stringify(targetState).replaceAll("\\", "\\\\"); 
 
-  devtools.inspectedWindow.eval(`window.SVOLTE_INJECT_STATE(${component_id}, '${json_processed}')`, (result, error) => console.log('result is ', result, 'error is ', error));
+  devtools.inspectedWindow.eval(`window.SVOLTE_INJECT_STATE(${component_id}, '${JSONd_state}')`, (result, error) => console.log('result is ', result, 'error is ', error));
   }
-  // devtools.inspectedWindow.eval(`funcname()`,  
-
 }
 
 
