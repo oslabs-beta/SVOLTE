@@ -194,26 +194,27 @@ onMount(() => {
       .attr("transform", "translate(-6, 4)");
     
     const rect = gSVG.append("rect")
-      .attr("width", 700)
-      .attr("height", 400)
+      .attr("width", d => `${d.data.name.length * 100 + 10}px`)
+      .attr("height", d => `${d.data.name.length * 100 + 10}px`)
       .attr("fill", "lightgray")
       .style("opacity", 0)
 
     const enterSVG = gSVG.append("foreignObject")
-      .attr("width", 600)
-      .attr("height", 400)
+      .attr("width", d => `${d.data.name.length * 90 + 10}px`)
+      .attr("height", d => `${d.data.name.length * 90 + 10}px`)
   
     const textDiv = enterSVG.append("xhtml:div")
-      .attr("width", 600)
-      .attr("height", 400)
       .style("font-size", "15px")
       .style("overflow-wrap", "anywhere") 
       .style("color", "black")
-      .text("hello world")
+      .text(d => d.data.name)
       .style("opacity", 0)
       .attr("class", "wrapped-text")
-      .style("margin", "auto")
-
+      .style("text-align", "center")
+      .style("word-wrap", "break-word")
+      .style("width", d => `${d.data.name.length * 80}px`)
+      .style("height", d => `${d.data.name.length * 80}px`)
+    
     circleSVG.on("mouseover", function(event, d){
       //vanilla DOM way 
       // d3.select(this.parentNode)._groups[0][0].querySelector('svg').querySelector('text').style.opacity = 1;
@@ -225,8 +226,22 @@ onMount(() => {
         console.log('el: ', el)
         if (!el.value.source){str+=JSON.stringify(el)}
       }
-      console.log('d.data.variables: ', d.data.variables)
-      d3.select(this.parentNode).select('foreignObject').select('div').style('opacity', 1).text(`Variables: ${str}`)
+      console.log('d.data.name.length: ', d.data.name.length)
+
+      const textLength = d.data.variables.reduce((acc, variable) => {
+        for (const value of Object.values(variable)) {
+          if (typeof value === "string") {
+            const words = value.split(" ");
+            acc += words.length;
+          }
+        }
+        return acc;
+      }, 0);
+      d3.select(this.parentNode).select("foreignObject").select("div").style("opacity", 1).text(`Variables: ${str}`);
+
+      d3.select(this.parentNode).select("rect").attr("width", `${textLength * 90}px`);
+
+      d3.select(this.parentNode).select("foreignObject").attr("width", `${textLength * 90}px`);
       d3.select(this.parentNode).select('rect').style('opacity', 1);
       console.log(d3.select(this.parentNode))
       console.log('d.data: ', d.data)
