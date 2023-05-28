@@ -192,18 +192,27 @@ onMount(() => {
     
     const gSVG = nodeEnter.append('g')
       .attr("transform", "translate(-6, 4)");
+    
+    const rect = gSVG.append("rect")
+      .attr("width", 700)
+      .attr("height", 400)
+      .attr("fill", "lightgray")
+      .style("opacity", 0)
 
     const enterSVG = gSVG.append("foreignObject")
-      .attr("width", 400)
-      .attr("height", 200)
-      
+      .attr("width", 600)
+      .attr("height", 400)
+  
     const textDiv = enterSVG.append("xhtml:div")
-      .style("font-size", "12px")
-      .style("overflow-wrap", "break-word") //
-      .style("background-color", "dark-gray")
+      .attr("width", 600)
+      .attr("height", 400)
+      .style("font-size", "15px")
+      .style("overflow-wrap", "anywhere") 
+      .style("color", "black")
       .text("hello world")
       .style("opacity", 0)
-      .attr("class", "wrapped-text");
+      .attr("class", "wrapped-text")
+      .style("margin", "auto")
 
     circleSVG.on("mouseover", function(event, d){
       //vanilla DOM way 
