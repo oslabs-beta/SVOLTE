@@ -163,15 +163,21 @@ onMount(() => {
 
     const node = svg.selectAll('g.node').data(nodes, d => d.id || (d.id = ++ i));
 
-    const nodeEnter = node
-      .enter()
-      .append('g')
-      .attr('class', 'node')
-    //   .attr('class', d => "node" + (d.children ? " node--internal"
-    //      : " node--leaf"))
-      .attr('transform', d => "translate(" + source.y0 + ", " + source.x0 + ")")
-      .on('click', click)
-      .style('z-index', '1');
+  //attaching a circle to represent each node
+  const nodeEnter = node
+    .enter()
+    .append('g')
+    .attr('class', 'node')
+    .attr('transform', d => "translate(" + source.y0 + ", " + source.x0 + ")")
+    .on('click', click);
+
+  const circleSVG = nodeEnter.append('circle')
+    .attr('r', 8)
+    .style("fill", d => d._children ? "yellow" : "black")
+    .attr('cursor', 'pointer');
+
+  const gSVG = nodeEnter.append('g')
+    .attr("transform", "translate(-6, 4)");
 
     //adding component name to each node
     nodeEnter
@@ -183,16 +189,6 @@ onMount(() => {
       .text(d => d.data.name)
       .style('fill', 'aliceblue')
 
-
-    //attaching a circle to represent each node
-    const circleSVG = nodeEnter.append('circle')
-      .attr('r', 8)
-      .style("fill", d => d._children ? "yellow" : "black")
-      .attr('cursor', 'pointer')
-    
-    const gSVG = nodeEnter.append('g')
-      .attr("transform", "translate(-6, 4)");
-    
     const rect = gSVG.append("rect")
       .attr("width", d => `${d.data.name.length * 81}px`)
       .attr("height", d => `${d.data.name.length * 81}px`)
@@ -202,7 +198,7 @@ onMount(() => {
     const enterSVG = gSVG.append("foreignObject")
       .attr("width", d => `${d.data.name.length * 80 + 10}px`)
       .attr("height", d => `${d.data.name.length * 80 + 10}px`)
-  
+
     const textDiv = enterSVG.append("xhtml:div")
       .style("font-size", "15px")
       .style("overflow-wrap", "anywhere") 
@@ -211,8 +207,8 @@ onMount(() => {
       .style("opacity", 0)
       .attr("class", "wrapped-text")
       .style("word-wrap", "break-word")
-      .style("width", d => `${d.data.name.length * 80}px`)
-      .style("height", d => `${d.data.name.length * 40}px`)
+
+
 
     circleSVG.on("mouseover", function(event, d){
       let str = '';
@@ -222,15 +218,15 @@ onMount(() => {
         console.log('el: ', el)
         if (!el.value.source){
           if (typeof el.value === "object") {
-            for (const [key, value] of Object.entries(el.value)) {
+            for (const [key, value] of Object.entries(el.value)) { 
               if (typeof value === "string") {
                 textLength += value.length;
-                textContent += `{key: ${key}, value: ${value}}<br>`; //adds both key and value to textContent with prefixes
+                textContent += `{key: ${key}, value: ${value}}<br>`; 
               }
             }
           } else if (typeof el.value === "string") {
             textLength += el.value.length;
-            textContent += `{key: ${el.key}, value: ${el.value}}<br>`; //adds both key and value to textContent with prefixes
+            textContent += `{key: ${el.key}, value: ${el.value}}<br>`; 
           }
         }
       }
@@ -241,9 +237,8 @@ onMount(() => {
       const rectHeight = Math.max(40, Math.ceil(textLength));
       textDiv.style("width", `${rectWidth*0.9}px`);
       textDiv.style("height", `${rectHeight*0.9}px`);
-      textDiv.style("z-index", 40);
 
-      d3.select(this.parentNode).select("rect").attr("width", rectWidth).style('z-index', 41);
+      d3.select(this.parentNode).select("rect").attr("width", rectWidth);
       d3.select(this.parentNode).select("rect").attr("height", rectHeight)
       d3.select(this.parentNode).select("foreignObject").attr("width", `${textLength * 80}px`);
       d3.select(this.parentNode).select('rect').style('opacity', 1);
