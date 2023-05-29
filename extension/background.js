@@ -14,25 +14,37 @@ const connections = {};
 
 
 chrome.runtime.onConnect.addListener(function (port) {
-  console.log("On connect add listener");
+
   const extensionListener = function (message, sender, sendResponse) {
-    // The original connection event doesn't include the tab ID of the
-    // DevTools page, so we need to send it explicitly.
-    if (message.name == "INIT") {
-      port.postMessage({ 
-        source: "background.js",
-        type: "postMessage"
-      });
-      key = message.tabId;
-      connections[key] = port;
-      tabid = message.tabId;
-      ext = sender.id;
-      return;
-    }
-    // other message handling
+  // The original connection event doesn't include the tab ID of the
+  // DevTools page, so we need to send it explicitly.
+  if (message.type === 'INIT') {
+    console.log('message type INIT received in background.js')
+    port.postMessage({ 
+      source: "background.js",
+      type: "postMessage - INIT"
+    });
+    key = message.tabId;
+    connections[key] = port;
+    tabid = message.tabId;
+    ext = sender.id;
+    return;
+  }
+  if (message.type === 'INJECT') {
+    console.log('message type INJECT received in background.js')
+    port.postMessage({ 
+      source: "background.js",
+      type: "postMessage - INJECT",
+      message: message
+    });
+    return;
+  }
+  // other message handling
   };
+
   // Listen to messages sent from the DevTools page
   port.onMessage.addListener(extensionListener);
+
   // handle disconnect
   port.onDisconnect.addListener(function (port) {
     port.onMessage.removeListener(extensionListener);
@@ -43,4 +55,5 @@ chrome.runtime.onConnect.addListener(function (port) {
       }
     }
   });
+
 });

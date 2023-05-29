@@ -1,12 +1,13 @@
-import { writable, get } from 'svelte/store'
-import type { Writable } from 'svelte/store'
-import type { Message, Node, SnapShot } from './types'
-const { devtools, runtime } = chrome
+import { writable, get } from "svelte/store";
+import type { Writable } from "svelte/store";
+import type { Message, Node, SnapShot } from "./types";
+const { devtools, runtime, scripting } = chrome;
 
 const nodeMap = new Map()
 export const rootNodes: Writable<Node[]> = writable([])
 export const snapShotHistory: Writable<SnapShot[]> = writable([])
 export const selected: Writable<SnapShot> = writable(null)
+let currentSnapShot: number = 0;
 
 //we want to dynamically add to treeData
 export const treeData = writable({})
@@ -26,26 +27,35 @@ export const pathStore = writable({
   },
 })
 
-const backgroundPageConnection = runtime.connect()
 
-// report back with tabId to identify devtools location in chrome
+// ================================================================================
+//              MESSAGING
+// ================================================================================
+
+// establish connection
+const backgroundPageConnection = runtime.connect();
+
+// message background with tabID 
 backgroundPageConnection.postMessage({
-  name: 'INIT',
+  type: 'INIT',
   tabId: devtools.inspectedWindow.tabId,
 })
 
-// background.js -> here
-
+// listen for messages from background
 backgroundPageConnection.onMessage.addListener((message: Message) => {
+
   switch (message.type) {
-    case 'clear': {
-      rootNodes.set([])
-      break
+    
+    // used when refreshing page or disconnecting
+    case "clear": {
+      rootNodes.set([]);
+      break;
     }
 
-    case 'addNode': {
-      const node: Node = message.node
-      node.children = []
+    // add nodes to the nodeMap
+    case "addNode": {
+      const node: Node = message.node;
+      node.children = [];
       // node.collapsed = true;
       node.invalidate = noop
       // resolveEventBubble(node);
@@ -73,8 +83,9 @@ backgroundPageConnection.onMessage.addListener((message: Message) => {
       break
     }
 
-    case 'updateNode': {
-      const node = nodeMap.get(message.node.id)
+    // update nodes within the nodeMap
+    case "updateNode": {
+      const node = nodeMap.get(message.node.id);
 
       addSnapShot(node, message)
 
@@ -87,9 +98,10 @@ backgroundPageConnection.onMessage.addListener((message: Message) => {
       break
     }
 
-    case 'removeNode': {
-      const node = nodeMap.get(message.node.id)
-      nodeMap.delete(node.id)
+    // remove nodes from the nodeMap
+    case "removeNode": {
+      const node = nodeMap.get(message.node.id);
+      nodeMap.delete(node.id);
 
       if (!node.parent) break
 
@@ -102,6 +114,14 @@ backgroundPageConnection.onMessage.addListener((message: Message) => {
     }
   }
 })
+
+// ================================================================================
+//              
+// ================================================================================
+
+// ================================================================================
+//              
+// ================================================================================
 
 function insertNode(node, target, anchorId) {
   node.parent = target
@@ -147,6 +167,7 @@ function addSnapShot(prevNode, message) {
       node._id = get(snapShotHistory).length
       snapShotHistory.update((prev) => [...prev, node])
       console.log('snap shot history is:', get(snapShotHistory))
+      currentSnapShot = get(snapShotHistory).length - 1;
     }
   }
 }
@@ -177,3 +198,65 @@ function compareObjects(
     }
   }
 }
+
+// function takes as input a ctx array and returns a processed ctx without functions
+function process_ctx(ctx_array) {
+
+  // helper function that returns boolean based on if the element contains a function
+  function hasFunction(obj) {
+    if (typeof obj !== "object" || obj === null) {
+      return false;
+    }
+  
+    if (obj.__isFunction) {
+      return true;
+    }
+  
+    for (const key in obj) {
+      if (typeof obj[key] === 'function' || hasFunction(obj[key])) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  // new array to hold processed ctx elements
+  const processed_ctx = [];
+
+  // iterate through the given ctx array and check for functions
+  for (let i = 0; i < ctx_array.length; i++) {
+    if (!hasFunction(ctx_array[i])) processed_ctx.push(ctx_array[i]);
+  }
+  return processed_ctx;
+}
+
+
+// this function is used to jump to the user selected slice of time in state history
+export function jump(snapshotID) {
+  // iterate through the history array from the current snapshot backwards to the desired snapshot
+  // as we iterate through, undo the state changes from slice to slice
+  for (let i = currentSnapShot; i >= snapshotID; i--) {
+  console.log('i is ', i, ' and currentSnapShot is ', currentSnapShot);
+  const component_id = get(snapShotHistory)[currentSnapShot].id;
+  const targetState = get(snapShotHistory)[i].detail.ctx;
+
+  // console.log('targetState in store is ', targetState);
+
+  // this looks strange but the json string that is returned from stringify contains \n to mark a new line
+  // but because we are placing this string inside of another string (eval(str)), we need to escape it again
+  // this means that all the single escapes ( \ ) must be replaced with double escapes ( \\ ) -- weird af ikno
+  const JSONd_state = JSON.stringify(targetState).replaceAll("\\", "\\\\"); 
+
+  devtools.inspectedWindow.eval(`window.SVOLTE_INJECT_STATE(${component_id}, '${JSONd_state}')`, (result, error) => console.log('result is ', result, 'error is ', error));
+  }
+}
+
+
+function sendJumpMessage(componentID, newState) {
+  backgroundPageConnection.postMessage({
+    type: 'INJECT',
+    componentID: componentID,
+    newState: newState
+  })
+}
+

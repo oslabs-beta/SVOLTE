@@ -131,8 +131,8 @@ function clone(value, seen = new Map()) {
   }
 }
 
-// array to hold root nodes (not useful yet)
-const rootNodes = []
+// array to hold root node
+const rootNodes = [];
 
 // ========================================================================================
 //          DOM NODE FUNCTIONS
@@ -324,8 +324,9 @@ function updateProfile(node, type, fn, ...args) {
 }
 
 //function is called when the 'SvelteRegisterComponent' event is dispatched
-function EVENT_CALLBACK_SvelteRegisterComponent(event) {
-  const { component, tagName } = event.detail
+function EVENT_CALLBACK_SvelteRegisterComponent (event) {
+  const { component, tagName } = event.detail;
+  console.log('component is ', component);
 
   //grab the content element associated with the node
   const node = nodeMap.get(component.$$.fragment)
@@ -375,18 +376,34 @@ function EVENT_CALLBACK_SvelteDOMRemove(event) {
 //          SETUP
 // ========================================================================================
 
-function SVOLTE_SETUP(root) {
-  root.addEventListener(
-    'SvelteRegisterBlock',
-    EVENT_CALLBACK_SvelteRegisterBlock
-  )
-  root.addEventListener(
-    'SvelteRegisterComponent',
-    EVENT_CALLBACK_SvelteRegisterComponent
-  )
-  root.addEventListener('SvelteDOMInsert', EVENT_CALLBACK_SvelteDOMInsert)
-  root.addEventListener('SvelteDOMSetData', EVENT_CALLBACK_SvelteDOMSetData)
-  root.addEventListener('SvelteDOMRemove', EVENT_CALLBACK_SvelteDOMRemove)
+function SVOLTE_SETUP (root) {
+  root.addEventListener('SvelteRegisterBlock', EVENT_CALLBACK_SvelteRegisterBlock);
+  root.addEventListener('SvelteRegisterComponent', EVENT_CALLBACK_SvelteRegisterComponent);
+  root.addEventListener('SvelteDOMInsert', EVENT_CALLBACK_SvelteDOMInsert);
+  root.addEventListener('SvelteDOMSetData', EVENT_CALLBACK_SvelteDOMSetData);
+  root.addEventListener('SvelteDOMRemove', EVENT_CALLBACK_SvelteDOMRemove);
 }
 
-SVOLTE_SETUP(window.document)
+SVOLTE_SETUP(window.document);
+
+window.SVOLTE_INJECT_STATE = function (component_id, state) {
+  // console.log('component_id is ', component_id);
+  // console.log('JSON.parsed ctx from store.ts jump() is ', JSON.parse(state));
+
+  const updated_ctx = JSON.parse(state);
+  const targetComponentDetail = nodeMap.get(component_id).detail;
+
+  console.log('nodeMap.get(component_id) is ', nodeMap.get(component_id));
+  console.log('targetComponentDetail is ', targetComponentDetail);
+  console.log('updated_ctx is ', updated_ctx);
+
+  // console.log('targetComponentDetail.$capture_state() before is ', targetComponentDetail.$capture_state());
+  console.log('targetComponentDetail.ctx before is ', targetComponentDetail.ctx);
+  for (let i = 0; i < updated_ctx.length; i++) {
+    // targetComponentDetail.ctx = updated_ctx;
+    targetComponentDetail.$inject_state({ value: updated_ctx[i].value });
+  }
+  console.log('targetComponentDetail.ctx after is ', targetComponentDetail.ctx);
+  // console.log('targetComponentDetail.$capture_state() after is ', targetComponentDetail.$capture_state());
+}
+
