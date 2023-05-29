@@ -194,14 +194,14 @@ onMount(() => {
       .attr("transform", "translate(-6, 4)");
     
     const rect = gSVG.append("rect")
-      .attr("width", d => `${d.data.name.length * 100 + 10}px`)
-      .attr("height", d => `${d.data.name.length * 100 + 10}px`)
+      .attr("width", d => `${d.data.name.length * 81}px`)
+      .attr("height", d => `${d.data.name.length * 81}px`)
       .attr("fill", "lightgray")
       .style("opacity", 0)
 
     const enterSVG = gSVG.append("foreignObject")
-      .attr("width", d => `${d.data.name.length * 90 + 10}px`)
-      .attr("height", d => `${d.data.name.length * 90 + 10}px`)
+      .attr("width", d => `${d.data.name.length * 80 + 10}px`)
+      .attr("height", d => `${d.data.name.length * 80 + 10}px`)
   
     const textDiv = enterSVG.append("xhtml:div")
       .style("font-size", "15px")
@@ -210,45 +210,48 @@ onMount(() => {
       .text(d => d.data.name)
       .style("opacity", 0)
       .attr("class", "wrapped-text")
-      .style("text-align", "center")
+      // .style("text-align", "center")
       .style("word-wrap", "break-word")
       .style("width", d => `${d.data.name.length * 80}px`)
-      .style("height", d => `${d.data.name.length * 80}px`)
-    
-    circleSVG.on("mouseover", function(event, d){
-      //vanilla DOM way 
-      // d3.select(this.parentNode)._groups[0][0].querySelector('svg').querySelector('text').style.opacity = 1;
-      // d3.select(this.parentNode)._groups[0][0].querySelector('svg').querySelector('text').textContent = `Age: ${d.data.age}`;
+      .style("height", d => `${d.data.name.length * 40}px`)
 
-      //D3 way of changing style/text content
-      let str = ''
+    circleSVG.on("mouseover", function(event, d){
+      let str = '';
+      let textLength = 0;
+      let textContent = '';
+
       for (const el of d.data.variables){
         console.log('el: ', el)
-        if (!el.value.source){str+=JSON.stringify(el)}
-      }
-      console.log('d.data.name.length: ', d.data.name.length)
-
-      const textLength = d.data.variables.reduce((acc, variable) => {
-        for (const value of Object.values(variable)) {
-          if (typeof value === "string") {
-            const words = value.split(" ");
-            acc += words.length;
+        if (!el.value.source){
+          if (typeof el.value === "object") {
+            for (const [key, value] of Object.entries(el.value)) {
+              if (typeof value === "string") {
+                textLength += value.length;
+                textContent += `{key: ${key}, value: ${value}}<br>`; // adds both key and value to textContent with prefixes
+              }
+            }
+          } else if (typeof el.value === "string") {
+            textLength += el.value.length;
+            textContent += `{key: ${el.key}, value: ${el.value}}<br>`; // adds both key and value to textContent with prefixes
           }
         }
-        return acc;
-      }, 0);
-      d3.select(this.parentNode).select("foreignObject").select("div").style("opacity", 1).text(`Variables: ${str}`);
-
-      d3.select(this.parentNode).select("rect").attr("width", `${textLength * 90}px`);
-
-      d3.select(this.parentNode).select("foreignObject").attr("width", `${textLength * 90}px`);
+      }
+      console.log('d.data.variables: ', d.data.variables)
+      console.log('d.data.name: ', d.data.name, 'textLength: ', textLength, 'textContent: ', textContent)
+      d3.select(this.parentNode).select("foreignObject").select("div").style("opacity", 1).html(`Variables: ${textContent}`); // Use textContent instead of str
+      const rectWidth = textLength * 80;
+      const rectHeight = Math.max(20, Math.ceil(textLength));
+      textDiv.style("width", `${rectWidth*0.9}px`);
+      textDiv.style("height", `${rectHeight*0.9}px`);
+      d3.select(this.parentNode).select("rect").attr("width", rectWidth);
+      d3.select(this.parentNode).select("rect").attr("height", rectHeight)
+      d3.select(this.parentNode).select("foreignObject").attr("width", `${textLength * 80}px`);
       d3.select(this.parentNode).select('rect').style('opacity', 1);
-      console.log(d3.select(this.parentNode))
-      console.log('d.data: ', d.data)
-      console.log('circ svg string: ', d.data.variables);
-      // d3.select(this.parentNode).select("rect").select("text").style("opacity", 1).text(`Age: ${d.data.age}`)
-      // d3.select(this).select("text").style("opacity", 1).text(`Age: ${d.data.age} Hello Hello Nickname: ${d.data.nickname}`);
     });
+
+
+
+
     circleSVG.on("mouseout", function(event, d) {
       // console.log('d3.select(this.parentNode): ', d3.select(this.parentNode))
       d3.select(this.parentNode).select('foreignObject').select('div').style("opacity", 0);
