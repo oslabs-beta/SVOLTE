@@ -173,7 +173,7 @@ onMount(() => {
       .on('click', click)
       .style('z-index', '1');
 
-    // adding component name to each node
+    //adding component name to each node
     nodeEnter
       .append('text')
       .attr('dy', '.35em')
@@ -184,7 +184,7 @@ onMount(() => {
       .style('fill', 'aliceblue')
 
 
-    // attaching a circle to represent each node
+    //attaching a circle to represent each node
     const circleSVG = nodeEnter.append('circle')
       .attr('r', 8)
       .style("fill", d => d._children ? "yellow" : "black")
@@ -210,7 +210,6 @@ onMount(() => {
       .text(d => d.data.name)
       .style("opacity", 0)
       .attr("class", "wrapped-text")
-      // .style("text-align", "center")
       .style("word-wrap", "break-word")
       .style("width", d => `${d.data.name.length * 80}px`)
       .style("height", d => `${d.data.name.length * 40}px`)
@@ -219,7 +218,6 @@ onMount(() => {
       let str = '';
       let textLength = 0;
       let textContent = '';
-
       for (const el of d.data.variables){
         console.log('el: ', el)
         if (!el.value.source){
@@ -227,18 +225,18 @@ onMount(() => {
             for (const [key, value] of Object.entries(el.value)) {
               if (typeof value === "string") {
                 textLength += value.length;
-                textContent += `{key: ${key}, value: ${value}}<br>`; // adds both key and value to textContent with prefixes
+                textContent += `{key: ${key}, value: ${value}}<br>`; //adds both key and value to textContent with prefixes
               }
             }
           } else if (typeof el.value === "string") {
             textLength += el.value.length;
-            textContent += `{key: ${el.key}, value: ${el.value}}<br>`; // adds both key and value to textContent with prefixes
+            textContent += `{key: ${el.key}, value: ${el.value}}<br>`; //adds both key and value to textContent with prefixes
           }
         }
       }
       console.log('d.data.variables: ', d.data.variables)
       console.log('d.data.name: ', d.data.name, 'textLength: ', textLength, 'textContent: ', textContent)
-      d3.select(this.parentNode).select("foreignObject").select("div").style("opacity", 1).html(`Variables: ${textContent}`); // Use textContent instead of str
+      d3.select(this.parentNode).select("foreignObject").select("div").style("opacity", 1).html(`Variables: <br> ${textContent}`);
       const rectWidth = textLength * 80;
       const rectHeight = Math.max(20, Math.ceil(textLength));
       textDiv.style("width", `${rectWidth*0.9}px`);
