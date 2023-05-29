@@ -1,5 +1,6 @@
 <script lang="ts">
   import { ListBoxItem } from '@skeletonlabs/skeleton'
+  import { jump } from "../store";
   export let diff
   export let tagName
   export let detail
@@ -21,7 +22,5 @@
       {change.value1} => {change.value2}
     </p>
   {/each}
+  <button on:click={() => jump(snap._id)}>Jump</button>
 </ListBoxItem>
-
-<style>
-</style>
