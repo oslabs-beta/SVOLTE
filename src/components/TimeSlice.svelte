@@ -1,13 +1,27 @@
 <script lang="ts">
-  export let diff;
-  export let tagName;
-  export let detail;
-  
+  import { ListBoxItem } from '@skeletonlabs/skeleton'
+  export let diff
+  export let tagName
+  export let detail
+  export let _id
+  export let setSelected
+  export let singleValue
 </script>
-<div>
-  <h1>{tagName}</h1>
+
+<ListBoxItem
+  on:click={() => setSelected(_id)}
+  bind:group={singleValue}
+  name="medium"
+  value={_id}
+>
+  {tagName}
   {#each diff as change (change.id)}
-    <h1>Key is {detail.ctx[Number(change.path[0])].key}</h1>
-    <h2>{change.value1} changed to {change.value2} </h2>
+    <p>
+      {detail.ctx[change.path[0]].key}
+      {change.value1} => {change.value2}
+    </p>
   {/each}
-</div>
+</ListBoxItem>
+
+<style>
+</style>
