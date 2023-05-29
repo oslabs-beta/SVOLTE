@@ -5,6 +5,7 @@ export interface Message {
   target?: number;
   node: Node;
 }
+
 export interface Node {
   id: number;
   children: Array<Node> | [];
@@ -19,6 +20,7 @@ export interface Node {
     ctx: any[];
   };
 }
+
 export interface SnapShot {
   _id: number;
   id: string;
