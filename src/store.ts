@@ -259,4 +259,3 @@ function sendJumpMessage(componentID, newState) {
     newState: newState
   })
 }
-

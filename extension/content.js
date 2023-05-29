@@ -387,23 +387,46 @@ function SVOLTE_SETUP (root) {
 SVOLTE_SETUP(window.document);
 
 window.SVOLTE_INJECT_STATE = function (component_id, state) {
-  // console.log('component_id is ', component_id);
-  // console.log('JSON.parsed ctx from store.ts jump() is ', JSON.parse(state));
-
   const updated_ctx = JSON.parse(state);
   const targetComponentDetail = nodeMap.get(component_id).detail;
+  const componentState = targetComponentDetail.$capture_state();
 
-  console.log('nodeMap.get(component_id) is ', nodeMap.get(component_id));
-  console.log('targetComponentDetail is ', targetComponentDetail);
+
   console.log('updated_ctx is ', updated_ctx);
 
-  // console.log('targetComponentDetail.$capture_state() before is ', targetComponentDetail.$capture_state());
+  console.log('targetComponentDetail.$capture_state() before is ', componentState);
+  // for (let i = 0; i < updated_ctx.length; i++) {
+  //   // targetComponentDetail.ctx = updated_ctx;
+  //   // targetComponentDetail.$inject_state({ value: updated_ctx[i].value });
+  //   targetComponentDetail.$inject_state({ $count: 99 });
+  // }
+
   console.log('targetComponentDetail.ctx before is ', targetComponentDetail.ctx);
-  for (let i = 0; i < updated_ctx.length; i++) {
-    // targetComponentDetail.ctx = updated_ctx;
-    targetComponentDetail.$inject_state({ value: updated_ctx[i].value });
-  }
+
+  const newState = processState(componentState, updated_ctx);
+  targetComponentDetail.$inject_state(newState);
+
   console.log('targetComponentDetail.ctx after is ', targetComponentDetail.ctx);
-  // console.log('targetComponentDetail.$capture_state() after is ', targetComponentDetail.$capture_state());
+  console.log('componentState after is ', componentState);
 }
 
+function processState (state, ctx) {
+  // flatten ctx to be key : value 
+  const flattened_ctx = {};
+  for (const obj of ctx) flattened_ctx[obj.key] = obj.value;
+
+  // create new array to hold all keys of state where the key begins with $
+  const blingArray = Object.keys(state).filter((el) => el[0] === '$');
+
+  // new array that holds previous array keys without $
+  const shavedBlingArray = blingArray.map((el) => el.slice(1));
+  
+  // iterate through the array and invoke the set function within the state argument
+  for (const index in shavedBlingArray) {
+    if (blingArray[index] in flattened_ctx) state[shavedBlingArray[index]].set(flattened_ctx[blingArray[index]]);
+  }
+
+  const resultState = { ...state, ...flattened_ctx };
+
+  return resultState;
+}
