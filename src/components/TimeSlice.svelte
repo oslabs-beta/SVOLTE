@@ -22,5 +22,5 @@
       {change.value1} => {change.value2}
     </p>
   {/each}
-  <button on:click={() => jump(snap._id)}>Jump</button>
+  <button on:click={() => jump(_id)}>Jump</button>
 </ListBoxItem>

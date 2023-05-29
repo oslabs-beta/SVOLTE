@@ -8,6 +8,7 @@ export const rootNodes: Writable<Node[]> = writable([])
 export const snapShotHistory: Writable<SnapShot[]> = writable([])
 export const selected: Writable<SnapShot> = writable(null)
 let currentSnapShot: number = 0;
+let shaveCounter: number = 0;
 
 //we want to dynamically add to treeData
 export const treeData = writable({})
@@ -85,6 +86,7 @@ backgroundPageConnection.onMessage.addListener((message: Message) => {
 
     // update nodes within the nodeMap
     case "updateNode": {
+      console.log('update node');
       const node = nodeMap.get(message.node.id);
 
       addSnapShot(node, message)
@@ -162,13 +164,15 @@ function addSnapShot(prevNode, message) {
   ) {
     const differences = []
     compareObjects(prevNode.detail.ctx, node.detail.ctx, differences)
-    if (differences.length) {
+    if (differences.length && !shaveCounter) {
       node.diff = differences
       node._id = get(snapShotHistory).length
       snapShotHistory.update((prev) => [...prev, node])
+      
       console.log('snap shot history is:', get(snapShotHistory))
       currentSnapShot = get(snapShotHistory).length - 1;
     }
+    if (shaveCounter) --shaveCounter;
   }
 }
 
@@ -236,6 +240,8 @@ export function jump(snapshotID) {
   // iterate through the history array from the current snapshot backwards to the desired snapshot
   // as we iterate through, undo the state changes from slice to slice
   for (let i = currentSnapShot; i >= snapshotID; i--) {
+  ++shaveCounter;
+  console.log('jump here')
   console.log('i is ', i, ' and currentSnapShot is ', currentSnapShot);
   const component_id = get(snapShotHistory)[currentSnapShot].id;
   const targetState = get(snapShotHistory)[i].detail.ctx;
@@ -249,14 +255,14 @@ export function jump(snapshotID) {
 
   devtools.inspectedWindow.eval(`window.SVOLTE_INJECT_STATE(${component_id}, '${JSONd_state}')`, (result, error) => console.log('result is ', result, 'error is ', error));
   }
+  console.log('shavecounter is ', shaveCounter);
 }
 
 
-function sendJumpMessage(componentID, newState) {
-  backgroundPageConnection.postMessage({
-    type: 'INJECT',
-    componentID: componentID,
-    newState: newState
-  })
-}
-
+// function sendJumpMessage(componentID, newState) {
+//   backgroundPageConnection.postMessage({
+//     type: 'INJECT',
+//     componentID: componentID,
+//     newState: newState
+//   })
+// }
