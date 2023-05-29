@@ -231,9 +231,12 @@ function process_ctx(ctx_array) {
 export function jump(snapshotID) {
   // iterate through the history array from the current snapshot backwards to the desired snapshot
   // as we iterate through, undo the state changes from slice to slice
-  for (let i = currentSnapShot; i > snapshotID; i--) {
+  for (let i = currentSnapShot; i >= snapshotID; i--) {
+  console.log('i is ', i, ' and currentSnapShot is ', currentSnapShot);
   const component_id = get(snapShotHistory)[currentSnapShot].id;
-  const targetState = get(snapShotHistory)[currentSnapShot].detail.ctx;
+  const targetState = get(snapShotHistory)[i].detail.ctx;
+
+  // console.log('targetState in store is ', targetState);
 
   // this looks strange but the json string that is returned from stringify contains \n to mark a new line
   // but because we are placing this string inside of another string (eval(str)), we need to escape it again

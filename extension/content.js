@@ -327,7 +327,8 @@ function updateProfile(node, type, fn, ...args) {
 
 //function is called when the 'SvelteRegisterComponent' event is dispatched
 function EVENT_CALLBACK_SvelteRegisterComponent (event) {
-  const { component, tagName } = event.detail
+  const { component, tagName } = event.detail;
+  console.log('component is ', component);
 
   //grab the content element associated with the node
   const node = nodeMap.get(component.$$.fragment)
@@ -394,14 +395,17 @@ window.SVOLTE_INJECT_STATE = function (component_id, state) {
   const updated_ctx = JSON.parse(state);
   const targetComponentDetail = nodeMap.get(component_id).detail;
 
+  console.log('nodeMap.get(component_id) is ', nodeMap.get(component_id));
   console.log('targetComponentDetail is ', targetComponentDetail);
   console.log('updated_ctx is ', updated_ctx);
 
   // console.log('targetComponentDetail.$capture_state() before is ', targetComponentDetail.$capture_state());
-  // for (let i = 0; i < updated_ctx.length; i++) {
-  //   targetComponentDetail.$inject_state({ key: updated_ctx[i].key });
-  //   targetComponentDetail.$inject_state({ value: updated_ctx[i].value });
-  // }
+  console.log('targetComponentDetail.ctx before is ', targetComponentDetail.ctx);
+  for (let i = 0; i < updated_ctx.length; i++) {
+    // targetComponentDetail.ctx = updated_ctx;
+    targetComponentDetail.$inject_state({ value: updated_ctx[i].value });
+  }
+  console.log('targetComponentDetail.ctx after is ', targetComponentDetail.ctx);
   // console.log('targetComponentDetail.$capture_state() after is ', targetComponentDetail.$capture_state());
 }
 
