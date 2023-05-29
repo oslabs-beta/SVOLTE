@@ -183,7 +183,7 @@ onMount(() => {
     nodeEnter
       .append('text')
       .attr('dy', '.35em')
-      .attr('y', d => d.children || d._children ? -15 : 0)
+      .attr('y', d => d.children || d._children ? -20 : 0)
       .attr('x', 14)
       .attr('text-anchor', d => d.children || d._children ? "end" : "start")
       .text(d => d.data.name)
