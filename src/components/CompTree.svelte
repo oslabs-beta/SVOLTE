@@ -238,10 +238,12 @@ onMount(() => {
       console.log('d.data.name: ', d.data.name, 'textLength: ', textLength, 'textContent: ', textContent)
       d3.select(this.parentNode).select("foreignObject").select("div").style("opacity", 1).html(`Variables: <br> ${textContent}`);
       const rectWidth = textLength * 80;
-      const rectHeight = Math.max(20, Math.ceil(textLength));
+      const rectHeight = Math.max(40, Math.ceil(textLength));
       textDiv.style("width", `${rectWidth*0.9}px`);
       textDiv.style("height", `${rectHeight*0.9}px`);
-      d3.select(this.parentNode).select("rect").attr("width", rectWidth);
+      textDiv.style("z-index", 40);
+
+      d3.select(this.parentNode).select("rect").attr("width", rectWidth).style('z-index', 41);
       d3.select(this.parentNode).select("rect").attr("height", rectHeight)
       d3.select(this.parentNode).select("foreignObject").attr("width", `${textLength * 80}px`);
       d3.select(this.parentNode).select('rect').style('opacity', 1);
