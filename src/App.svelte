@@ -9,7 +9,8 @@
   //this must be done any time you have a reference to the store
 
   // Your selected Skeleton theme:
-  import '@skeletonlabs/skeleton/themes/theme-skeleton.css'
+  // import '@skeletonlabs/skeleton/themes/theme-skeleton.css'
+  import '@skeletonlabs/skeleton/themes/theme-hamlindigo.css';
 
   // This contains the bulk of Skeletons required styles:
   // NOTE: this will be renamed skeleton.css in the v2.x release.
@@ -22,12 +23,14 @@
 </script>
 
 {#if $rootNodes.length}
-  <AppShell>
+  <AppShell class="h-full overflow-hidden">
     <svelte:fragment slot="pageHeader">
-      <AppBar>Svolte</AppBar>
+      <AppBar>
+      <img src="/icons/svolte_logo_smaller.png" alt="svolte header"/>
+    </AppBar>
     </svelte:fragment>
   
-    <TabGroup class="h-full">
+    <TabGroup class="h-full overflow-hidden">
       <Tab bind:group={tabSet} name="tab1" value={0}>Component Tree</Tab>
       <Tab bind:group={tabSet} name="tab2" value={1}>Time Travel</Tab>
       <!-- Tab Panels --->
@@ -50,6 +53,6 @@
     background-color: gray;
   } */
   :global(html, body) {
-    @apply h-full overflow-hidden;
+    @apply h-screen overflow-hidden;
   }
 </style>
