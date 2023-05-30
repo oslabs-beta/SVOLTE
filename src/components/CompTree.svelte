@@ -127,32 +127,13 @@
   //used to construct a root node data from a given hierarchial data
   //data MUST be of an object and represent a root node
   //returns an array of object(s)
-  let root = d3.hierarchy($treeData, d => d.children);
-  root.x0 = height / 2;
-  root.y0 = 0
-  console.log('root ', root);
+
 
 
   
   // transition duration
   let i = 0;
   const duration = 500;
-
-
-//append the svg object to the body of the page
-//appends a 'group' element to 'svg'
-let svg;
-onMount(() => {
-  svg = d3
-    .select("#body")
-    .append("svg")
-    .attr("width", width + margin.right + margin.left)
-    .attr("height", height + margin.top + margin.bottom)
-    .append("g")
-    .attr("transform", "translate(" + margin.left + ", " + margin.top + ")")
-
-
-  update(root)
 
   function update(source) {
     const treeData = treeLayout(root)
@@ -163,17 +144,23 @@ onMount(() => {
 
     const node = svg.selectAll('g.node').data(nodes, d => d.id || (d.id = ++ i));
 
-    const nodeEnter = node
-      .enter()
-      .append('g')
-      .attr('class', 'node')
-    //   .attr('class', d => "node" + (d.children ? " node--internal"
-    //      : " node--leaf"))
-      .attr('transform', d => "translate(" + source.y0 + ", " + source.x0 + ")")
-      .on('click', click)
-      .style('z-index', '1');
+  //attaching a circle to represent each node
+  const nodeEnter = node
+    .enter()
+    .append('g')
+    .attr('class', 'node')
+    .attr('transform', d => "translate(" + source.y0 + ", " + source.x0 + ")")
+    .on('click', click);
 
-    // adding component name to each node
+  const circleSVG = nodeEnter.append('circle')
+    .attr('r', 8)
+    .style("fill", d => d._children ? "yellow" : "black")
+    .attr('cursor', 'pointer');
+
+  const gSVG = nodeEnter.append('g')
+    .attr("transform", "translate(-6, 4)");
+
+    //adding component name to each node
     nodeEnter
       .append('text')
       .attr('dy', '.35em')
@@ -183,60 +170,68 @@ onMount(() => {
       .text(d => d.data.name)
       .style('fill', 'aliceblue')
 
-
-    // attaching a circle to represent each node
-    const circleSVG = nodeEnter.append('circle')
-      .attr('r', 8)
-      .style("fill", d => d._children ? "yellow" : "black")
-      .attr('cursor', 'pointer')
-    
-    const gSVG = nodeEnter.append('g')
-      .attr("transform", "translate(-6, 4)");
-
-    const enterSVG = gSVG.append("svg")
-      .attr("width", 400)
-      .attr("height", 200)
-      
-    const rect = enterSVG.append("rect")
-      .attr("width", 200)
-      .attr("height", 100)
-      .attr("fill", "lightgray")
+    const rect = gSVG.append("rect")
+      .attr("width", d => `${d.data.name.length * 81}px`)
+      .attr("height", d => `${d.data.name.length * 81}px`)
+      .attr("fill", "#F5F5F5")
       .style("opacity", 0)
 
-    const text = enterSVG.append("text")
-      .attr("x", 100)
-      .attr("y", 60)
-      .attr("text-anchor", "middle")
-      .text("hello world")
-      .style("font-size", "20px")
-      .style("fill", "black")
+    const enterSVG = gSVG.append("foreignObject")
+      .attr("width", d => `${d.data.name.length * 80 + 10}px`)
+      .attr("height", d => `${d.data.name.length * 80 + 10}px`)
+
+    const textDiv = enterSVG.append("xhtml:div")
+      .style("font-size", "15px")
+      .style("overflow-wrap", "anywhere") 
+      .style("color", "black")
+      .text(d => d.data.name)
       .style("opacity", 0)
-      .attr("class", "wrapped-text");
+      .attr("class", "wrapped-text")
+      .style("word-wrap", "break-word")
+      .style("font-family", "Arial");
+
+
 
     circleSVG.on("mouseover", function(event, d){
-      //vanilla DOM way 
-      // d3.select(this.parentNode)._groups[0][0].querySelector('svg').querySelector('text').style.opacity = 1;
-      // d3.select(this.parentNode)._groups[0][0].querySelector('svg').querySelector('text').textContent = `Age: ${d.data.age}`;
-
-      //D3 way of changing style/text content
-      let str = ''
+      let str = '';
+      let textLength = 0;
+      let textContent = '';
       for (const el of d.data.variables){
         console.log('el: ', el)
-        if (!el.value.source){str+=JSON.stringify(el)}
+        if (!el.value.source){
+          if (typeof el.value === "object") {
+            for (const [key, value] of Object.entries(el.value)) { 
+              if (typeof value === "string") {
+                textLength += value.length;
+                textContent += `${key} — ${value}<br>`; 
+              }
+            }
+          } else if (typeof el.value === "string") {
+            textLength += el.value.length;
+            textContent += `${el.key} — ${el.value}<br>`; 
+          }
+        }
       }
       console.log('d.data.variables: ', d.data.variables)
-      d3.select(this.parentNode).select('svg').select('text').style('opacity', 1).text(`Variables: ${str}`)
-      // d3.select(this.parentNode).select('rect').style('opacity', 1);
+      console.log('d.data.name: ', d.data.name, 'textLength: ', textLength, 'textContent: ', textContent)
+      d3.select(this.parentNode).select("foreignObject").select("div").style("opacity", 1).style("padding", "10px 5px 15px 15px").html(`Variables<hr>${textContent}`);
+      const rectWidth = textLength * 80;
+      const rectHeight = Math.max(70, Math.ceil(textLength * 1.7));
+      textDiv.style("width", `${rectWidth*0.9}px`);
+      textDiv.style("height", `${rectHeight*0.9}px`);
+
+      d3.select(this.parentNode).select("rect").attr("width", rectWidth);
+      d3.select(this.parentNode).select("rect").attr("height", rectHeight)
+      d3.select(this.parentNode).select("foreignObject").attr("width", `${textLength * 80}px`);
       d3.select(this.parentNode).select('rect').style('opacity', 1);
-      console.log(d3.select(this.parentNode))
-      console.log('d.data: ', d.data)
-      console.log('circ svg string: ', d.data.variables);
-      // d3.select(this.parentNode).select("rect").select("text").style("opacity", 1).text(`Age: ${d.data.age}`)
-      // d3.select(this).select("text").style("opacity", 1).text(`Age: ${d.data.age} Hello Hello Nickname: ${d.data.nickname}`);
     });
+
+
+
+
     circleSVG.on("mouseout", function(event, d) {
       // console.log('d3.select(this.parentNode): ', d3.select(this.parentNode))
-      d3.select(this.parentNode).select('svg').select('text').style("opacity", 0);
+      d3.select(this.parentNode).select('foreignObject').select('div').style("opacity", 0);
       d3.select(this.parentNode).select('rect').style('opacity', 0);
     });
 
@@ -331,7 +326,40 @@ onMount(() => {
 
   }
 
+
+//append the svg object to the body of the page
+//appends a 'group' element to 'svg'
+let svg;
+let root;
+onMount(() => {
+
+  root = d3.hierarchy($treeData, d => d.children);
+  root.x0 = height / 2;
+  root.y0 = 0
+  console.log('root ', root);
+  if($treeData){
+      svg = d3
+    .select("#body")
+    .append("svg")
+    .attr("width", width + margin.right + margin.left)
+    .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+    .attr("transform", "translate(" + margin.left + ", " + margin.top + ")")
+
+
+  update(root)
+
+
+  }
+
+
 })
+
+afterUpdate(() => {
+    if ($treeData && svg) {
+      update(root);
+    }
+  });
 
 
 </script>
