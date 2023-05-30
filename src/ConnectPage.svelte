@@ -4,5 +4,7 @@
 </script>
 
 <div>
-  <button on:click={reload}>click me!</button>
+  <h1>Welcome to Svolte!</h1>
+  <p>To begin, click connect to refresh the page.</p>
+  <button on:click={reload}>CONNECT</button>
 </div>
