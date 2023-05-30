@@ -154,7 +154,7 @@
 
   const circleSVG = nodeEnter.append('circle')
     .attr('r', 8)
-    .style("fill", d => d._children ? "yellow" : "black")
+    .style("fill", d => d._children ? "yellow" : "#D6B0FF")
     .attr('cursor', 'pointer');
 
   const gSVG = nodeEnter.append('g')
@@ -367,6 +367,6 @@ afterUpdate(() => {
 
 
 
-<main id='body'>
+<main id='body' style='overflow: auto;'>
   
 </main>
