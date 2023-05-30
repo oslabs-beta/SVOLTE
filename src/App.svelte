@@ -20,12 +20,15 @@
   let tabSet = 0
 </script>
 
-<AppShell>
+<AppShell class="h-full overflow-hidden">
   <svelte:fragment slot="pageHeader">
-    <AppBar>Svolte</AppBar>
+    <AppBar class="flex justify-center">
+      <img src="/icons/48.png" alt="svolte logo" />
+      <h1>Svolte</h1>
+    </AppBar>
   </svelte:fragment>
 
-  <TabGroup class="h-full">
+  <TabGroup class="h-full overflow-hidden">
     <Tab bind:group={tabSet} name="tab1" value={0}>Component Tree</Tab>
     <Tab bind:group={tabSet} name="tab2" value={1}>Time Travel</Tab>
     <!-- Tab Panels --->

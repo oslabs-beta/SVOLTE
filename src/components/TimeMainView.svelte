@@ -5,6 +5,7 @@
   let newArray = [];
   $: {
     if ($selected) {
+      newArray = [];
       const originalArray = $selected.detail.ctx
       // Recursive function to check if an object or its nested properties have _isFunction
       function hasFunction(obj) {
@@ -47,13 +48,11 @@
   }
 </script>
 
-<div class="h-full grow items-center justify-center flex">
+<div class="h-full grow items-center content-center flex-col flex">
   {#if newArray.length}
     {#each newArray as pair}
-      <h1>{pair.key}: {pair.value}</h1>
+      <div>{pair.key}: {pair.value}</div>
     {/each}
-  {:else}
-    <h1></h1>
   {/if}
 </div>
 
