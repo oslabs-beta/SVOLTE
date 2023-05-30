@@ -367,6 +367,6 @@ afterUpdate(() => {
 
 
 
-<main id='body'>
+<main id='body' style='overflow: auto;'>
   
 </main>
