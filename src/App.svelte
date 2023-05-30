@@ -3,9 +3,10 @@
   import Time from './components/Time.svelte'
   import { TabGroup, Tab } from '@skeletonlabs/skeleton'
   import { AppShell, AppBar } from '@skeletonlabs/skeleton'
+  import { onMount, afterUpdate } from 'svelte';
+
   //use the store subscription prefix '$' in order to access the value from a store element
   //this must be done any time you have a reference to the store
-
   // Your selected Skeleton theme:
   import '@skeletonlabs/skeleton/themes/theme-skeleton.css'
 
@@ -16,8 +17,20 @@
   // Finally, your application's global stylesheet (sometimes labeled 'app.css')
   import './app.postcss'
 
-  let tabSet = 0
+  let tabSet = 1;
+  
+  // let isReloading = JSON.parse(localStorage.getItem('isReloading'));
+// // Reload the page once
+// if (!isReloading) {
+//   setTimeout(()=>{
+//     location.reload();
+//     isReloading = true;
+//     localStorage.setItem('isReloading', JSON.stringify(isReloading));
+//   }, 1000)
+  
+// }
 </script>
+
 
 <AppShell>
   <svelte:fragment slot="pageHeader">

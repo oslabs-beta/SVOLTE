@@ -127,32 +127,13 @@
   //used to construct a root node data from a given hierarchial data
   //data MUST be of an object and represent a root node
   //returns an array of object(s)
-  let root = d3.hierarchy($treeData, d => d.children);
-  root.x0 = height / 2;
-  root.y0 = 0
-  console.log('root ', root);
+
 
 
   
   // transition duration
   let i = 0;
   const duration = 500;
-
-
-//append the svg object to the body of the page
-//appends a 'group' element to 'svg'
-let svg;
-onMount(() => {
-  svg = d3
-    .select("#body")
-    .append("svg")
-    .attr("width", width + margin.right + margin.left)
-    .attr("height", height + margin.top + margin.bottom)
-    .append("g")
-    .attr("transform", "translate(" + margin.left + ", " + margin.top + ")")
-
-
-  update(root)
 
   function update(source) {
     const treeData = treeLayout(root)
@@ -192,7 +173,7 @@ onMount(() => {
     const rect = gSVG.append("rect")
       .attr("width", d => `${d.data.name.length * 81}px`)
       .attr("height", d => `${d.data.name.length * 81}px`)
-      .attr("fill", "lightgray")
+      .attr("fill", "#F5F5F5")
       .style("opacity", 0)
 
     const enterSVG = gSVG.append("foreignObject")
@@ -207,6 +188,7 @@ onMount(() => {
       .style("opacity", 0)
       .attr("class", "wrapped-text")
       .style("word-wrap", "break-word")
+      .style("font-family", "Arial");
 
 
 
@@ -221,20 +203,20 @@ onMount(() => {
             for (const [key, value] of Object.entries(el.value)) { 
               if (typeof value === "string") {
                 textLength += value.length;
-                textContent += `{key: ${key}, value: ${value}}<br>`; 
+                textContent += `${key} — ${value}<br>`; 
               }
             }
           } else if (typeof el.value === "string") {
             textLength += el.value.length;
-            textContent += `{key: ${el.key}, value: ${el.value}}<br>`; 
+            textContent += `${el.key} — ${el.value}<br>`; 
           }
         }
       }
       console.log('d.data.variables: ', d.data.variables)
       console.log('d.data.name: ', d.data.name, 'textLength: ', textLength, 'textContent: ', textContent)
-      d3.select(this.parentNode).select("foreignObject").select("div").style("opacity", 1).html(`Variables: <br> ${textContent}`);
+      d3.select(this.parentNode).select("foreignObject").select("div").style("opacity", 1).style("padding", "10px 5px 15px 15px").html(`Variables<hr>${textContent}`);
       const rectWidth = textLength * 80;
-      const rectHeight = Math.max(40, Math.ceil(textLength));
+      const rectHeight = Math.max(70, Math.ceil(textLength * 1.7));
       textDiv.style("width", `${rectWidth*0.9}px`);
       textDiv.style("height", `${rectHeight*0.9}px`);
 
@@ -344,7 +326,40 @@ onMount(() => {
 
   }
 
+
+//append the svg object to the body of the page
+//appends a 'group' element to 'svg'
+let svg;
+let root;
+onMount(() => {
+
+  root = d3.hierarchy($treeData, d => d.children);
+  root.x0 = height / 2;
+  root.y0 = 0
+  console.log('root ', root);
+  if($treeData){
+      svg = d3
+    .select("#body")
+    .append("svg")
+    .attr("width", width + margin.right + margin.left)
+    .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+    .attr("transform", "translate(" + margin.left + ", " + margin.top + ")")
+
+
+  update(root)
+
+
+  }
+
+
 })
+
+afterUpdate(() => {
+    if ($treeData && svg) {
+      update(root);
+    }
+  });
 
 
 </script>
