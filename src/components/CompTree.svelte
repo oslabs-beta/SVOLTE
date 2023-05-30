@@ -187,7 +187,7 @@ onMount(() => {
     // attaching a circle to represent each node
     const circleSVG = nodeEnter.append('circle')
       .attr('r', 8)
-      .style("fill", d => d._children ? "yellow" : "black")
+      .style("fill", d => d._children ? "yellow" : "#D6B0FF")
       .attr('cursor', 'pointer')
     
     const gSVG = nodeEnter.append('g')
@@ -282,8 +282,8 @@ onMount(() => {
         let o = { x: source.x0, y: source.y }
         return diagonal(o, o)
       })
-      .style('opacity', '0.6')
-      .style("stroke", "purple")
+      .style('opacity', '0.9')
+      .style("stroke", "#FCFFAE")
       .style('stroke-width', '3px')
       .style('fill', 'none')
 
@@ -314,13 +314,13 @@ onMount(() => {
       if (d.children) {
         d._children = d.children;
         d.children = null;
-        d3.select(this)._groups[0][0].querySelector('circle').style.fill = 'yellow';
+        d3.select(this)._groups[0][0].querySelector('circle').style.fill = '#A0FFA1';
         // console.log('d3this lv 2: ', d3.select(this)._groups[0][0])
         // console.log('d3 this no level: ', d3.select(this))
       } else {
         d.children = d._children;
         d._children = null;
-        d3.select(this)._groups[0][0].querySelector('circle').style.fill = 'black';
+        d3.select(this)._groups[0][0].querySelector('circle').style.fill = '#A0FFFE';
         // console.log('d3this lv 2: ', d3.select(this)._groups[0][0])
         // console.log('d3 this no level: ', d3.select(this))
       }

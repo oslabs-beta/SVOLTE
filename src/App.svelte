@@ -23,11 +23,11 @@
 </script>
 
 {#if $rootNodes.length}
-  <AppShell class="h-full overflow-hidden">
+  <AppShell class="h-full overflow-hidden bg-gradient-to-t from-gray-800 to-slate-800 ...">
     <svelte:fragment slot="pageHeader">
-      <AppBar>
-      <img src="/icons/svolte_logo_smaller.png" alt="svolte header"/>
-    </AppBar>
+      <AppBar class="pl-15 bg-gradient-to-b from-gray-800 to-slate-800 ...">
+      <img src="/images/svolte_banner.png" alt="svolte header"/>
+      </AppBar>
     </svelte:fragment>
   
     <TabGroup class="h-full overflow-hidden">
@@ -49,10 +49,13 @@
 {/if}
 
 <style>
-  /* main {
-    background-color: gray;
-  } */
+  
   :global(html, body) {
     @apply h-screen overflow-hidden;
+  }
+
+  img {
+    max-width: 9rem;
+    height: auto;
   }
 </style>
