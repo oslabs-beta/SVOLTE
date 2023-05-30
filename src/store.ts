@@ -211,7 +211,7 @@ function compareObjects(
 }
 
 // function takes as input a ctx array and returns a processed ctx without functions
-function process_ctx(ctx_array:any[]):any[] {
+export function process_ctx(ctx_array:any[]):any[] {
 
   // helper function that returns boolean based on if the element contains a function
   function hasFunction(obj) {
@@ -235,8 +235,10 @@ function process_ctx(ctx_array:any[]):any[] {
   const processed_ctx = [];
 
   // iterate through the given ctx array and check for functions
-  for (let i = 0; i < ctx_array.length; i++) {
-    if (!hasFunction(ctx_array[i])) processed_ctx.push(ctx_array[i]);
+  if (ctx_array.length) {
+    for (let i = 0; i < ctx_array.length; i++) {
+      if (!hasFunction(ctx_array[i])) processed_ctx.push(ctx_array[i]);
+    }
   }
   return processed_ctx;
 }

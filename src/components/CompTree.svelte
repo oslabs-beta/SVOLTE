@@ -1,6 +1,6 @@
 <script>
   import * as d3 from 'd3';
-  import { treeData, rootNodes } from '../store';
+  import { treeData, rootNodes, process_ctx } from '../store';
   import { onMount, afterUpdate } from 'svelte'
 
 
@@ -62,12 +62,14 @@
   function rootParser(root) {
     // root is an object
     // output is an object
-    // if (root) {
       const output = {};
       output.name = root.tagName;
-      output.variables = root.detail.ctx; // array of objs
-      // placeholder line to set variables property (ctx)
-  
+      if (root.detail.ctx){
+        output.variables = process_ctx(root.detail.ctx);
+      }
+      if (root.detail.attributes) {
+        output.props = process_ctx(root.detail.attributes);
+      }
       
       output.children = nodeTraverse(root.children); //array of child objects
   
@@ -75,42 +77,16 @@
       // output: this is the tree data we will use (see tree data template above)
       // console.log('root parser output: ', output);
       return output;
-    // }
   }
+
+
 
   if ( $rootNodes[0]) {
     const parsedData = rootParser($rootNodes[0]);
-    console.log('result of parsing ', parsedData);
+    // console.log('result of parsing ', parsedData);
     treeData.set(parsedData);
   };
   console.log('tree data after parsing ', $treeData);
-
-// dummy data
-  // treeData.set({
-  //   "name": "Root",
-  //   "age": 10,
-  //   "nickname":'Tanner',
-  //   "children": [
-  //     { "name": "Counter1",
-  //       "age": 11,
-  //       "nickname":'Jake',
-  //       "children": [
-  //         { "name": "Increment",
-  //           "age": 12,
-  //           "nickname":'Alison'
-  //         }, 
-  //         { "name": "Decrement",
-  //           "age": 13,
-  //           "nickname":'Demetri',
-  //         }
-  //       ]
-  //     },
-  //     { "name": "Counter2",
-  //       "age": 14,
-  //       "nickname":'Tyson'
-  //     }
-  //   ]
-  // })
 
 
   let margin = { top: 20, right: 90, bottom: 20, left: 90 };
@@ -120,14 +96,6 @@
   // create a tidy tree layout with specified size [height, width]
   const treeLayout = d3.tree()
     .size([height, width]);
-
-
-  //assigns parent, child, height, depth
-  //d3.hierarchy(data,[children])
-  //used to construct a root node data from a given hierarchial data
-  //data MUST be of an object and represent a root node
-  //returns an array of object(s)
-
 
 
   
@@ -192,45 +160,68 @@
 
 
 
-    circleSVG.on("mouseover", function(event, d){
-      let str = '';
-      let textLength = 0;
-      let textContent = '';
-      for (const el of d.data.variables){
-        console.log('el: ', el)
-        if (!el.value.source){
+      circleSVG.on("mouseover", function(event, d){
+        let str = '';
+        let textLength = 0;
+        let varTextContent = '';
+        let propTextContent = '';
+        let elCounter = 0;
+        for (const el of d.data.variables){
           if (typeof el.value === "object") {
             for (const [key, value] of Object.entries(el.value)) { 
               if (typeof value === "string") {
-                textLength += value.length;
-                textContent += `${key} — ${value}<br>`; 
+                // textLength += value.length;
+                textLength = Math.max(textLength, `${el.value}`.length)
+                varTextContent += `${key} — ${value}<br>`; 
+                elCounter+=1;
               }
             }
-          } else if (typeof el.value === "string") {
-            textLength += el.value.length;
-            textContent += `${el.key} — ${el.value}<br>`; 
+          } else {
+            // textLength += `${el.value}`.length;
+            textLength = Math.max(textLength, `${el.value}`.length)
+            varTextContent += `${el.key}: ${el.value}<br>`; 
+            elCounter+=1;;
           }
         }
-      }
-      console.log('d.data.variables: ', d.data.variables)
-      console.log('d.data.name: ', d.data.name, 'textLength: ', textLength, 'textContent: ', textContent)
-      d3.select(this.parentNode).select("foreignObject").select("div").style("opacity", 1).style("padding", "10px 5px 15px 15px").html(`Variables<hr>${textContent}`);
-      const rectWidth = textLength * 80;
-      const rectHeight = Math.max(70, Math.ceil(textLength * 1.7));
-      textDiv.style("width", `${rectWidth*0.9}px`);
-      textDiv.style("height", `${rectHeight*0.9}px`);
+        for (const el of d.data.props){
+          if (typeof el.value === "object") {
+            for (const [key, value] of Object.entries(el.value)) { 
+              if (typeof value === "string") {
+                // textLength += value.length;
+                textLength = Math.max(textLength, `${el.value}`.length)
+                propTextContent += `${key} — ${value}<br>`; 
+                elCounter+=1;
+              }
+            }
+          } else {
+            // textLength += `${el.value}`.length;
+            textLength = Math.max(textLength, `${el.value}`.length)
+            propTextContent += `${el.key}: ${el.value}<br>`; 
+            elCounter+=1;;
+          }
+        }
+        console.log('d.data.variables: ', d.data.variables)
+        console.log('d.data.name: ', d.data.name, 'textLength: ', textLength, 'varTextContent: ', varTextContent)
+        d3.select(this.parentNode)
+          .select("foreignObject")
+          .select("div").style("opacity", 1)
+          .style("padding", "10px 5px 15px 15px")
+          .html(`Variables<hr>${varTextContent}Props<hr>${propTextContent}`);
+        const rectWidth =  Math.ceil(textLength*40);
+        const rectHeight = Math.max(70, Math.ceil(elCounter * 80));
+        textDiv.style("width", `${rectWidth*0.9}px`);
+        textDiv.style("height", `${rectHeight*0.9}px`);
 
-      d3.select(this.parentNode).select("rect").attr("width", rectWidth);
-      d3.select(this.parentNode).select("rect").attr("height", rectHeight)
-      d3.select(this.parentNode).select("foreignObject").attr("width", `${textLength * 80}px`);
-      d3.select(this.parentNode).select('rect').style('opacity', 1);
+        d3.select(this.parentNode).select("rect").attr("width", rectWidth);
+        d3.select(this.parentNode).select("rect").attr("height", rectHeight)
+        d3.select(this.parentNode).select("foreignObject").attr("width", `${textLength * 80}px`);
+        d3.select(this.parentNode).select('rect').style('opacity', 1);
     });
 
 
 
 
     circleSVG.on("mouseout", function(event, d) {
-      // console.log('d3.select(this.parentNode): ', d3.select(this.parentNode))
       d3.select(this.parentNode).select('foreignObject').select('div').style("opacity", 0);
       d3.select(this.parentNode).select('rect').style('opacity', 0);
     });
@@ -333,6 +324,10 @@ let svg;
 let root;
 onMount(() => {
 
+  /* d3.hierarchy(data,[children]) assigns parent, child, height, depth
+    used to construct a root node data from a given hierarchial data
+    data MUST be of an object and represent a root node
+    returns an array of object(s) */
   root = d3.hierarchy($treeData, d => d.children);
   root.x0 = height / 2;
   root.y0 = 0
@@ -367,6 +362,6 @@ afterUpdate(() => {
 
 
 
-<main id='body'>
+<main id='body' style='overflow: auto;'>
   
 </main>
