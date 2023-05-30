@@ -22,9 +22,8 @@
 
 <AppShell class="h-full overflow-hidden">
   <svelte:fragment slot="pageHeader">
-    <AppBar class="flex justify-center">
-      <img src="/icons/48.png" alt="svolte logo" />
-      <h1>Svolte</h1>
+    <AppBar>
+      <img src="/icons/svolte_logo_smaller.png" alt="svolte header"/>
     </AppBar>
   </svelte:fragment>
 
@@ -48,6 +47,6 @@
     background-color: gray;
   } */
   :global(html, body) {
-    @apply h-full overflow-hidden;
+    @apply h-screen overflow-hidden;
   }
 </style>
