@@ -1,12 +1,13 @@
 import { writable, get } from 'svelte/store'
 import type { Writable } from 'svelte/store'
 import type { Message, Node, SnapShot, Difference } from './types'
-const { devtools, runtime, scripting } = chrome
+const { devtools, runtime } = chrome
 
 const nodeMap = new Map()
 export const rootNodes: Writable<Node[]> = writable([])
 export const snapShotHistory: Writable<SnapShot[]> = writable([])
 export const selected: Writable<SnapShot> = writable(null)
+export const skipArr: Writable<number[]> = writable([])
 let currentSnapShot: number = 0
 let shaveCounter: number = 0
 
@@ -246,6 +247,9 @@ export function jump(snapshotID) {
   // going backwards in time
   if (currentSnapShot > snapshotID) {
     for (let i = currentSnapShot - 1; i >= snapshotID; i--) {
+      if (get(skipArr).includes(i)) {
+        continue
+      }
       console.log('backwards')
       ++shaveCounter
       const component_id = get(snapShotHistory)[currentSnapShot].id
@@ -261,6 +265,9 @@ export function jump(snapshotID) {
   // going forwards in time
   else if (currentSnapShot < snapshotID) {
     for (let i = currentSnapShot + 1; i <= snapshotID; i++) {
+      if (get(skipArr).includes(i)) {
+        continue
+      }
       console.log('forwards')
       ++shaveCounter
       const component_id = get(snapShotHistory)[currentSnapShot].id
