@@ -9,7 +9,7 @@
   //this must be done any time you have a reference to the store
   // Your selected Skeleton theme:
   // import '@skeletonlabs/skeleton/themes/theme-skeleton.css'
-  import '@skeletonlabs/skeleton/themes/theme-hamlindigo.css';
+  import '@skeletonlabs/skeleton/themes/theme-hamlindigo.css'
 
   // This contains the bulk of Skeletons required styles:
   // NOTE: this will be renamed skeleton.css in the v2.x release.
@@ -18,34 +18,33 @@
   // Finally, your application's global stylesheet (sometimes labeled 'app.css')
   import './app.postcss'
 
-  let tabSet = 1;
-  
+  let tabSet = 1
+
   // let isReloading = JSON.parse(localStorage.getItem('isReloading'));
-// // Reload the page once
-// if (!isReloading) {
-//   setTimeout(()=>{
-//     location.reload();
-//     isReloading = true;
-//     localStorage.setItem('isReloading', JSON.stringify(isReloading));
-//   }, 1000)
-  
-// }
+  // // Reload the page once
+  // if (!isReloading) {
+  //   setTimeout(()=>{
+  //     location.reload();
+  //     isReloading = true;
+  //     localStorage.setItem('isReloading', JSON.stringify(isReloading));
+  //   }, 1000)
+
+  // }
 </script>
 
-
 {#if $rootNodes.length}
-  <AppShell class="h-full overflow-hidden">
+  <AppShell class="">
     <svelte:fragment slot="pageHeader">
-      <AppBar>
-      <img src="/icons/svolte_logo_smaller.png" alt="svolte header"/>
-    </AppBar>
+      <AppBar class="pl-15 bg-gradient-to-b from-gray-800 to-slate-800 ...">
+        <img src="/images/svolte_banner.png" alt="svolte header" />
+      </AppBar>
     </svelte:fragment>
-  
-    <TabGroup class="h-full overflow-hidden">
+
+    <TabGroup class="h-auto overflow-hidden">
       <Tab bind:group={tabSet} name="tab1" value={0}>Component Tree</Tab>
       <Tab bind:group={tabSet} name="tab2" value={1}>Time Travel</Tab>
       <!-- Tab Panels --->
-  
+
       <svelte:fragment slot="panel">
         {#if tabSet === 0}
           <CompTree />
@@ -60,10 +59,12 @@
 {/if}
 
 <style>
-  /* main {
-    background-color: gray;
-  } */
   :global(html, body) {
-    @apply h-screen overflow-hidden;
+    @apply h-full overflow-hidden;
+  }
+
+  img {
+    max-width: 9rem;
+    height: auto;
   }
 </style>

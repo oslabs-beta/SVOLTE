@@ -1,14 +1,15 @@
-import { writable, get } from "svelte/store";
-import type { Writable } from "svelte/store";
-import type { Message, Node, SnapShot , Difference } from "./types";
-const { devtools, runtime, scripting } = chrome;
+import { writable, get } from 'svelte/store'
+import type { Writable } from 'svelte/store'
+import type { Message, Node, SnapShot, Difference } from './types'
+const { devtools, runtime } = chrome
 
 const nodeMap = new Map()
 export const rootNodes: Writable<Node[]> = writable([])
 export const snapShotHistory: Writable<SnapShot[]> = writable([])
 export const selected: Writable<SnapShot> = writable(null)
-let currentSnapShot: number = 0;
-let shaveCounter: number = 0;
+export const skipArr: Writable<number[]> = writable([])
+let currentSnapShot: number = 0
+let shaveCounter: number = 0
 
 //we want to dynamically add to treeData
 export const treeData = writable({})
@@ -33,16 +34,14 @@ export function reload() {
     tabId: devtools.inspectedWindow.tabId,
   })
 }
-
-
 // ================================================================================
 //              MESSAGING
 // ================================================================================
 
 // establish connection
-const backgroundPageConnection = runtime.connect();
+const backgroundPageConnection = runtime.connect()
 
-// message background with tabID 
+// message background with tabID
 backgroundPageConnection.postMessage({
   type: 'INIT',
   tabId: devtools.inspectedWindow.tabId,
@@ -50,19 +49,17 @@ backgroundPageConnection.postMessage({
 
 // listen for messages from background
 backgroundPageConnection.onMessage.addListener((message: Message) => {
-
   switch (message.type) {
-    
     // used when refreshing page or disconnecting
-    case "clear": {
-      rootNodes.set([]);
-      break;
+    case 'clear': {
+      rootNodes.set([])
+      break
     }
 
     // add nodes to the nodeMap
-    case "addNode": {
-      const node: Node = message.node;
-      node.children = [];
+    case 'addNode': {
+      const node: Node = message.node
+      node.children = []
       // node.collapsed = true;
       node.invalidate = noop
       // resolveEventBubble(node);
@@ -91,8 +88,8 @@ backgroundPageConnection.onMessage.addListener((message: Message) => {
     }
 
     // update nodes within the nodeMap
-    case "updateNode": {
-      const node = nodeMap.get(message.node.id);
+    case 'updateNode': {
+      const node = nodeMap.get(message.node.id)
 
       addSnapShot(node, message)
 
@@ -106,9 +103,9 @@ backgroundPageConnection.onMessage.addListener((message: Message) => {
     }
 
     // remove nodes from the nodeMap
-    case "removeNode": {
-      const node = nodeMap.get(message.node.id);
-      nodeMap.delete(node.id);
+    case 'removeNode': {
+      const node = nodeMap.get(message.node.id)
+      nodeMap.delete(node.id)
 
       if (!node.parent) break
 
@@ -123,14 +120,14 @@ backgroundPageConnection.onMessage.addListener((message: Message) => {
 })
 
 // ================================================================================
-//              
+//
 // ================================================================================
 
 // ================================================================================
-//              
+//
 // ================================================================================
 
-function insertNode(node:Node, target:Node, anchorId:number):void {
+function insertNode(node: Node, target: Node, anchorId: number): void {
   node.parent = target
 
   let index = -1
@@ -169,17 +166,17 @@ function addSnapShot(prevNode, message) {
     node.tagName !== 'Root' &&
     node.tagName !== 'Unknown'
   ) {
-    const differences:Array<Difference> = []
+    const differences: Array<Difference> = []
     compareObjects(prevNode.detail.ctx, node.detail.ctx, differences)
     if (differences.length && !shaveCounter) {
       node.diff = differences
       node._id = get(snapShotHistory).length
       snapShotHistory.update((prev) => [...prev, node])
-      
+
       console.log('snap shot history is:', get(snapShotHistory))
-      currentSnapShot = get(snapShotHistory).length - 1;
+      currentSnapShot = get(snapShotHistory).length - 1
     }
-    if (shaveCounter) --shaveCounter;
+    if (shaveCounter) --shaveCounter
   }
 }
 
@@ -211,28 +208,27 @@ function compareObjects(
 }
 
 // function takes as input a ctx array and returns a processed ctx without functions
-export function process_ctx(ctx_array:any[]):any[] {
-
+export function process_ctx(ctx_array: any[]): any[] {
   // helper function that returns boolean based on if the element contains a function
   function hasFunction(obj) {
-    if (typeof obj !== "object" || obj === null) {
-      return false;
+    if (typeof obj !== 'object' || obj === null) {
+      return false
     }
-  
+
     if (obj.__isFunction) {
-      return true;
+      return true
     }
-  
+
     for (const key in obj) {
       if (typeof obj[key] === 'function' || hasFunction(obj[key])) {
-        return true;
+        return true
       }
     }
-    return false;
+    return false
   }
 
   // new array to hold processed ctx elements
-  const processed_ctx = [];
+  const processed_ctx = []
 
   // iterate through the given ctx array and check for functions
   if (ctx_array.length) {
@@ -243,38 +239,50 @@ export function process_ctx(ctx_array:any[]):any[] {
   return processed_ctx;
 }
 
-
 // this function is used to jump to the user selected slice of time in state history
 // iterate through the history array from the current snapshot backwards to the desired snapshot
 // as we iterate through, undo the state changes from slice to slice
 export function jump(snapshotID) {
   // counter that indicates how many elements to shave off the history array as we are adding unnecessary events by jumping
-  shaveCounter = 0;
+  shaveCounter = 0
 
   // going backwards in time
-  if(currentSnapShot > snapshotID){
+  if (currentSnapShot > snapshotID) {
     for (let i = currentSnapShot - 1; i >= snapshotID; i--) {
-      console.log('backwards');
-    ++shaveCounter;
-    const component_id = get(snapShotHistory)[currentSnapShot].id;
-    const targetState = get(snapShotHistory)[i].detail.ctx;
-    const JSONd_state = JSON.stringify(targetState).replaceAll("\\", "\\\\");  
-    devtools.inspectedWindow.eval(`window.SVOLTE_INJECT_STATE(${component_id}, '${JSONd_state}')`, (result, error) => console.log('result is ', result, 'error is ', error));
+      if (get(skipArr).includes(i)) {
+        continue
+      }
+      console.log('backwards')
+      ++shaveCounter
+      const component_id = get(snapShotHistory)[i].id
+      const targetState = get(snapShotHistory)[i].detail.ctx
+      const JSONd_state = JSON.stringify(targetState).replaceAll('\\', '\\\\')
+      devtools.inspectedWindow.eval(
+        `window.SVOLTE_INJECT_STATE(${component_id}, '${JSONd_state}')`,
+        (result, error) => console.log('result is ', result, 'error is ', error)
+      )
     }
   }
 
-  // going forwards in time 
-  else if(currentSnapShot < snapshotID){
+  // going forwards in time
+  else if (currentSnapShot < snapshotID) {
     for (let i = currentSnapShot + 1; i <= snapshotID; i++) {
-      console.log('forwards');
-      ++shaveCounter;
-      const component_id = get(snapShotHistory)[currentSnapShot].id;
-      const targetState = get(snapShotHistory)[i].detail.ctx;
-      const JSONd_state = JSON.stringify(targetState).replaceAll("\\", "\\\\"); 
-      devtools.inspectedWindow.eval(`window.SVOLTE_INJECT_STATE(${component_id}, '${JSONd_state}')`, (result, error) => console.log('result is ', result, 'error is ', error));
+      if (get(skipArr).includes(i)) {
+        continue
       }
+      console.log('forwards')
+      ++shaveCounter
+      const component_id = get(snapShotHistory)[i].id
+      console.log(component_id)
+      const targetState = get(snapShotHistory)[i].detail.ctx
+      const JSONd_state = JSON.stringify(targetState).replaceAll('\\', '\\\\')
+      devtools.inspectedWindow.eval(
+        `window.SVOLTE_INJECT_STATE(${component_id}, '${JSONd_state}')`,
+        (result, error) => console.log('result is ', result, 'error is ', error)
+      )
+    }
   }
 
   //set our current place in time to where we just traveled to
-  currentSnapShot = snapshotID;
+  currentSnapShot = snapshotID
 }
