@@ -6,7 +6,6 @@
 	// $: offset = modulo($displayed_count, 1);
 
 	let testVar = 'hello';
-	console.log(testProp);
 
 	// function modulo(n: number, m: number) {
 	// 	// handle negative numbers
