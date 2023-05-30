@@ -252,7 +252,7 @@ export function jump(snapshotID) {
       }
       console.log('backwards')
       ++shaveCounter
-      const component_id = get(snapShotHistory)[currentSnapShot].id
+      const component_id = get(snapShotHistory)[i].id
       const targetState = get(snapShotHistory)[i].detail.ctx
       const JSONd_state = JSON.stringify(targetState).replaceAll('\\', '\\\\')
       devtools.inspectedWindow.eval(
@@ -270,7 +270,8 @@ export function jump(snapshotID) {
       }
       console.log('forwards')
       ++shaveCounter
-      const component_id = get(snapShotHistory)[currentSnapShot].id
+      const component_id = get(snapShotHistory)[i].id
+      console.log(component_id)
       const targetState = get(snapShotHistory)[i].detail.ctx
       const JSONd_state = JSON.stringify(targetState).replaceAll('\\', '\\\\')
       devtools.inspectedWindow.eval(
