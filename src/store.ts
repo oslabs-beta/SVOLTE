@@ -153,6 +153,8 @@ function eventBubble(node) {
   }
   return node.parent
 }
+
+// adds a snapshot of the components state and difference to an array of all our state changes (history)
 function addSnapShot(prevNode, message) {
   const { node } = message
   if (

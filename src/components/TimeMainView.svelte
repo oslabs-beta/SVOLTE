@@ -1,10 +1,10 @@
 <script lang="ts">
+  import { loop_guard } from 'svelte/internal';
   import { selected } from '../store'
 
-  let newArray
+  let newArray = [];
   $: {
     if ($selected) {
-      newArray = []
       const originalArray = $selected.detail.ctx
       // Recursive function to check if an object or its nested properties have _isFunction
       function hasFunction(obj) {
@@ -36,12 +36,25 @@
         newArray.push(obj)
         newArray = newArray
       }
+
+      console.log('newArray is ', newArray);
+      // const flattened_info = {};
+      // for (const obj of newArray) {
+      //   flattened_info[obj.key] = obj.value;
+      // }
+      // console.log('flattened_info is ', flattened_info);
     }
   }
 </script>
 
 <div class="h-full grow items-center justify-center flex">
-  <h1>{JSON.stringify(newArray)}</h1>
+  {#if newArray.length}
+    {#each newArray as pair}
+      <h1>{pair.key}: {pair.value}</h1>
+    {/each}
+  {:else}
+    <h1></h1>
+  {/if}
 </div>
 
 <style>
