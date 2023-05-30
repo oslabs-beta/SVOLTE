@@ -40,6 +40,11 @@ chrome.runtime.onConnect.addListener(function (port) {
     return;
   }
   // other message handling
+  if (message.type === 'RELOAD') {
+    console.log('RELOADING webpage');
+    chrome.tabs.reload(message.tabId, { bypassCache: true });
+  }
+    return;
   };
 
   // Listen to messages sent from the DevTools page

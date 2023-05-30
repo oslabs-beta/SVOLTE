@@ -27,6 +27,13 @@ export const pathStore = writable({
   },
 })
 
+export function reload() {
+  backgroundPageConnection.postMessage({
+    type: 'RELOAD',
+    tabId: devtools.inspectedWindow.tabId,
+  })
+}
+
 
 // ================================================================================
 //              MESSAGING
