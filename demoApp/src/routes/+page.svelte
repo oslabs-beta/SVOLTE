@@ -1,5 +1,6 @@
 <script>
 	import Counter from './Counter.svelte';
+	import Counter1 from './Counter1.svelte';
 	import welcome from '$lib/images/svelte-welcome.webp';
 	import welcome_fallback from '$lib/images/svelte-welcome.png';
 	let testProp = 'hi';
@@ -26,7 +27,8 @@
 		try editing <strong>src/routes/+page.svelte</strong>
 	</h2>
 
-	<Counter testProp={testProp} />
+	<Counter {testProp} />
+	<Counter1 {testProp} />
 </section>
 
 <style>
