@@ -1,6 +1,6 @@
 import { writable, get } from "svelte/store";
 import type { Writable } from "svelte/store";
-import type { Message, Node, SnapShot } from "./types";
+import type { Message, Node, SnapShot , Difference } from "./types";
 const { devtools, runtime, scripting } = chrome;
 
 const nodeMap = new Map()
@@ -19,7 +19,6 @@ export const pathStore = writable({
   setPath: () => {
     pathStore.update((state) => {
       if (state.path === 'tree') {
-        console.log('proceed')
         return { ...state, path: 'time' }
       } else {
         return { ...state, path: 'tree' }
@@ -86,7 +85,6 @@ backgroundPageConnection.onMessage.addListener((message: Message) => {
 
     // update nodes within the nodeMap
     case "updateNode": {
-      console.log('update node');
       const node = nodeMap.get(message.node.id);
 
       addSnapShot(node, message)
@@ -125,7 +123,7 @@ backgroundPageConnection.onMessage.addListener((message: Message) => {
 //              
 // ================================================================================
 
-function insertNode(node, target, anchorId) {
+function insertNode(node:Node, target:Node, anchorId:number):void {
   node.parent = target
 
   let index = -1
@@ -162,7 +160,7 @@ function addSnapShot(prevNode, message) {
     node.tagName !== 'Root' &&
     node.tagName !== 'Unknown'
   ) {
-    const differences = []
+    const differences:Array<Difference> = []
     compareObjects(prevNode.detail.ctx, node.detail.ctx, differences)
     if (differences.length && !shaveCounter) {
       node.diff = differences
@@ -204,7 +202,7 @@ function compareObjects(
 }
 
 // function takes as input a ctx array and returns a processed ctx without functions
-function process_ctx(ctx_array) {
+function process_ctx(ctx_array:any[]):any[] {
 
   // helper function that returns boolean based on if the element contains a function
   function hasFunction(obj) {
@@ -236,33 +234,36 @@ function process_ctx(ctx_array) {
 
 
 // this function is used to jump to the user selected slice of time in state history
+// iterate through the history array from the current snapshot backwards to the desired snapshot
+// as we iterate through, undo the state changes from slice to slice
 export function jump(snapshotID) {
-  // iterate through the history array from the current snapshot backwards to the desired snapshot
-  // as we iterate through, undo the state changes from slice to slice
-  for (let i = currentSnapShot; i >= snapshotID; i--) {
-  ++shaveCounter;
-  console.log('jump here')
-  console.log('i is ', i, ' and currentSnapShot is ', currentSnapShot);
-  const component_id = get(snapShotHistory)[currentSnapShot].id;
-  const targetState = get(snapShotHistory)[i].detail.ctx;
+  // counter that indicates how many elements to shave off the history array as we are adding unnecessary events by jumping
+  shaveCounter = 0;
 
-  // console.log('targetState in store is ', targetState);
-
-  // this looks strange but the json string that is returned from stringify contains \n to mark a new line
-  // but because we are placing this string inside of another string (eval(str)), we need to escape it again
-  // this means that all the single escapes ( \ ) must be replaced with double escapes ( \\ ) -- weird af ikno
-  const JSONd_state = JSON.stringify(targetState).replaceAll("\\", "\\\\"); 
-
-  devtools.inspectedWindow.eval(`window.SVOLTE_INJECT_STATE(${component_id}, '${JSONd_state}')`, (result, error) => console.log('result is ', result, 'error is ', error));
+  // going backwards in time
+  if(currentSnapShot > snapshotID){
+    for (let i = currentSnapShot - 1; i >= snapshotID; i--) {
+      console.log('backwards');
+    ++shaveCounter;
+    const component_id = get(snapShotHistory)[currentSnapShot].id;
+    const targetState = get(snapShotHistory)[i].detail.ctx;
+    const JSONd_state = JSON.stringify(targetState).replaceAll("\\", "\\\\");  
+    devtools.inspectedWindow.eval(`window.SVOLTE_INJECT_STATE(${component_id}, '${JSONd_state}')`, (result, error) => console.log('result is ', result, 'error is ', error));
+    }
   }
-  console.log('shavecounter is ', shaveCounter);
+
+  // going forwards in time 
+  else if(currentSnapShot < snapshotID){
+    for (let i = currentSnapShot + 1; i <= snapshotID; i++) {
+      console.log('forwards');
+      ++shaveCounter;
+      const component_id = get(snapShotHistory)[currentSnapShot].id;
+      const targetState = get(snapShotHistory)[i].detail.ctx;
+      const JSONd_state = JSON.stringify(targetState).replaceAll("\\", "\\\\"); 
+      devtools.inspectedWindow.eval(`window.SVOLTE_INJECT_STATE(${component_id}, '${JSONd_state}')`, (result, error) => console.log('result is ', result, 'error is ', error));
+      }
+  }
+
+  //set our current place in time to where we just traveled to
+  currentSnapShot = snapshotID;
 }
-
-
-// function sendJumpMessage(componentID, newState) {
-//   backgroundPageConnection.postMessage({
-//     type: 'INJECT',
-//     componentID: componentID,
-//     newState: newState
-//   })
-// }

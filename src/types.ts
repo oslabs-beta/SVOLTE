@@ -8,7 +8,7 @@ export interface Message {
 
 export interface Node {
   id: number;
-  children: Array<Node> | [];
+  children: Array<Node> | any[];
   parent: Node | null;
   invalidate?: () => void;
   _timeout?: number;
@@ -34,7 +34,7 @@ export interface SnapShot {
   diff: Array<Difference>;
 }
 
-interface Difference {
+export interface Difference {
   id: number;
   path: Array<string>;
   value1: any;
