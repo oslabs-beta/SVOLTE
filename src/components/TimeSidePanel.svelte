@@ -16,7 +16,7 @@
   }
 </script>
 
-<ListBox class="h-full">
+<ListBox class="h-full overflow-y-auto">
   {#each $snapShotHistory as snap (snap._id)}
     <TimeSlice {singleValue} {setSelected} {...snap} />
   {/each}

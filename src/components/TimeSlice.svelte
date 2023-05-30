@@ -10,7 +10,10 @@
 </script>
 
 <ListBoxItem
-  on:click={() => setSelected(_id)}
+  
+  on:click={() => {
+    setSelected(_id);
+    jump(_id)}}
   bind:group={singleValue}
   name="medium"
   value={_id}
@@ -22,5 +25,5 @@
       {change.value1} => {change.value2}
     </p>
   {/each}
-  <button on:click={() => jump(snap._id)}>Jump</button>
 </ListBoxItem>
+
