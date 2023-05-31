@@ -1,17 +1,17 @@
 <script lang="ts">
-  import { selected, process_ctx } from '../store'
+  import { selected, process_ctx } from '../store';
 
-  let state = []
+  let state = [];
   $: {
     if ($selected) {
-      state = process_ctx($selected.detail.ctx)
+      state = process_ctx($selected.detail.ctx);
     }
   }
 </script>
 
 {#if state.length}
   <div class="max-h-full grow items-center content-center flex-col flex pt-3">
-    {#each state as pair}
+    {#each state as pair (pair.id)}
       <div class="w-fit text-left self-center">
         {pair.key}: {#if !Array.isArray(pair.value) && typeof pair.value === 'object'}
           <span>
