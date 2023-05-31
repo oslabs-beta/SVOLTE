@@ -14,15 +14,19 @@ Svolte is an open source Chrome developer tool for time travel debugging and com
 ## Features
 
 **Component Hierarchy and Props Visualization**
+
 Visualize the hierarchy of your Svelte app and check the props of each component.
 
 **Record and Inspect Component State Snapshots**
+
 Record the states of your components to see how each state has changed.
 
 **Jumping**
+
 Jump through each snapshot to recreate state changes.
 
 **Skipping**
+
 Have a snapshot you want to skip? Simply toggle skip to ignore that snapshot when you jump.
 
 ## Getting Started
