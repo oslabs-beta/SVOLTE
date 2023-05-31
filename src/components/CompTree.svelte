@@ -149,6 +149,7 @@
         let varTextContent = '';
         let propTextContent = '';
         let elCounter = 0;
+        if (d.data.variables) elCounter += 2;
         for (const el of d.data.variables){
           if (typeof el.value === "object") {
             for (const [key, value] of Object.entries(el.value)) { 
@@ -190,16 +191,15 @@
           .select("div").style("opacity", 1)
           .style("padding", "10px 5px 15px 15px")
           .html(`Variables<hr>${varTextContent}Props<hr>${propTextContent}`);
-        const rectWidth =  Math.max(Math.ceil(textLength*10.5));
+        const rectWidth =  Math.ceil(textLength*12);
         console.log('this is textLength: ', textLength)
-        const rectHeight = Math.max(70, Math.ceil(elCounter * 50) + 20);
+        const rectHeight = Math.ceil(elCounter * 35);
         console.log('this is elCounter: ', elCounter, 'this is it *60: ', elCounter*60)
-        textDiv.style("width", `${((rectWidth*0.93)/945)*110}vh`);
+        textDiv.style("width", `${((rectWidth*0.93)/1500)*110}vw`);
         textDiv.style("height", `${((rectHeight*0.9)/945)*100}vh`);
-
-        d3.select(this.parentNode).select("rect").attr("width", rectWidth);
-        d3.select(this.parentNode).select("rect").attr("height", rectHeight)
-        d3.select(this.parentNode).select("foreignObject").attr("width", `${((textLength * 80)/945)*100}vh`);
+        d3.select(this.parentNode).select("rect").attr("width", `${(rectWidth/1500)*100}vw`);
+        d3.select(this.parentNode).select("rect").attr("height", `${(rectHeight/945)*110}vh`)
+        d3.select(this.parentNode).select("foreignObject").attr("width", `${((textLength * 10.5)/1500)*100}vw`);
         d3.select(this.parentNode).select('rect').style('opacity', 1);
         //handling text bug
         console.log('d3 select this.parentNode: ', d3.select(this.parentNode))
