@@ -45,7 +45,7 @@ This extension is only compatible with Svelte projects running in `development m
 
 ## Manual Installation for Developers
 
-Fork and clone this repository into your local machine. Once that is done, simply run the command `npm run build` to build the dev tool. Finally, making sure you toggle Developer mode `on` in your Chrome browser, you can load unpack the extension folder (located in the root level of the repository).
+Fork and clone this repository into your local machine. Once that is done, run the commands `npm i` and `npm run build` to download the dependencies and build the dev tool. Finally, making sure you toggle Developer mode `on` in your Chrome browser, you can load unpack the extension folder (located in the root level of the repository).
 
 # How to Use
 
