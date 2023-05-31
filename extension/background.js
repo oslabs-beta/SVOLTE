@@ -1,6 +1,5 @@
 //SERVICE WORKER
 
-console.log(chrome.runtime.id);
 let ext;
 let tabid;
 let key;
@@ -12,26 +11,12 @@ chrome.runtime.onMessage.addListener((message, sender, res) => {
 
 const connections = {};
 
-// function startPanel() {
-//   chrome.devtools.panels.create('SVOLTE', '/icons/128.png', './devtools/panel/panel.html');
-// }
-
-// chrome.runtime.onInstalled.addListener(()=>{
-//   //right click context menu option
-//   chrome.contextMenus.create({
-//       id : "SVOLTE",
-//       title : "SVOLTE",
-//       contexts : ["all"]
-//   }, startPanel)
-// })
-
 chrome.runtime.onConnect.addListener(function (port) {
 
   const extensionListener = function (message, sender, sendResponse) {
   // The original connection event doesn't include the tab ID of the
   // DevTools page, so we need to send it explicitly.
   if (message.type === 'INIT') {
-    console.log('message type INIT received in background.js')
     port.postMessage({ 
       source: "background.js",
       type: "postMessage - INIT"
@@ -43,7 +28,6 @@ chrome.runtime.onConnect.addListener(function (port) {
     return;
   }
   if (message.type === 'INJECT') {
-    console.log('message type INJECT received in background.js')
     port.postMessage({ 
       source: "background.js",
       type: "postMessage - INJECT",
@@ -53,7 +37,6 @@ chrome.runtime.onConnect.addListener(function (port) {
   }
   // other message handling
   if (message.type === 'RELOAD') {
-    console.log('RELOADING webpage');
     chrome.tabs.reload(message.tabId, { bypassCache: true });
   }
     return;

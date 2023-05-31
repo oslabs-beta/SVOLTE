@@ -4,7 +4,6 @@
   import { onMount, afterUpdate } from 'svelte'
 
 
-  console.log('imported root: ', $rootNodes[0]);
   const rootNode = $rootNodes[0];
 
   /* states and locally defined variables are in ctx property
@@ -73,17 +72,14 @@
   
   
       // output: this is the tree data we will use (see tree data template above)
-      // console.log('root parser output: ', output);
       return output;
     // }
   }
 
   if ( $rootNodes[0]) {
     const parsedData = rootParser($rootNodes[0]);
-    console.log('result of parsing ', parsedData);
     treeData.set(parsedData);
   };
-  console.log('tree data after parsing ', $treeData);
 
 // dummy data
   // treeData.set({
@@ -197,7 +193,6 @@
       let textLength = 0;
       let textContent = '';
       for (const el of d.data.variables){
-        console.log('el: ', el)
         if (!el.value.source){
           if (typeof el.value === "object") {
             for (const [key, value] of Object.entries(el.value)) { 
@@ -212,8 +207,6 @@
           }
         }
       }
-      console.log('d.data.variables: ', d.data.variables)
-      console.log('d.data.name: ', d.data.name, 'textLength: ', textLength, 'textContent: ', textContent)
       d3.select(this.parentNode).select("foreignObject").select("div").style("opacity", 1).style("padding", "10px 5px 15px 15px").html(`Variables<hr>${textContent}`);
       const rectWidth = textLength * 80;
       const rectHeight = Math.max(70, Math.ceil(textLength * 1.7));
@@ -230,7 +223,6 @@
 
 
     circleSVG.on("mouseout", function(event, d) {
-      // console.log('d3.select(this.parentNode): ', d3.select(this.parentNode))
       d3.select(this.parentNode).select('foreignObject').select('div').style("opacity", 0);
       d3.select(this.parentNode).select('rect').style('opacity', 0);
     });
@@ -310,16 +302,11 @@
         d._children = d.children;
         d.children = null;
         d3.select(this)._groups[0][0].querySelector('circle').style.fill = '#A0FFA1';
-        // console.log('d3this lv 2: ', d3.select(this)._groups[0][0])
-        // console.log('d3 this no level: ', d3.select(this))
       } else {
         d.children = d._children;
         d._children = null;
         d3.select(this)._groups[0][0].querySelector('circle').style.fill = '#A0FFFE';
-        // console.log('d3this lv 2: ', d3.select(this)._groups[0][0])
-        // console.log('d3 this no level: ', d3.select(this))
       }
-      console.log('d: ', d);
       update(d);
     }
 
@@ -336,7 +323,6 @@ onMount(() => {
   root = d3.hierarchy($treeData, d => d.children);
   root.x0 = height / 2;
   root.y0 = 0
-  console.log('root ', root);
   if($treeData){
       svg = d3
     .select("#body")

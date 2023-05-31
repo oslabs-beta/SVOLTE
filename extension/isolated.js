@@ -9,11 +9,11 @@ window.addEventListener('message', (msg) => {
     return;
   } else {
     chrome.runtime.sendMessage(msg.data, (res) => {
-      return
+      return;
     });
   }
 });
 
 window.addEventListener('unload', () => chrome.runtime.sendMessage({ type: 'clear' }));
 
-chrome.runtime.onMessage.addListener()
+chrome.runtime.onMessage.addListener();
