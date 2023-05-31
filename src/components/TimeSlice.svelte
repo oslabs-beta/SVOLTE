@@ -1,10 +1,7 @@
 <script lang="ts">
   import { ListBoxItem, SlideToggle } from '@skeletonlabs/skeleton'
   import { jump, skipArr } from '../store'
-  export let diff
-  export let tagName
-  export let detail
-  export let _id
+  export let diff, tagName, detail, _id
   export let setSelected
   export let singleValue
   let value: boolean = false

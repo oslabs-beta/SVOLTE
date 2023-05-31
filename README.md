@@ -1,47 +1,93 @@
-# Svelte + TS + Vite
+# Svolte Overview
 
-This template should help get you started developing with Svelte and TypeScript in Vite.
+Svolte is an open source Chrome developer tool for time travel debugging and component hierarchy visualization in Svelte applications. Svolte enables developers to record snapshots of component states, visualize component props, inspect and jump between snapshots. Svolte is the first Svelte time travel debugger that is compatible with writable stores.
 
-## Recommended IDE Setup
+<img src="https://img.shields.io/badge/Google_chrome-4285F4?style=for-the-badge&logo=Google-chrome&logoColor=white"/>
+<img src="https://img.shields.io/badge/Svelte-4A4A55?style=for-the-badge&logo=svelte&logoColor=FF3E00"/>
+<img src="https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white"/>
+<img src="https://img.shields.io/badge/d3.js-F9A03C?style=for-the-badge&logo=d3.js&logoColor=white">
+<img src="https://img.shields.io/badge/Vite-B73BFE?style=for-the-badge&logo=vite&logoColor=FFD62E">
 
-[VS Code](https://code.visualstudio.com/) + [Svelte](https://marketplace.visualstudio.com/items?itemName=svelte.svelte-vscode).
+## Features
 
-## Need an official Svelte framework?
+**_Component Hierarchy and Props Visualization_**
+Visualize the hierarchy of your Svelte app and check the props of each component.
 
-Check out [SvelteKit](https://github.com/sveltejs/kit#readme), which is also powered by Vite. Deploy anywhere with its serverless-first approach and adapt to various platforms, with out of the box support for TypeScript, SCSS, and Less, and easily-added support for mdsvex, GraphQL, PostCSS, Tailwind CSS, and more.
+**_Record and Inspect Component State Snapshots_**
+Record the states of your components to see how each state has changed.
 
-## Technical considerations
+**_Jumping_**
+Jump through each snapshot to recreate state changes.
 
-**Why use this over SvelteKit?**
+**_Skipping_**
+Have a snapshot you want to skip? Simply toggle skip to ignore that snapshot when you jump.
 
-- It brings its own routing solution which might not be preferable for some users.
-- It is first and foremost a framework that just happens to use Vite under the hood, not a Vite app.
+## Getting Started
 
-This template contains as little as possible to get started with Vite + TypeScript + Svelte, while taking into account the developer experience with regards to HMR and intellisense. It demonstrates capabilities on par with the other `create-vite` templates and is a good starting point for beginners dipping their toes into a Vite + Svelte project.
+**Download from the Chrome Store**
 
-Should you later need the extended capabilities and extensibility provided by SvelteKit, the template has been structured similarly to SvelteKit so that it is easy to migrate.
+Download the chrome extension [here](https://github.com/rixo/svelte-hmr#svelte-hmr).
 
-**Why `global.d.ts` instead of `compilerOptions.types` inside `jsconfig.json` or `tsconfig.json`?**
+This extension is only compatible with Svelte projects running in `development mode`, so be sure to check that configuration if you are not starting up your project with `npm run dev`.
 
-Setting `compilerOptions.types` shuts out all other types not explicitly listed in the configuration. Using triple-slash references keeps the default TypeScript setting of accepting type information from the entire workspace, while also adding `svelte` and `vite/client` type information.
+**Manual Installation for Developers**
+Fork and clone this repository into your local machine. Once that is done, simply run the command `npm run build` to build the dev tool. Finally, making sure you toggle Developer mode `on` in your Chrome browser, you can load unpack the extension folder (located in the root level of the repository).
 
-**Why include `.vscode/extensions.json`?**
+## How to Use
 
-Other templates indirectly recommend extensions via the README, but this file allows VS Code to prompt the user to install the recommended extension upon opening the project.
+After installing the Chrome extension open up your project in Chrome, and be sure your Svelte application is running in `development mode`.
 
-**Why enable `allowJs` in the TS template?**
+Right click your application and `Inspect` or press `f12` to open up Chrome Dev Tools, and navigate to the Svolte panel (which may be hidden behind `>>` if you have too many tabs).
 
-While `allowJs: false` would indeed prevent the use of `.js` files in the project, it does not prevent the use of JavaScript syntax in `.svelte` files. In addition, it would force `checkJs: false`, bringing the worst of both worlds: not being able to guarantee the entire codebase is TypeScript, and also having worse typechecking for the existing JavaScript. In addition, there are valid use cases in which a mixed codebase may be relevant.
+You are then ready to debug your Svolte application!
 
-**Why is HMR not preserving my local component state?**
+## The Svolte Team
 
-HMR state preservation comes with a number of gotchas! It has been disabled by default in both `svelte-hmr` and `@sveltejs/vite-plugin-svelte` due to its often surprising behavior. You can read the details [here](https://github.com/rixo/svelte-hmr#svelte-hmr).
+1. Harry Vu • [LinkedIn](https://www.linkedin.com/in/hnvu/) • [GitHub](https://github.com/boilerpot)
+1. Scott Kim • [LinkedIn]() • [GitHub](https://github.com/skottcim)
+1. Ying-An Wang • [LinkedIn](https://www.linkedin.com/in/yingan-wang01/) • [GitHub](https://github.com/yingan-wang01)
+1. Petros Ogbamichael • [LinkedIn](https://www.linkedin.com/in/petros-ogbamichael/) • [GitHub](https://github.com/PetrosO123)
+<table>
+  <tr>
+    <td align="center">
+      <img src="https://avatars.githubusercontent.com/u/107030143?v=4"/>
+      <br />
+      <sub><b>Harry Vu</b></sub>
+      <br />
+      <a href="https://www.linkedin.com/in/hnvu/"><img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn Icon"/></a>
+      <a href="https://github.com/boilerpot"><img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white" alt="GitHub Icon"/></a>
+    </td>
+    <td align="center">
+      <img src="https://avatars.githubusercontent.com/u/121269905?v=4"/>
+      <br />
+      <sub><b>Scott Kim</b></sub>
+      <br />
+      <a href=""><img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn Icon"/></a>
+      <a href="https://github.com/skottcim"><img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white" alt="GitHub Icon"/></a>
+    </td>
+    <td align="center">
+      <img src="https://avatars.githubusercontent.com/u/122405088?v=4"/>
+      <br />
+      <sub><b>Ying-An Wang</b></sub>
+      <br />
+      <a href="https://www.linkedin.com/in/yingan-wang01/"><img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn Icon"/></a>
+      <a href="https://github.com/yingan-wang01"><img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white" alt="GitHub Icon"/></a>
+    </td>
+    <td align="center">
+      <img src="https://avatars.githubusercontent.com/u/106777128?v=4"/>
+      <br />
+      <sub><b>Petros Ogbamichael</b></sub>
+      <br />
+      <a href="https://www.linkedin.com/in/petros-ogbamichael/"><img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn Icon"/></a>
+      <a href="https://github.com/PetrosO123"><img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white" alt="GitHub Icon"/></a>
+    </td>
+  </tr>
+</table>
 
-If you have state that's important to retain within a component, consider creating an external store which would not be replaced by HMR.
+## Support
 
-```ts
-// store.ts
-// An extremely simple external store
-import { writable } from 'svelte/store'
-export default writable(0)
-```
+If you find Svolte to be useful please throw a :star2: our way and share this project with your Svelte developer friends!
+
+## License
+
+Svolte is developed under the [MIT license]().
