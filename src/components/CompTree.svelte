@@ -67,7 +67,7 @@
 
   let margin = { top: 20, right: 90, bottom: 20, left: 90 };
   let width = 960 - margin.left - margin.right;
-  let height = 500 - margin.top - margin.bottom;
+  let height = 600 - margin.top - margin.bottom;
 
   // create a tidy tree layout with specified size [height, width]
   const treeLayout = d3.tree()
@@ -78,13 +78,15 @@
   // transition duration
   let i = 0;
   const duration = 500;
-
+  //adding a counter so we can number the g nodes in the order they are incremented
+  //(will help us resolve a bug where nodes are superimposed over textboxes in onhover events later)
+  let counter = 0;
   function update(source) {
     const treeData = treeLayout(root)
 
     // nodes
     const nodes = treeData.descendants();
-    nodes.forEach(d => d.y = d.depth * 180);
+    nodes.forEach(d => d.y = d.depth * 150);
 
     const node = svg.selectAll('g.node').data(nodes, d => d.id || (d.id = ++ i));
 
@@ -94,6 +96,7 @@
       .append('g')
       .attr('class', 'node')
       .attr('transform', d => "translate(" + source.y0 + ", " + source.x0 + ")")
+      .attr('id', () => `${counter++}`)
       .on('click', click);
 
     const circleSVG = nodeEnter.append('circle')
@@ -107,7 +110,7 @@
       .attr("transform", "translate(-6, 4)");
 
     //adding component name to each node
-    nodeEnter
+    const text = nodeEnter
       .append('text')
       .attr('dy', '.35em')
       .attr('y', d => d.children || d._children ? -20 : 0)
@@ -121,6 +124,8 @@
       .attr("height", d => `${d.data.name.length * 81}px`)
       .attr("fill", "#F5F5F5")
       .style("opacity", 0)
+      .attr("rx", 10)
+      .attr("ry", 10)
 
     const enterSVG = gSVG.append("foreignObject")
       .attr("width", d => `${d.data.name.length * 80 + 10}px`)
@@ -149,14 +154,14 @@
             for (const [key, value] of Object.entries(el.value)) { 
               if (typeof value === "string") {
                 // textLength += value.length;
-                textLength = Math.max(textLength, `${el.value}`.length)
+                textLength = Math.max(textLength, `${el.value}`.length + `${el.key}`.length)
                 varTextContent += `${key} — ${value}<br>`; 
                 elCounter+=1;
               }
             }
           } else {
             // textLength += `${el.value}`.length;
-            textLength = Math.max(textLength, `${el.value}`.length)
+            textLength = Math.max(textLength, `${el.value}`.length + `${el.key}`.length)
             varTextContent += `${el.key}: ${el.value}<br>`; 
             elCounter+=1;;
           }
@@ -166,14 +171,14 @@
             for (const [key, value] of Object.entries(el.value)) { 
               if (typeof value === "string") {
                 // textLength += value.length;
-                textLength = Math.max(textLength, `${el.value}`.length)
+                textLength = Math.max(textLength, `${el.value}`.length + `${el.key}`.length)
                 propTextContent += `${key} — ${value}<br>`; 
                 elCounter+=1;
               }
             }
           } else {
             // textLength += `${el.value}`.length;
-            textLength = Math.max(textLength, `${el.value}`.length)
+            textLength = Math.max(textLength, `${el.value}`.length + `${el.key}`.length)
             propTextContent += `${el.key}: ${el.value}<br>`; 
             elCounter+=1;;
           }
@@ -185,8 +190,10 @@
           .select("div").style("opacity", 1)
           .style("padding", "10px 5px 15px 15px")
           .html(`Variables<hr>${varTextContent}Props<hr>${propTextContent}`);
-        const rectWidth =  Math.ceil(textLength*40);
-        const rectHeight = Math.max(70, Math.ceil(elCounter * 80));
+        const rectWidth =  Math.max(Math.ceil(textLength*10.5));
+        console.log('this is textLength: ', textLength)
+        const rectHeight = Math.max(70, Math.ceil(elCounter * 50) + 20);
+        console.log('this is elCounter: ', elCounter, 'this is it *60: ', elCounter*60)
         textDiv.style("width", `${rectWidth*0.9}px`);
         textDiv.style("height", `${rectHeight*0.9}px`);
 
@@ -194,14 +201,47 @@
         d3.select(this.parentNode).select("rect").attr("height", rectHeight)
         d3.select(this.parentNode).select("foreignObject").attr("width", `${textLength * 80}px`);
         d3.select(this.parentNode).select('rect').style('opacity', 1);
+        //handling text bug
+        console.log('d3 select this.parentNode: ', d3.select(this.parentNode))
+
+        //older solution, makes all other nodes clear
+        // d3.selectAll('circle').style('opacity', 0);
+        // d3.selectAll('text').style('opacity', 0);
+
+        d3.select(this).style('opacity', 1);
+        d3.select(this.parentNode).select('text').style('opacity', 1);
+        const currentNodeId = Number(this.parentNode.id);
+        d3.selectAll('g.node').each(function() {
+          const nodeId = this.id;
+          const nodeNumber = Number(nodeId);
+          if (nodeNumber > currentNodeId) {
+            d3.select(this).style('opacity', 0);
+          }
+        });
     });
 
 
 
 
     circleSVG.on("mouseout", function(event, d) {
+      //handling text bug
+
+      //older solution, makes all other nodes visible on hover (were previously not)
+      // d3.selectAll('circle').style('opacity', 1);
+      // d3.selectAll('text').style('opacity', 1)
+
+      //rest of code handling foreign object of current element's opacity
       d3.select(this.parentNode).select('foreignObject').select('div').style("opacity", 0);
       d3.select(this.parentNode).select('rect').style('opacity', 0);
+      const currentNodeId = Number(this.parentNode.id);
+      d3.selectAll('g.node').each(function() {
+          const nodeId = this.id;
+          const nodeNumber = Number(nodeId);
+          if (nodeNumber > currentNodeId) {
+            d3.select(this).style('opacity', 1);
+          }
+      });
+
     });
 
     
@@ -307,6 +347,13 @@ onMount(() => {
     data MUST be of an object and represent a root node
     returns an array of object(s) */
   root = d3.hierarchy($treeData, d => d.children);
+  root.each((d) => {
+    if (d.children) {
+      d.children.forEach((child, i) => {
+        child.data.originalOrder = i;
+      });
+    }
+  });
   root.x0 = height / 2;
   root.y0 = 0
   console.log('root ', root);
