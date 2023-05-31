@@ -1,18 +1,18 @@
 <script lang="ts">
-  import { snapShotHistory, selected } from '../store'
-  import type { SnapShot } from '../types'
-  import { ListBox } from '@skeletonlabs/skeleton'
-  import TimeSlice from './TimeSlice.svelte'
+  import { snapShotHistory, selected } from '../store';
+  import type { SnapShot } from '../types';
+  import { ListBox } from '@skeletonlabs/skeleton';
+  import TimeSlice from './TimeSlice.svelte';
 
-  let singleValue:number
+  let singleValue: number;
   $: {
     if ($selected) {
-      singleValue = $selected._id
+      singleValue = $selected._id;
     }
   }
-  let snap: SnapShot
+  let snap: SnapShot;
   function setSelected(id: number): void {
-    selected.set($snapShotHistory[id])
+    selected.set($snapShotHistory[id]);
   }
 </script>
 
@@ -25,5 +25,4 @@
 </div>
 
 <style>
-
 </style>

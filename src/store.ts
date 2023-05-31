@@ -24,15 +24,15 @@ export const pathStore = writable({
       } else {
         return { ...state, path: 'tree' };
       }
-    })
+    });
   },
-})
+});
 
 export function reload() {
   backgroundPageConnection.postMessage({
     type: 'RELOAD',
     tabId: devtools.inspectedWindow.tabId,
-  })
+  });
 }
 // ================================================================================
 //              MESSAGING
@@ -45,7 +45,7 @@ const backgroundPageConnection = runtime.connect();
 backgroundPageConnection.postMessage({
   type: 'INIT',
   tabId: devtools.inspectedWindow.tabId,
-})
+});
 
 // listen for messages from background
 backgroundPageConnection.onMessage.addListener((message: Message) => {
@@ -79,10 +79,10 @@ backgroundPageConnection.onMessage.addListener((message: Message) => {
         const targetNode = nodeMap.get(message.target);
         if (targetNode) insertNode(node, targetNode, message.anchor);
         else {
-          node.tagName = 'Root'
+          node.tagName = 'Root';
           rootNodes.set([node]);
         }
-      }, 100)
+      }, 100);
 
       break;
     }
@@ -94,8 +94,6 @@ backgroundPageConnection.onMessage.addListener((message: Message) => {
       addSnapShot(node, message);
 
       Object.assign(node, message.node);
-      // const selected = get(selectedNode);
-      // if (selected && selected.id == message.node.id) selectedNode.update(o => o);
 
       node.invalidate();
 
@@ -117,11 +115,7 @@ backgroundPageConnection.onMessage.addListener((message: Message) => {
       break;
     }
   }
-})
-
-// ================================================================================
-//
-// ================================================================================
+});
 
 // ================================================================================
 //
@@ -142,7 +136,21 @@ function insertNode(node: Node, target: Node, anchorId: number): void {
   target.invalidate();
 }
 
-function noop() {};
+function noop() {}
+
+function eventBubble(node) {
+  //return nearest component parent
+  if (node.type === 'component') {
+    return node;
+  }
+  while (node) {
+    if (node.parent?.type === 'component') {
+      break;
+    }
+    node = node.parent;
+  }
+  return node.parent;
+}
 
 // adds a snapshot of the components state and difference to an array of all our state changes (history)
 function addSnapShot(prevNode, message) {
@@ -158,6 +166,8 @@ function addSnapShot(prevNode, message) {
       node.diff = differences;
       node._id = get(snapShotHistory).length;
       snapShotHistory.update((prev) => [...prev, node]);
+
+      console.log('snap shot history is:', get(snapShotHistory));
       currentSnapShot.set(get(snapShotHistory).length - 1);
     }
     if (shaveCounter) --shaveCounter;
@@ -185,7 +195,7 @@ function compareObjects(
           path: [...path, key],
           value1: node1[key],
           value2: node2[key],
-        }) // Add the difference to the array
+        }); // Add the difference to the array
       }
     }
   }
@@ -234,7 +244,7 @@ export function jump(snapshotID) {
       if (get(skipArr).includes(i)) {
         continue;
       }
-
+      console.log('backwards');
       ++shaveCounter;
       const component_id = get(snapShotHistory)[i].id;
       const targetState = get(snapShotHistory)[i].detail.ctx;
@@ -242,7 +252,7 @@ export function jump(snapshotID) {
       devtools.inspectedWindow.eval(
         `window.SVOLTE_INJECT_STATE(${component_id}, '${JSONd_state}')`,
         (result, error) => console.log('result is ', result, 'error is ', error)
-      )
+      );
     }
   }
 
@@ -252,14 +262,16 @@ export function jump(snapshotID) {
       if (get(skipArr).includes(i)) {
         continue;
       }
+      console.log('forwards');
       ++shaveCounter;
       const component_id = get(snapShotHistory)[i].id;
+      console.log(component_id);
       const targetState = get(snapShotHistory)[i].detail.ctx;
       const JSONd_state = JSON.stringify(targetState).replaceAll('\\', '\\\\');
       devtools.inspectedWindow.eval(
         `window.SVOLTE_INJECT_STATE(${component_id}, '${JSONd_state}')`,
         (result, error) => console.log('result is ', result, 'error is ', error)
-      )
+      );
     }
   }
 

@@ -2,9 +2,9 @@
 
 window.addEventListener('message', (msg) => {
   if (
-    typeof msg !== "object" ||
+    typeof msg !== 'object' ||
     msg === null ||
-    msg.data?.source !== "content.js"
+    msg.data?.source !== 'content.js'
   ) {
     return;
   } else {
@@ -14,6 +14,8 @@ window.addEventListener('message', (msg) => {
   }
 });
 
-window.addEventListener('unload', () => chrome.runtime.sendMessage({ type: 'clear' }));
+window.addEventListener('unload', () =>
+  chrome.runtime.sendMessage({ type: 'clear' })
+);
 
 chrome.runtime.onMessage.addListener();

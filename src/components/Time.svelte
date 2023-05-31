@@ -1,6 +1,6 @@
 <script lang="ts">
-  import TimeSidePanel from './TimeSidePanel.svelte'
-  import TimeMainView from './TimeMainView.svelte'
+  import TimeSidePanel from './TimeSidePanel.svelte';
+  import TimeMainView from './TimeMainView.svelte';
 </script>
 
 <div class="flex max-h-full w-full">

@@ -21,7 +21,7 @@ function addViaMessage(node) {
     type: 'addNode',
     node: processNode(node),
     source: 'content.js',
-  })
+  });
 }
 
 // sends message which triggers updating of node
@@ -30,7 +30,7 @@ function updateViaMessage(node) {
     type: 'updateNode',
     node: processNode(node),
     source: 'content.js',
-  })
+  });
 }
 
 // sends message which triggers removal of node
@@ -39,7 +39,7 @@ function removeViaMessage(node) {
     type: 'removeNode',
     node: processNode(node),
     source: 'content.js',
-  })
+  });
 }
 
 // ========================================================================================
@@ -53,7 +53,7 @@ function processNode(node) {
     id: node.id,
     type: node.type,
     tagName: node.tagName,
-  }
+  };
 
   //check for component type node or text type node
   switch (node.type) {
@@ -66,7 +66,7 @@ function processNode(node) {
       const internal = node.detail.$$;
       const props = Array.isArray(internal.props)
         ? internal.props // Svelte < 3.13.0 stored props names as an array
-        : Object.keys(internal.props)
+        : Object.keys(internal.props);
       let ctx = clone(node.detail.$capture_state());
       if (ctx === undefined) ctx = {};
 
@@ -83,7 +83,7 @@ function processNode(node) {
             value.map((o) => ({ event, handler: o.toString() }))
         ),
         ctx: Object.entries(ctx).map(([key, value]) => ({ key, value })),
-      }
+      };
       break;
     }
 
@@ -100,7 +100,7 @@ function processNode(node) {
               handler: o.handler.toString(),
             }))
           : [],
-      }
+      };
       break;
     }
   }
@@ -152,7 +152,7 @@ function insert(element, target, anchor) {
     tagName: element.nodeName.toLowerCase(),
     parentBlock: currentBlock,
     children: [],
-  }
+  };
   addNode(node, target, anchor);
 
   for (const child of element.childNodes) {
@@ -208,7 +208,6 @@ function removeNode(node) {
 // ========================================================================================
 
 let currentBlock;
-
 function EVENT_CALLBACK_SvelteRegisterBlock(e) {
   const { type, id, block, ...detail } = e.detail;
   const tagName = type == 'pending' ? 'await' : type;
@@ -238,7 +237,7 @@ function EVENT_CALLBACK_SvelteRegisterBlock(e) {
           break;
 
         case 'component':
-          const componentNode = nodeMap.get(block)
+          const componentNode = nodeMap.get(block);
           if (componentNode) {
             nodeMap.delete(block);
             Object.assign(node, componentNode);
@@ -247,7 +246,7 @@ function EVENT_CALLBACK_SvelteRegisterBlock(e) {
               type: 'component',
               tagName: 'Unknown',
               detail: {},
-            })
+            });
             nodeMap.set(block, node);
           }
 
@@ -256,7 +255,7 @@ function EVENT_CALLBACK_SvelteRegisterBlock(e) {
               node.detail.$$ &&
               Object.keys(node.detail.$$.bound).length &&
               updateViaMessage(node)
-          )
+          );
           break;
       }
 
@@ -273,7 +272,7 @@ function EVENT_CALLBACK_SvelteRegisterBlock(e) {
             tagName: 'each',
             parentBlock,
             children: [],
-          }
+          };
           nodeMap.set(parentBlock.id + id, group);
           addNode(group, target, anchor);
         }
@@ -287,7 +286,7 @@ function EVENT_CALLBACK_SvelteRegisterBlock(e) {
       currentBlock = node;
       updateProfile(node, 'mount', mountFn, target, anchor);
       currentBlock = parentBlock;
-    }
+    };
   }
 
   if (block.p) {
@@ -301,7 +300,7 @@ function EVENT_CALLBACK_SvelteRegisterBlock(e) {
       updateProfile(currentBlock, 'patch', patchFn, changed, ctx);
 
       currentBlock = parentBlock;
-    }
+    };
   }
 
   if (block.d) {
@@ -316,7 +315,7 @@ function EVENT_CALLBACK_SvelteRegisterBlock(e) {
       }
 
       updateProfile(node, 'detach', detachFn, detaching);
-    }
+    };
   }
 }
 
@@ -325,7 +324,7 @@ function updateProfile(node, type, fn, ...args) {
 }
 
 //function is called when the 'SvelteRegisterComponent' event is dispatched
-function EVENT_CALLBACK_SvelteRegisterComponent (event) {
+function EVENT_CALLBACK_SvelteRegisterComponent(event) {
   const { component, tagName } = event.detail;
 
   //grab the content element associated with the node
@@ -344,7 +343,7 @@ function EVENT_CALLBACK_SvelteRegisterComponent (event) {
       type: 'component',
       detail: component,
       tagName,
-    })
+    });
   }
 }
 
@@ -376,9 +375,15 @@ function EVENT_CALLBACK_SvelteDOMRemove(event) {
 //          SETUP
 // ========================================================================================
 
-function SVOLTE_SETUP (root) {
-  root.addEventListener('SvelteRegisterBlock', EVENT_CALLBACK_SvelteRegisterBlock);
-  root.addEventListener('SvelteRegisterComponent', EVENT_CALLBACK_SvelteRegisterComponent);
+function SVOLTE_SETUP(root) {
+  root.addEventListener(
+    'SvelteRegisterBlock',
+    EVENT_CALLBACK_SvelteRegisterBlock
+  );
+  root.addEventListener(
+    'SvelteRegisterComponent',
+    EVENT_CALLBACK_SvelteRegisterComponent
+  );
   root.addEventListener('SvelteDOMInsert', EVENT_CALLBACK_SvelteDOMInsert);
   root.addEventListener('SvelteDOMSetData', EVENT_CALLBACK_SvelteDOMSetData);
   root.addEventListener('SvelteDOMRemove', EVENT_CALLBACK_SvelteDOMRemove);
@@ -391,13 +396,13 @@ window.SVOLTE_INJECT_STATE = function (component_id, state) {
   const targetComponentDetail = nodeMap.get(component_id).detail;
   const componentState = targetComponentDetail.$capture_state();
 
-
   const newState = processState(componentState, updated_ctx);
   targetComponentDetail.$inject_state(newState);
-}
+  console.log('capture state is ', targetComponentDetail.$capture_state());
+};
 
-function processState (state, ctx) {
-  // flatten ctx to be key : value 
+function processState(state, ctx) {
+  // flatten ctx to be key : value
   const flattened_ctx = {};
   for (const obj of ctx) flattened_ctx[obj.key] = obj.value;
 
@@ -406,10 +411,11 @@ function processState (state, ctx) {
 
   // new array that holds previous array keys without $
   const shavedBlingArray = blingArray.map((el) => el.slice(1));
-  
+
   // iterate through the array and invoke the set function within the state argument
   for (const index in shavedBlingArray) {
-    if (blingArray[index] in flattened_ctx) state[shavedBlingArray[index]].set(flattened_ctx[blingArray[index]]);
+    if (blingArray[index] in flattened_ctx)
+      state[shavedBlingArray[index]].set(flattened_ctx[blingArray[index]]);
   }
 
   const resultState = { ...state, ...flattened_ctx };
