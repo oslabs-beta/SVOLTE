@@ -7,10 +7,9 @@
   import { rootNodes } from './store'
   //use the store subscription prefix '$' in order to access the value from a store element
   //this must be done any time you have a reference to the store
-
   // Your selected Skeleton theme:
   // import '@skeletonlabs/skeleton/themes/theme-skeleton.css'
-  import '@skeletonlabs/skeleton/themes/theme-hamlindigo.css';
+  import '@skeletonlabs/skeleton/themes/theme-hamlindigo.css'
 
   // This contains the bulk of Skeletons required styles:
   // NOTE: this will be renamed skeleton.css in the v2.x release.
@@ -19,7 +18,18 @@
   // Finally, your application's global stylesheet (sometimes labeled 'app.css')
   import './app.postcss'
 
-  let tabSet = 0
+  let tabSet = 1
+
+  // let isReloading = JSON.parse(localStorage.getItem('isReloading'));
+  // // Reload the page once
+  // if (!isReloading) {
+  //   setTimeout(()=>{
+  //     location.reload();
+  //     isReloading = true;
+  //     localStorage.setItem('isReloading', JSON.stringify(isReloading));
+  //   }, 1000)
+
+  // }
 </script>
 
 
@@ -27,7 +37,7 @@
   <AppShell class="max-h-screen bg-gradient-to-t from-gray-800 to-slate-800 ...">
     <svelte:fragment slot="pageHeader">
       <AppBar class="pl-15 bg-gradient-to-b from-gray-800 to-slate-800 ...">
-      <img src="/images/svolte_banner.png" alt="svolte header"/>
+        <img src="/images/svolte_banner.png" alt="svolte header" />
       </AppBar>
     </svelte:fragment>
     
@@ -35,7 +45,7 @@
       <Tab bind:group={tabSet} name="tab1" value={0}>Component Tree</Tab>
       <Tab bind:group={tabSet} name="tab2" value={1}>Time Travel</Tab>
       <!-- Tab Panels --->
-  
+
       <svelte:fragment slot="panel">
         {#if tabSet === 0}
           <CompTree />

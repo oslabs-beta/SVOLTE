@@ -4,7 +4,7 @@
   import { ListBox } from '@skeletonlabs/skeleton'
   import TimeSlice from './TimeSlice.svelte'
 
-  let singleValue
+  let singleValue:number
   $: {
     if ($selected) {
       singleValue = $selected._id
