@@ -11,10 +11,6 @@
     linkStroke: "#FCFFAE",
   };
   
-  
-  console.log('imported root: ', $rootNodes[0]);
-  const rootNode = $rootNodes[0];
-
   /* states and locally defined variables are in ctx property
   props from a parent component are in attributes property */
   
@@ -55,41 +51,10 @@
       return output;
   }
 
-
-
   if ( $rootNodes[0]) {
     const parsedData = rootParser($rootNodes[0]);
     treeData.set(parsedData);
   };
-  console.log('tree data after parsing ', $treeData);
-
-// dummy data
-  // treeData.set({
-  //   "name": "Root",
-  //   "age": 10,
-  //   "nickname":'Tanner',
-  //   "children": [
-  //     { "name": "Counter1",
-  //       "age": 11,
-  //       "nickname":'Jake',
-  //       "children": [
-  //         { "name": "Increment",
-  //           "age": 12,
-  //           "nickname":'Alison'
-  //         }, 
-  //         { "name": "Decrement",
-  //           "age": 13,
-  //           "nickname":'Demetri',
-  //         }
-  //       ]
-  //     },
-  //     { "name": "Counter2",
-  //       "age": 14,
-  //       "nickname":'Tyson'
-  //     }
-  //   ]
-  // })
-
 
   let margin = { top: 20, right: 90, bottom: 20, left: 90 };
   let width = 960 - margin.left - margin.right;
@@ -98,8 +63,6 @@
   // create a tidy tree layout with specified size [height, width]
   const treeLayout = d3.tree()
     .size([height, width]);
-
-
   
   // transition duration
   let i = 0;
@@ -107,6 +70,7 @@
   //adding a counter so we can number the g nodes in the order they are incremented
   //(will help us resolve a bug where nodes are superimposed over textboxes in onhover events later)
   let counter = 0;
+
   function update(source) {
     const treeData = treeLayout(root)
 
@@ -167,8 +131,6 @@
       .style("word-wrap", "break-word")
       .style("font-family", "Arial");
 
-
-
       circleSVG.on("mouseover", function(event, d){
         let str = '';
         let textLength = 0;
@@ -209,17 +171,13 @@
             elCounter+=1;;
           }
         }
-        console.log('d.data.variables: ', d.data.variables)
-        console.log('d.data.name: ', d.data.name, 'textLength: ', textLength, 'varTextContent: ', varTextContent)
         d3.select(this.parentNode)
           .select("foreignObject")
           .select("div").style("opacity", 1)
           .style("padding", "10px 5px 15px 15px")
           .html(`Variables<hr>${varTextContent}Props<hr>${propTextContent}`);
         const rectWidth =  Math.max(Math.ceil(textLength*10.5));
-        console.log('this is textLength: ', textLength)
         const rectHeight = Math.max(70, Math.ceil(elCounter * 50) + 20);
-        console.log('this is elCounter: ', elCounter, 'this is it *60: ', elCounter*60)
         textDiv.style("width", `${rectWidth*0.9}px`);
         textDiv.style("height", `${rectHeight*0.9}px`);
 
@@ -228,7 +186,6 @@
         d3.select(this.parentNode).select("foreignObject").attr("width", `${textLength * 80}px`);
         d3.select(this.parentNode).select('rect').style('opacity', 1);
         //handling text bug
-        console.log('d3 select this.parentNode: ', d3.select(this.parentNode))
 
         //older solution, makes all other nodes clear
         // d3.selectAll('circle').style('opacity', 0);
@@ -245,9 +202,6 @@
           }
         });
     });
-
-
-
 
     circleSVG.on("mouseout", function(event, d) {
       //handling text bug
@@ -268,9 +222,7 @@
           }
       });
 
-    });
-
-    
+    }); 
     
     const nodeUpdate = nodeEnter.merge(node);
 
@@ -366,6 +318,7 @@
 //appends a 'group' element to 'svg'
 let svg;
 let root;
+
 onMount(() => {
 
   /* d3.hierarchy(data,[children]) assigns parent, child, height, depth
@@ -404,7 +357,4 @@ afterUpdate(() => {
 
 </script>
 
-
-<main id='body' style='overflow: auto;'>
-  
-</main>
+<main id='body' style='overflow: auto;'/>
