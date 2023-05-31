@@ -3,13 +3,12 @@
 Svolte is an open source Chrome developer tool for time travel debugging and component hierarchy visualization in Svelte applications. Svolte enables developers to record snapshots of component states, visualize component props, inspect and jump between snapshots. Svolte is the first Svelte time travel debugger that is compatible with writable stores.
 
 **Developed with**
-
-<img src="https://img.shields.io/badge/Google_chrome-4285F4?style=for-the-badge&logo=Google-chrome&logoColor=white"/>
-<img src="https://img.shields.io/badge/Svelte-4A4A55?style=for-the-badge&logo=svelte&logoColor=FF3E00"/>
-<img src="https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white"/>
-<img src="https://img.shields.io/badge/d3.js-F9A03C?style=for-the-badge&logo=d3.js&logoColor=white">
-<img src="https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white">
-<img src="https://img.shields.io/badge/Vite-B73BFE?style=for-the-badge&logo=vite&logoColor=FFD62E">
+![Google Chrome](https://img.shields.io/badge/Google_chrome-4285F4?style=for-the-badge&logo=Google-chrome&logoColor=white)
+![Svelte](https://img.shields.io/badge/Svelte-4A4A55?style=for-the-badge&logo=svelte&logoColor=FF3E00)
+![Typescript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
+![D3.js](https://img.shields.io/badge/d3.js-F9A03C?style=for-the-badge&logo=d3.js&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-B73BFE?style=for-the-badge&logo=vite&logoColor=FFD62E)
 
 ## Features
 
@@ -50,7 +49,7 @@ You are then ready to debug your Svolte application!
 <table>
   <tr>
     <td align="center">
-      <img src="https://avatars.githubusercontent.com/u/107030143?v=4" height="175"/>
+      <img src="https://avatars.githubusercontent.com/u/107030143?v=4" width="175" height="175"/>
       <br />
       <sub><b>Harry Vu</b></sub>
       <br />
@@ -58,7 +57,7 @@ You are then ready to debug your Svolte application!
       <a href="https://github.com/boilerpot"><img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white" alt="GitHub Icon"/></a>
     </td>
     <td align="center">
-      <img src="https://avatars.githubusercontent.com/u/121269905?v=4" height="175"/>
+      <img src="https://avatars.githubusercontent.com/u/121269905?v=4" width="175" height="175"/>
       <br />
       <sub><b>Scott Kim</b></sub>
       <br />
@@ -66,7 +65,7 @@ You are then ready to debug your Svolte application!
       <a href="https://github.com/skottcim"><img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white" alt="GitHub Icon"/></a>
     </td>
     <td align="center">
-      <img src="https://avatars.githubusercontent.com/u/122405088?v=4" height="175"/>
+      <img src="https://avatars.githubusercontent.com/u/122405088?v=4" width="175" height="175"/>
       <br />
       <sub><b>Ying-An Wang</b></sub>
       <br />
@@ -74,7 +73,7 @@ You are then ready to debug your Svolte application!
       <a href="https://github.com/yingan-wang01"><img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white" alt="GitHub Icon"/></a>
     </td>
     <td align="center">
-      <img src="https://avatars.githubusercontent.com/u/106777128?v=4" height="175"/>
+      <img src="https://avatars.githubusercontent.com/u/106777128?v=4" width="175" height="175"/>
       <br />
       <sub><b>Petros Ogbamichael</b></sub>
       <br />
