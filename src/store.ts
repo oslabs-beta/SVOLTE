@@ -1,18 +1,18 @@
-import { writable, get } from 'svelte/store'
-import type { Writable } from 'svelte/store'
-import type { Message, Node, SnapShot, Difference } from './types'
-const { devtools, runtime } = chrome
+import { writable, get } from 'svelte/store';
+import type { Writable } from 'svelte/store';
+import type { Message, Node, SnapShot, Difference } from './types';
+const { devtools, runtime } = chrome;
 
-const nodeMap = new Map()
-export const rootNodes: Writable<Node[]> = writable([])
-export const snapShotHistory: Writable<SnapShot[]> = writable([])
-export const selected: Writable<SnapShot> = writable(null)
-export const skipArr: Writable<number[]> = writable([])
-let currentSnapShot: number = 0
-let shaveCounter: number = 0
+const nodeMap = new Map();
+export const rootNodes: Writable<Node[]> = writable([]);
+export const snapShotHistory: Writable<SnapShot[]> = writable([]);
+export const selected: Writable<SnapShot> = writable(null);
+export const skipArr: Writable<number[]> = writable([]);
+let currentSnapShot: number = 0;
+let shaveCounter: number = 0;
 
 //we want to dynamically add to treeData
-export const treeData = writable({})
+export const treeData = writable({});
 
 // switch between tree and time travel panels
 export const pathStore = writable({
@@ -20,126 +20,120 @@ export const pathStore = writable({
   setPath: () => {
     pathStore.update((state) => {
       if (state.path === 'tree') {
-        return { ...state, path: 'time' }
+        return { ...state, path: 'time' };
       } else {
-        return { ...state, path: 'tree' }
+        return { ...state, path: 'tree' };
       }
-    })
+    });
   },
-})
+});
 
 export function reload() {
   backgroundPageConnection.postMessage({
     type: 'RELOAD',
     tabId: devtools.inspectedWindow.tabId,
-  })
+  });
 }
 // ================================================================================
 //              MESSAGING
 // ================================================================================
 
 // establish connection
-const backgroundPageConnection = runtime.connect()
+const backgroundPageConnection = runtime.connect();
 
 // message background with tabID
 backgroundPageConnection.postMessage({
   type: 'INIT',
   tabId: devtools.inspectedWindow.tabId,
-})
+});
 
 // listen for messages from background
 backgroundPageConnection.onMessage.addListener((message: Message) => {
   switch (message.type) {
     // used when refreshing page or disconnecting
     case 'clear': {
-      rootNodes.set([])
-      break
+      rootNodes.set([]);
+      break;
     }
 
     // add nodes to the nodeMap
     case 'addNode': {
-      const node: Node = message.node
-      node.children = []
+      const node: Node = message.node;
+      node.children = [];
       // node.collapsed = true;
-      node.invalidate = noop
+      node.invalidate = noop;
       // resolveEventBubble(node);
 
-      const targetNode = nodeMap.get(message.target)
-      nodeMap.set(node.id, node)
+      const targetNode = nodeMap.get(message.target);
+      nodeMap.set(node.id, node);
 
       if (targetNode) {
-        insertNode(node, targetNode, message.anchor)
-        return
+        insertNode(node, targetNode, message.anchor);
+        return;
       }
 
-      if (node._timeout) return
+      if (node._timeout) return;
 
       node._timeout = setTimeout(() => {
-        delete node._timeout
-        const targetNode = nodeMap.get(message.target)
-        if (targetNode) insertNode(node, targetNode, message.anchor)
+        delete node._timeout;
+        const targetNode = nodeMap.get(message.target);
+        if (targetNode) insertNode(node, targetNode, message.anchor);
         else {
-          node.tagName = 'Root'
-          rootNodes.set([node])
+          node.tagName = 'Root';
+          rootNodes.set([node]);
         }
-      }, 100)
+      }, 100);
 
-      break
+      break;
     }
 
     // update nodes within the nodeMap
     case 'updateNode': {
-      const node = nodeMap.get(message.node.id)
+      const node = nodeMap.get(message.node.id);
 
-      addSnapShot(node, message)
+      addSnapShot(node, message);
 
-      Object.assign(node, message.node)
-      // const selected = get(selectedNode);
-      // if (selected && selected.id == message.node.id) selectedNode.update(o => o);
+      Object.assign(node, message.node);
 
-      node.invalidate()
+      node.invalidate();
 
-      break
+      break;
     }
 
     // remove nodes from the nodeMap
     case 'removeNode': {
-      const node = nodeMap.get(message.node.id)
-      nodeMap.delete(node.id)
+      const node = nodeMap.get(message.node.id);
+      nodeMap.delete(node.id);
 
-      if (!node.parent) break
+      if (!node.parent) break;
 
-      const index = node.parent.children.findIndex((o) => o.id == node.id)
-      node.parent.children.splice(index, 1)
+      const index = node.parent.children.findIndex((o) => o.id == node.id);
+      node.parent.children.splice(index, 1);
 
-      node.parent.invalidate()
+      node.parent.invalidate();
 
-      break
+      break;
     }
   }
-})
-
-// ================================================================================
-//
-// ================================================================================
+});
 
 // ================================================================================
 //
 // ================================================================================
 
 function insertNode(node: Node, target: Node, anchorId: number): void {
-  node.parent = target
+  node.parent = target;
 
-  let index = -1
-  if (anchorId) index = target.children.findIndex((o) => o.id == anchorId)
+  let index = -1;
+  if (anchorId) index = target.children.findIndex((o) => o.id == anchorId);
 
   if (index != -1) {
-    target.children.splice(index, 0, node)
+    target.children.splice(index, 0, node);
   } else {
-    target.children.push(node)
+    target.children.push(node);
   }
 
-  target.invalidate()
+  target.invalidate();
 }
 
 function noop() {}
@@ -147,36 +141,36 @@ function noop() {}
 function eventBubble(node) {
   //return nearest component parent
   if (node.type === 'component') {
-    return node
+    return node;
   }
   while (node) {
     if (node.parent?.type === 'component') {
-      break
+      break;
     }
-    node = node.parent
+    node = node.parent;
   }
-  return node.parent
+  return node.parent;
 }
 
 // adds a snapshot of the components state and difference to an array of all our state changes (history)
 function addSnapShot(prevNode, message) {
-  const { node } = message
+  const { node } = message;
   if (
     node.type === 'component' &&
     node.tagName !== 'Root' &&
     node.tagName !== 'Unknown'
   ) {
-    const differences: Array<Difference> = []
-    compareObjects(prevNode.detail.ctx, node.detail.ctx, differences)
+    const differences: Array<Difference> = [];
+    compareObjects(prevNode.detail.ctx, node.detail.ctx, differences);
     if (differences.length && !shaveCounter) {
-      node.diff = differences
-      node._id = get(snapShotHistory).length
-      snapShotHistory.update((prev) => [...prev, node])
+      node.diff = differences;
+      node._id = get(snapShotHistory).length;
+      snapShotHistory.update((prev) => [...prev, node]);
 
-      console.log('snap shot history is:', get(snapShotHistory))
-      currentSnapShot = get(snapShotHistory).length - 1
+      console.log('snap shot history is:', get(snapShotHistory));
+      currentSnapShot = get(snapShotHistory).length - 1;
     }
-    if (shaveCounter) --shaveCounter
+    if (shaveCounter) --shaveCounter;
   }
 }
 
@@ -188,12 +182,12 @@ function compareObjects(
 ) {
   for (const key in node1) {
     if (typeof node1[key] === 'function') {
-      continue // Ignore functions
+      continue; // Ignore functions
     }
 
     if (typeof node1[key] === 'object' && typeof node2[key] === 'object') {
-      const newPath = [...path, key]
-      compareObjects(node1[key], node2[key], differences, newPath) // Recursively compare nested objects
+      const newPath = [...path, key];
+      compareObjects(node1[key], node2[key], differences, newPath); // Recursively compare nested objects
     } else {
       if (node1[key] !== node2[key]) {
         differences.push({
@@ -201,7 +195,7 @@ function compareObjects(
           path: [...path, key],
           value1: node1[key],
           value2: node2[key],
-        }) // Add the difference to the array
+        }); // Add the difference to the array
       }
     }
   }
@@ -212,23 +206,23 @@ export function process_ctx(ctx_array: any[]): any[] {
   // helper function that returns boolean based on if the element contains a function
   function hasFunction(obj) {
     if (typeof obj !== 'object' || obj === null) {
-      return false
+      return false;
     }
 
     if (obj.__isFunction) {
-      return true
+      return true;
     }
 
     for (const key in obj) {
       if (typeof obj[key] === 'function' || hasFunction(obj[key])) {
-        return true
+        return true;
       }
     }
-    return false
+    return false;
   }
 
   // new array to hold processed ctx elements
-  const processed_ctx = []
+  const processed_ctx = [];
 
   // iterate through the given ctx array and check for functions
   if (ctx_array.length) {
@@ -244,23 +238,23 @@ export function process_ctx(ctx_array: any[]): any[] {
 // as we iterate through, undo the state changes from slice to slice
 export function jump(snapshotID) {
   // counter that indicates how many elements to shave off the history array as we are adding unnecessary events by jumping
-  shaveCounter = 0
+  shaveCounter = 0;
 
   // going backwards in time
   if (currentSnapShot > snapshotID) {
     for (let i = currentSnapShot - 1; i >= snapshotID; i--) {
       if (get(skipArr).includes(i)) {
-        continue
+        continue;
       }
-      console.log('backwards')
-      ++shaveCounter
-      const component_id = get(snapShotHistory)[i].id
-      const targetState = get(snapShotHistory)[i].detail.ctx
-      const JSONd_state = JSON.stringify(targetState).replaceAll('\\', '\\\\')
+      console.log('backwards');
+      ++shaveCounter;
+      const component_id = get(snapShotHistory)[i].id;
+      const targetState = get(snapShotHistory)[i].detail.ctx;
+      const JSONd_state = JSON.stringify(targetState).replaceAll('\\', '\\\\');
       devtools.inspectedWindow.eval(
         `window.SVOLTE_INJECT_STATE(${component_id}, '${JSONd_state}')`,
         (result, error) => console.log('result is ', result, 'error is ', error)
-      )
+      );
     }
   }
 
@@ -268,21 +262,21 @@ export function jump(snapshotID) {
   else if (currentSnapShot < snapshotID) {
     for (let i = currentSnapShot + 1; i <= snapshotID; i++) {
       if (get(skipArr).includes(i)) {
-        continue
+        continue;
       }
-      console.log('forwards')
-      ++shaveCounter
-      const component_id = get(snapShotHistory)[i].id
-      console.log(component_id)
-      const targetState = get(snapShotHistory)[i].detail.ctx
-      const JSONd_state = JSON.stringify(targetState).replaceAll('\\', '\\\\')
+      console.log('forwards');
+      ++shaveCounter;
+      const component_id = get(snapShotHistory)[i].id;
+      console.log(component_id);
+      const targetState = get(snapShotHistory)[i].detail.ctx;
+      const JSONd_state = JSON.stringify(targetState).replaceAll('\\', '\\\\');
       devtools.inspectedWindow.eval(
         `window.SVOLTE_INJECT_STATE(${component_id}, '${JSONd_state}')`,
         (result, error) => console.log('result is ', result, 'error is ', error)
-      )
+      );
     }
   }
 
   //set our current place in time to where we just traveled to
-  currentSnapShot = snapshotID
+  currentSnapShot = snapshotID;
 }

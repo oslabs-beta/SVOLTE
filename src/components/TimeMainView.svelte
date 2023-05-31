@@ -1,10 +1,10 @@
 <script lang="ts">
-  import { selected, process_ctx } from '../store'
+  import { selected, process_ctx } from '../store';
 
-  let state = []
+  let state = [];
   $: {
     if ($selected) {
-      state = process_ctx($selected.detail.ctx)
+      state = process_ctx($selected.detail.ctx);
     }
   }
 </script>

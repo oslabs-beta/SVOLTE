@@ -1,22 +1,22 @@
 <script lang="ts">
-  import { ListBoxItem, SlideToggle } from '@skeletonlabs/skeleton'
-  import { jump, skipArr } from '../store'
-  export let diff, tagName, detail, _id
-  export let setSelected
-  export let singleValue
-  let value: boolean = false
+  import { ListBoxItem, SlideToggle } from '@skeletonlabs/skeleton';
+  import { jump, skipArr } from '../store';
+  export let diff, tagName, detail, _id;
+  export let setSelected;
+  export let singleValue;
+  let value: boolean = false;
   $: {
     if (value) {
-      skipArr.update((prev) => [...prev, _id])
+      skipArr.update((prev) => [...prev, _id]);
     } else {
-      skipArr.update((prev) => prev.filter((id) => id !== _id))
+      skipArr.update((prev) => prev.filter((id) => id !== _id));
     }
   }
 </script>
 
 <ListBoxItem
   on:click={() => {
-    setSelected(_id)
+    setSelected(_id);
   }}
   bind:group={singleValue}
   name="medium"
