@@ -15,39 +15,39 @@ Svolte is an open source Chrome developer tool for time travel debugging and com
 ![Vite](https://img.shields.io/badge/Vite-B73BFE?style=for-the-badge&logo=vite&logoColor=FFD62E)
 ![Google Chrome](https://img.shields.io/badge/Google_chrome-4285F4?style=for-the-badge&logo=Google-chrome&logoColor=white)
 
-## Features
+# Features
 
-**Component Hierarchy and Props Visualization**
+## Component Hierarchy and Props Visualization
 
 Visualize the hierarchy of your Svelte app and check the props of each component.
 
-**Record and Inspect Component State Snapshots**
+## Record and Inspect Component State Snapshots
 
 Record the states of your components to see how each state has changed.
+
 <img src="/assets/inspectState.gif" alt="state inspection gif"/>
 
-**Jumping**
+## Jumping and Skipping
 
-Jump through each snapshot to recreate state changes.
+* Jump through each snapshot to recreate state changes.
 
-**Skipping**
+* Have a snapshot you want to skip? Simply toggle skip to ignore that snapshot when you jump.
 
-Have a snapshot you want to skip? Simply toggle skip to ignore that snapshot when you jump.
 <img src="/assets/timeTravel.gif" alt="time travel gif"/>
 
-## Getting Started
+# Getting Started
 
-**Download from the Chrome Store**
+## Download from the Chrome Store
 
 Download the chrome extension [here](https://github.com/rixo/svelte-hmr#svelte-hmr).
 
 This extension is only compatible with Svelte projects running in `development mode`, so be sure to check that configuration if you are not starting up your project with `npm run dev`.
 
-**Manual Installation for Developers**
+## Manual Installation for Developers
 
 Fork and clone this repository into your local machine. Once that is done, simply run the command `npm run build` to build the dev tool. Finally, making sure you toggle Developer mode `on` in your Chrome browser, you can load unpack the extension folder (located in the root level of the repository).
 
-## How to Use
+# How to Use
 
 After installing the Chrome extension open up your project in Chrome, and be sure your Svelte application is running in `development mode`.
 
@@ -57,7 +57,7 @@ You are then ready to debug your Svolte application!
 
 <img src="/assets/openDev.gif" alt="open dev gif"/>
 
-## The Svolte Team
+# The Svolte Team
 
 <table>
   <tr>
@@ -96,10 +96,10 @@ You are then ready to debug your Svolte application!
   </tr>
 </table>
 
-## Support
+# Support
 
 If you find Svolte to be useful please throw a :star2: our way and share this project with your Svelte developer friends!
 
-## License
+# License
 
 Svolte is developed under the [MIT license](/LICENSE).
