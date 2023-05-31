@@ -18,7 +18,7 @@
   // Finally, your application's global stylesheet (sometimes labeled 'app.css')
   import './app.postcss'
 
-  let tabSet = 1
+  let tabSet = 0;
 
   // let isReloading = JSON.parse(localStorage.getItem('isReloading'));
   // // Reload the page once
