@@ -22,15 +22,16 @@
   let tabSet = 0
 </script>
 
+
 {#if $rootNodes.length}
-  <AppShell class="h-full overflow-hidden bg-gradient-to-t from-gray-800 to-slate-800 ...">
+  <AppShell class="max-h-screen bg-gradient-to-t from-gray-800 to-slate-800 ...">
     <svelte:fragment slot="pageHeader">
       <AppBar class="pl-15 bg-gradient-to-b from-gray-800 to-slate-800 ...">
       <img src="/images/svolte_banner.png" alt="svolte header"/>
       </AppBar>
     </svelte:fragment>
-  
-    <TabGroup class="h-full overflow-hidden">
+    
+    <TabGroup>
       <Tab bind:group={tabSet} name="tab1" value={0}>Component Tree</Tab>
       <Tab bind:group={tabSet} name="tab2" value={1}>Time Travel</Tab>
       <!-- Tab Panels --->
@@ -49,13 +50,14 @@
 {/if}
 
 <style>
-  
-  :global(html, body) {
-    @apply h-screen overflow-hidden;
+
+  :global(body) {
+    @apply h-screen;
   }
 
   img {
     max-width: 9rem;
     height: auto;
   }
+  
 </style>

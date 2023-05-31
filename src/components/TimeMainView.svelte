@@ -48,7 +48,7 @@
   }
 </script>
 
-<div class="h-full grow items-center content-center flex-col flex">
+<div class="max-h-full grow items-center content-center flex-col flex pt-3">
   {#if newArray.length}
     {#each newArray as pair}
       <div>{pair.key}: {pair.value}</div>

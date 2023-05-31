@@ -16,11 +16,14 @@
   }
 </script>
 
-<ListBox class="h-full overflow-y-auto m-2">
-  {#each $snapShotHistory as snap (snap._id)}
-    <TimeSlice {singleValue} {setSelected} {...snap} />
-  {/each}
-</ListBox>
+<div class="flex-col overflow-y-auto pl-4">
+  <ListBox>
+    {#each $snapShotHistory as snap (snap._id)}
+      <TimeSlice {singleValue} {setSelected} {...snap} />
+    {/each}
+  </ListBox>
+</div>
 
 <style>
+
 </style>
