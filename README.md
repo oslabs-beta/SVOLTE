@@ -2,6 +2,7 @@
 
 Svolte is an open source Chrome developer tool for time travel debugging and component hierarchy visualization in Svelte applications. Svolte enables developers to record snapshots of component states, visualize component props, inspect and jump between snapshots. Svolte is the first Svelte time travel debugger that is compatible with writable stores.
 
+**Developed with**
 <img src="https://img.shields.io/badge/Google_chrome-4285F4?style=for-the-badge&logo=Google-chrome&logoColor=white"/>
 <img src="https://img.shields.io/badge/Svelte-4A4A55?style=for-the-badge&logo=svelte&logoColor=FF3E00"/>
 <img src="https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white"/>
@@ -43,10 +44,6 @@ You are then ready to debug your Svolte application!
 
 ## The Svolte Team
 
-1. Harry Vu • [LinkedIn](https://www.linkedin.com/in/hnvu/) • [GitHub](https://github.com/boilerpot)
-1. Scott Kim • [LinkedIn]() • [GitHub](https://github.com/skottcim)
-1. Ying-An Wang • [LinkedIn](https://www.linkedin.com/in/yingan-wang01/) • [GitHub](https://github.com/yingan-wang01)
-1. Petros Ogbamichael • [LinkedIn](https://www.linkedin.com/in/petros-ogbamichael/) • [GitHub](https://github.com/PetrosO123)
 <table>
   <tr>
     <td align="center">
@@ -62,7 +59,7 @@ You are then ready to debug your Svolte application!
       <br />
       <sub><b>Scott Kim</b></sub>
       <br />
-      <a href=""><img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn Icon"/></a>
+      <a href="https://www.linkedin.com/in/skottcim/"><img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn Icon"/></a>
       <a href="https://github.com/skottcim"><img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white" alt="GitHub Icon"/></a>
     </td>
     <td align="center">
