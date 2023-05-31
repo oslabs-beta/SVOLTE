@@ -115,55 +115,50 @@
       .attr('dy', '.35em')
       .attr('y', (d) => (d.children || d._children ? -20 : 0))
       .attr('x', 14)
-      .attr('text-anchor', (d) => (d.children || d._children ? 'end' : 'start'))
-      .text((d) => d.data.name)
-      .style('fill', 'aliceblue');
+      .attr('text-anchor', d => d.children || d._children ? "end" : "start")
+      .text(d => d.data.name)
+      .style('fill', 'aliceblue')
 
-    const rect = gSVG
-      .append('rect')
-      .attr('width', (d) => `${((d.data.name.length * 81) / 945) * 100}vh`)
-      .attr('height', (d) => `${((d.data.name.length * 81) / 945) * 100}vh`)
-      .attr('fill', '#F5F5F5')
-      .style('opacity', 0)
-      .attr('rx', 10)
-      .attr('ry', 10);
+    const rect = gSVG.append("rect")
+      .attr("width", d => `${((d.data.name.length * 81)/945)*100}vh`)
+      .attr("height", d => `${((d.data.name.length * 81)/945)*100}vh`)
+      .attr("fill", "#F5F5F5")
+      .style("opacity", 0)
+      .attr("rx", 10)
+      .attr("ry", 10)
 
-    const enterSVG = gSVG
-      .append('foreignObject')
-      .attr('width', (d) => `${((d.data.name.length * 80 + 10) / 945) * 100}vh`)
-      .attr(
-        'height',
-        (d) => `${((d.data.name.length * 80 + 10) / 945) * 100}vh`
-      );
+    const enterSVG = gSVG.append("foreignObject")
+      .attr("width", d => `${((d.data.name.length * 80 + 10)/945)*100}vh`)
+      .attr("height", d => `${((d.data.name.length * 80 + 10)/945)*100}vh`)
 
-    const textDiv = enterSVG
-      .append('xhtml:div')
-      .style('font-size', '15px')
-      .style('overflow-wrap', 'anywhere')
-      .style('color', 'black')
-      .text((d) => d.data.name)
-      .style('opacity', 0)
-      .attr('class', 'wrapped-text')
-      .style('word-wrap', 'break-word')
-      .style('font-family', 'Arial');
+    const textDiv = enterSVG.append("xhtml:div")
+      .style("font-size", "15px")
+      .style("overflow-wrap", "anywhere") 
+      .style("color", "black")
+      .text(d => d.data.name)
+      .style("opacity", 0)
+      .attr("class", "wrapped-text")
+      .style("word-wrap", "break-word")
+      .style("font-family", "Arial");
 
-    circleSVG.on('mouseover', function (event, d) {
-      let str = '';
-      let textLength = 0;
-      let varTextContent = '';
-      let propTextContent = '';
-      let elCounter = 0;
-      for (const el of d.data.variables) {
-        if (typeof el.value === 'object') {
-          for (const [key, value] of Object.entries(el.value)) {
-            if (typeof value === 'string') {
-              // textLength += value.length;
-              textLength = Math.max(
-                textLength,
-                `${el.value}`.length + `${el.key}`.length
-              );
-              varTextContent += `${key} — ${value}<br>`;
-              elCounter += 1;
+
+
+      circleSVG.on("mouseover", function(event, d){
+        let str = '';
+        let textLength = 0;
+        let varTextContent = '';
+        let propTextContent = '';
+        let elCounter = 0;
+        if (d.data.variables) elCounter += 2;
+        for (const el of d.data.variables){
+          if (typeof el.value === "object") {
+            for (const [key, value] of Object.entries(el.value)) { 
+              if (typeof value === "string") {
+                // textLength += value.length;
+                textLength = Math.max(textLength, `${el.value}`.length + `${el.key}`.length)
+                varTextContent += `${key} — ${value}<br>`; 
+                elCounter+=1;
+              }
             }
           }
         } else {
@@ -198,42 +193,41 @@
           propTextContent += `${el.key}: ${el.value}<br>`;
           elCounter += 1;
         }
-      }
-      console.log('d.data.variables: ', d.data.variables);
-      console.log(
-        'd.data.name: ',
-        d.data.name,
-        'textLength: ',
-        textLength,
-        'varTextContent: ',
-        varTextContent
-      );
-      d3.select(this.parentNode)
-        .select('foreignObject')
-        .select('div')
-        .style('opacity', 1)
-        .style('padding', '10px 5px 15px 15px')
-        .html(`Variables<hr>${varTextContent}Props<hr>${propTextContent}`);
-      const rectWidth = Math.max(Math.ceil(textLength * 10.5));
-      console.log('this is textLength: ', textLength);
-      const rectHeight = Math.max(70, Math.ceil(elCounter * 50) + 20);
-      console.log(
-        'this is elCounter: ',
-        elCounter,
-        'this is it *60: ',
-        elCounter * 60
-      );
-      textDiv.style('width', `${((rectWidth * 0.93) / 945) * 110}vh`);
-      textDiv.style('height', `${((rectHeight * 0.9) / 945) * 100}vh`);
+        console.log('d.data.variables: ', d.data.variables)
+        console.log('d.data.name: ', d.data.name, 'textLength: ', textLength, 'varTextContent: ', varTextContent)
+        d3.select(this.parentNode)
+          .select("foreignObject")
+          .select("div").style("opacity", 1)
+          .style("padding", "10px 5px 15px 15px")
+          .html(`Variables<hr>${varTextContent}Props<hr>${propTextContent}`);
+        const rectWidth =  Math.ceil(textLength*12);
+        console.log('this is textLength: ', textLength)
+        const rectHeight = Math.ceil(elCounter * 35);
+        console.log('this is elCounter: ', elCounter, 'this is it *60: ', elCounter*60)
+        textDiv.style("width", `${((rectWidth)/945)*100}vh`);
+        textDiv.style("height", `${((rectHeight*0.9)/945)*100}vh`);
+        d3.select(this.parentNode).select("rect").attr("width", `${(rectWidth/945)*100}vh`);
+        d3.select(this.parentNode).select("rect").attr("height", `${(rectHeight/945)*110}vh`)
+        d3.select(this.parentNode).select("foreignObject").attr("width", `${((textLength * 10.5)/945)*100}vh`);
+        d3.select(this.parentNode).select('rect').style('opacity', 1);
+        //handling text bug
+        console.log('d3 select this.parentNode: ', d3.select(this.parentNode))
 
-      d3.select(this.parentNode).select('rect').attr('width', rectWidth);
-      d3.select(this.parentNode).select('rect').attr('height', rectHeight);
-      d3.select(this.parentNode)
-        .select('foreignObject')
-        .attr('width', `${((textLength * 80) / 945) * 100}vh`);
-      d3.select(this.parentNode).select('rect').style('opacity', 1);
-      //handling text bug
-      console.log('d3 select this.parentNode: ', d3.select(this.parentNode));
+        //older solution, makes all other nodes clear
+        // d3.selectAll('circle').style('opacity', 0);
+        // d3.selectAll('text').style('opacity', 0);
+
+        d3.select(this).style('opacity', 1);
+        d3.select(this.parentNode).select('text').style('opacity', 1);
+        const currentNodeId = Number(this.parentNode.id);
+        d3.selectAll('g.node').each(function() {
+          const nodeId = this.id;
+          const nodeNumber = Number(nodeId);
+          if (nodeNumber > currentNodeId) {
+            d3.select(this).style('opacity', 0);
+          }
+        });
+    });
 
       //older solution, makes all other nodes clear
       // d3.selectAll('circle').style('opacity', 0);
