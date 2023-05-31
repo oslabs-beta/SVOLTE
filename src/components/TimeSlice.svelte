@@ -24,7 +24,7 @@
   bind:group={singleValue}
   name="medium"
   value={_id}
-  class="group flex border-solid divide-white gap-1"
+  class="group flex border-solid divide-white gap-1 bg-white/5"
 >
   {tagName}
   {#each diff as change (change.id)}

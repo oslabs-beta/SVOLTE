@@ -10,7 +10,7 @@
 </script>
 
 {#if state.length}
-  <div class="h-full grow flex flex-col">
+  <div class="max-h-full grow items-center content-center flex-col flex pt-3">
     {#each state as pair}
       <div class="w-fit text-left self-center">
         {pair.key}: {#if !Array.isArray(pair.value) && typeof pair.value === 'object'}
