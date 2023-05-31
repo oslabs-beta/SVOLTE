@@ -3,24 +3,26 @@
 Svolte is an open source Chrome developer tool for time travel debugging and component hierarchy visualization in Svelte applications. Svolte enables developers to record snapshots of component states, visualize component props, inspect and jump between snapshots. Svolte is the first Svelte time travel debugger that is compatible with writable stores.
 
 **Developed with**
+
 <img src="https://img.shields.io/badge/Google_chrome-4285F4?style=for-the-badge&logo=Google-chrome&logoColor=white"/>
 <img src="https://img.shields.io/badge/Svelte-4A4A55?style=for-the-badge&logo=svelte&logoColor=FF3E00"/>
 <img src="https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white"/>
 <img src="https://img.shields.io/badge/d3.js-F9A03C?style=for-the-badge&logo=d3.js&logoColor=white">
+<img src="https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white">
 <img src="https://img.shields.io/badge/Vite-B73BFE?style=for-the-badge&logo=vite&logoColor=FFD62E">
 
 ## Features
 
-**_Component Hierarchy and Props Visualization_**
+**Component Hierarchy and Props Visualization**
 Visualize the hierarchy of your Svelte app and check the props of each component.
 
-**_Record and Inspect Component State Snapshots_**
+**Record and Inspect Component State Snapshots**
 Record the states of your components to see how each state has changed.
 
-**_Jumping_**
+**Jumping**
 Jump through each snapshot to recreate state changes.
 
-**_Skipping_**
+**Skipping**
 Have a snapshot you want to skip? Simply toggle skip to ignore that snapshot when you jump.
 
 ## Getting Started
@@ -32,6 +34,7 @@ Download the chrome extension [here](https://github.com/rixo/svelte-hmr#svelte-h
 This extension is only compatible with Svelte projects running in `development mode`, so be sure to check that configuration if you are not starting up your project with `npm run dev`.
 
 **Manual Installation for Developers**
+
 Fork and clone this repository into your local machine. Once that is done, simply run the command `npm run build` to build the dev tool. Finally, making sure you toggle Developer mode `on` in your Chrome browser, you can load unpack the extension folder (located in the root level of the repository).
 
 ## How to Use
@@ -47,7 +50,7 @@ You are then ready to debug your Svolte application!
 <table>
   <tr>
     <td align="center">
-      <img src="https://avatars.githubusercontent.com/u/107030143?v=4"/>
+      <img src="https://avatars.githubusercontent.com/u/107030143?v=4" height="175"/>
       <br />
       <sub><b>Harry Vu</b></sub>
       <br />
@@ -55,7 +58,7 @@ You are then ready to debug your Svolte application!
       <a href="https://github.com/boilerpot"><img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white" alt="GitHub Icon"/></a>
     </td>
     <td align="center">
-      <img src="https://avatars.githubusercontent.com/u/121269905?v=4"/>
+      <img src="https://avatars.githubusercontent.com/u/121269905?v=4" height="175"/>
       <br />
       <sub><b>Scott Kim</b></sub>
       <br />
@@ -63,7 +66,7 @@ You are then ready to debug your Svolte application!
       <a href="https://github.com/skottcim"><img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white" alt="GitHub Icon"/></a>
     </td>
     <td align="center">
-      <img src="https://avatars.githubusercontent.com/u/122405088?v=4"/>
+      <img src="https://avatars.githubusercontent.com/u/122405088?v=4" height="175"/>
       <br />
       <sub><b>Ying-An Wang</b></sub>
       <br />
@@ -71,7 +74,7 @@ You are then ready to debug your Svolte application!
       <a href="https://github.com/yingan-wang01"><img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white" alt="GitHub Icon"/></a>
     </td>
     <td align="center">
-      <img src="https://avatars.githubusercontent.com/u/106777128?v=4"/>
+      <img src="https://avatars.githubusercontent.com/u/106777128?v=4" height="175"/>
       <br />
       <sub><b>Petros Ogbamichael</b></sub>
       <br />
