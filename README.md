@@ -1,5 +1,5 @@
 <div align="center">
-    <img src="/assets/svolte_banner.png" alt="Svolte banner" width="100%"/>
+    <img src="/assets/svolte_banner.png" alt="Svolte banner" width="60%"/>
 </div>
 
 # Overview
