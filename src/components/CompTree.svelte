@@ -3,43 +3,20 @@
   import { treeData, rootNodes, process_ctx } from '../store';
   import { onMount, afterUpdate } from 'svelte'
 
-
+  let shouldWait = false;
+  const treeColors = {
+    childrenHidden: '#A0FFA1',
+    childrenShown: '#A0FFFE',
+    leafNode: "#D6B0FF",
+    linkStroke: "#FCFFAE",
+  };
+  
+  
   console.log('imported root: ', $rootNodes[0]);
   const rootNode = $rootNodes[0];
 
   /* states and locally defined variables are in ctx property
   props from a parent component are in attributes property */
-
-  /* Tree data template from root node
-  {
-    "name": "Root",
-    "variables": {},
-    "children": [
-      {
-        "name": "Layout",
-        "variables": {},
-        "children": [
-          {
-            "name": "Header",
-            "variables": {},
-            "children": [],
-          }
-          {
-            "name": "Page",
-            "variables": {},
-            "children": [
-              {
-                "name": "Counter",
-                "variables": { count: 0 },
-                "children": []
-              }
-            ]
-          }
-        ]
-      }
-    ]
-
-  }*/
   
 
   /* iterates through children array of each node, if a child is a component then 
@@ -74,8 +51,7 @@
       output.children = nodeTraverse(root.children); //array of child objects
   
   
-      // output: this is the tree data we will use (see tree data template above)
-      // console.log('root parser output: ', output);
+      // output: this is the tree data we will use 
       return output;
   }
 
@@ -112,21 +88,23 @@
 
     const node = svg.selectAll('g.node').data(nodes, d => d.id || (d.id = ++ i));
 
-  //attaching a circle to represent each node
-  const nodeEnter = node
-    .enter()
-    .append('g')
-    .attr('class', 'node')
-    .attr('transform', d => "translate(" + source.y0 + ", " + source.x0 + ")")
-    .on('click', click);
+    //attaching a circle to represent each node
+    const nodeEnter = node
+      .enter()
+      .append('g')
+      .attr('class', 'node')
+      .attr('transform', d => "translate(" + source.y0 + ", " + source.x0 + ")")
+      .on('click', click);
 
-  const circleSVG = nodeEnter.append('circle')
-    .attr('r', 8)
-    .style("fill", d => d._children ? "yellow" : "#D6B0FF")
-    .attr('cursor', 'pointer');
+    const circleSVG = nodeEnter.append('circle')
+      .attr('r', 8)
+      .style("fill", d => d.children ? treeColors.childrenShown 
+                        : d._children ? treeColors.childrenHidden 
+                        : treeColors.leafNode)
+      .attr('cursor', 'pointer');
 
-  const gSVG = nodeEnter.append('g')
-    .attr("transform", "translate(-6, 4)");
+    const gSVG = nodeEnter.append('g')
+      .attr("transform", "translate(-6, 4)");
 
     //adding component name to each node
     nodeEnter
@@ -236,7 +214,7 @@
       .attr('transform', d => 'translate(' + d.y + ', ' + d.x + ')')
       .select('circle.node')
       .attr('r', 8)
-      .style('fill', d => d._children ? "yellow" : "black")
+      // .style('fill', d => d._children ? "yellow" : "black")
 
     const nodeExit = node
       .exit()
@@ -297,26 +275,26 @@
 
     // define click function
     function click(event, d) {
+      if (shouldWait) return;
+
       if (d.children) {
         d._children = d.children;
         d.children = null;
         d3.select(this)._groups[0][0].querySelector('circle').style.fill = '#A0FFA1';
-        // console.log('d3this lv 2: ', d3.select(this)._groups[0][0])
-        // console.log('d3 this no level: ', d3.select(this))
+
       } else {
         d.children = d._children;
         d._children = null;
         d3.select(this)._groups[0][0].querySelector('circle').style.fill = '#A0FFFE';
-        // console.log('d3this lv 2: ', d3.select(this)._groups[0][0])
-        // console.log('d3 this no level: ', d3.select(this))
       }
-      console.log('d: ', d);
+
+      // throttle
+      shouldWait = true;
+      setTimeout(() => {shouldWait = false}, 500);
+
       update(d);
     }
-
-
   }
-
 
 //append the svg object to the body of the page
 //appends a 'group' element to 'svg'
@@ -341,25 +319,18 @@ onMount(() => {
     .append("g")
     .attr("transform", "translate(" + margin.left + ", " + margin.top + ")")
 
-
   update(root)
 
-
   }
-
-
 })
 
 afterUpdate(() => {
-    if ($treeData && svg) {
-      update(root);
-    }
-  });
-
+  if ($treeData && svg) {
+    update(root);
+  }
+});
 
 </script>
-
-
 
 
 <main id='body' style='overflow: auto;'>
