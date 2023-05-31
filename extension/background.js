@@ -12,6 +12,18 @@ chrome.runtime.onMessage.addListener((message, sender, res) => {
 
 const connections = {};
 
+// function startPanel() {
+//   chrome.devtools.panels.create('SVOLTE', '/icons/128.png', './devtools/panel/panel.html');
+// }
+
+// chrome.runtime.onInstalled.addListener(()=>{
+//   //right click context menu option
+//   chrome.contextMenus.create({
+//       id : "SVOLTE",
+//       title : "SVOLTE",
+//       contexts : ["all"]
+//   }, startPanel)
+// })
 
 chrome.runtime.onConnect.addListener(function (port) {
 

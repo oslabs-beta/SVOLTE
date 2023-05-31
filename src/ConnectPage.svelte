@@ -1,9 +1,8 @@
 <script>
   import { reload } from './store'
-
 </script>
 
-<div class="center bg-gradient-to-t from-gray-800 to-slate-800 ...">
+<div class="h-screen w-full center pb-96 bg-gradient-to-t from-gray-800 to-slate-800 ...">
   <img src="/images/connectpage.png" alt="svolte connect page"/>
   <p class="text-xl">To begin, click connect to refresh the page.</p>
   <button type="button" class="btn variant-filled sm" on:click={reload}>Connect</button>
@@ -24,6 +23,3 @@
     height: auto;
   }
 </style>
-
-
-<button type="button" class="btn variant-filled">Connect</button>
