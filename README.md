@@ -1,4 +1,8 @@
-# Svolte Overview
+<div align="center">
+    <img src="/assets/svolte_banner.png" alt="Svolte banner" width="100%"/>
+</div>
+
+# Overview
 
 Svolte is an open source Chrome developer tool for time travel debugging and component hierarchy visualization in Svelte applications. Svolte enables developers to record snapshots of component states, visualize component props, inspect and jump between snapshots. Svolte is the first Svelte time travel debugger that is compatible with writable stores.
 
@@ -18,12 +22,14 @@ Visualize the hierarchy of your Svelte app and check the props of each component
 
 **Record and Inspect Component State Snapshots**
 Record the states of your components to see how each state has changed.
+<img src="/assets/inspectState.gif" alt="state inspection gif"/>
 
 **Jumping**
 Jump through each snapshot to recreate state changes.
 
 **Skipping**
 Have a snapshot you want to skip? Simply toggle skip to ignore that snapshot when you jump.
+<img src="/assets/timeTravel.gif" alt="time travel gif"/>
 
 ## Getting Started
 
@@ -44,6 +50,8 @@ After installing the Chrome extension open up your project in Chrome, and be sur
 Right click your application and `Inspect` or press `f12` to open up Chrome Dev Tools, and navigate to the Svolte panel (which may be hidden behind `>>` if you have too many tabs).
 
 You are then ready to debug your Svolte application!
+
+<img src="/assets/openDev.gif" alt="open dev gif"/>
 
 ## The Svolte Team
 
@@ -90,4 +98,4 @@ If you find Svolte to be useful please throw a :star2: our way and share this pr
 
 ## License
 
-Svolte is developed under the [MIT license]().
+Svolte is developed under the [MIT license](/LICENSE).
