@@ -120,16 +120,16 @@
       .style('fill', 'aliceblue')
 
     const rect = gSVG.append("rect")
-      .attr("width", d => `${d.data.name.length * 81}px`)
-      .attr("height", d => `${d.data.name.length * 81}px`)
+      .attr("width", d => `${((d.data.name.length * 81)/945)*100}vh`)
+      .attr("height", d => `${((d.data.name.length * 81)/945)*100}vh`)
       .attr("fill", "#F5F5F5")
       .style("opacity", 0)
       .attr("rx", 10)
       .attr("ry", 10)
 
     const enterSVG = gSVG.append("foreignObject")
-      .attr("width", d => `${d.data.name.length * 80 + 10}px`)
-      .attr("height", d => `${d.data.name.length * 80 + 10}px`)
+      .attr("width", d => `${((d.data.name.length * 80 + 10)/945)*100}vh`)
+      .attr("height", d => `${((d.data.name.length * 80 + 10)/945)*100}vh`)
 
     const textDiv = enterSVG.append("xhtml:div")
       .style("font-size", "15px")
@@ -194,12 +194,12 @@
         console.log('this is textLength: ', textLength)
         const rectHeight = Math.max(70, Math.ceil(elCounter * 50) + 20);
         console.log('this is elCounter: ', elCounter, 'this is it *60: ', elCounter*60)
-        textDiv.style("width", `${rectWidth*0.9}px`);
-        textDiv.style("height", `${rectHeight*0.9}px`);
+        textDiv.style("width", `${((rectWidth*0.93)/945)*110}vh`);
+        textDiv.style("height", `${((rectHeight*0.9)/945)*100}vh`);
 
         d3.select(this.parentNode).select("rect").attr("width", rectWidth);
         d3.select(this.parentNode).select("rect").attr("height", rectHeight)
-        d3.select(this.parentNode).select("foreignObject").attr("width", `${textLength * 80}px`);
+        d3.select(this.parentNode).select("foreignObject").attr("width", `${((textLength * 80)/945)*100}vh`);
         d3.select(this.parentNode).select('rect').style('opacity', 1);
         //handling text bug
         console.log('d3 select this.parentNode: ', d3.select(this.parentNode))
