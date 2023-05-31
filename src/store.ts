@@ -8,7 +8,7 @@ export const rootNodes: Writable<Node[]> = writable([]);
 export const snapShotHistory: Writable<SnapShot[]> = writable([]);
 export const selected: Writable<SnapShot> = writable(null);
 export const skipArr: Writable<number[]> = writable([]);
-let currentSnapShot: number = 0;
+export const currentSnapShot: Writable<number> = writable(0);
 let shaveCounter: number = 0;
 
 //we want to dynamically add to treeData
@@ -158,7 +158,7 @@ function addSnapShot(prevNode, message) {
       node.diff = differences;
       node._id = get(snapShotHistory).length;
       snapShotHistory.update((prev) => [...prev, node]);
-      currentSnapShot = get(snapShotHistory).length - 1;
+      currentSnapShot.set(get(snapShotHistory).length - 1);
     }
     if (shaveCounter) --shaveCounter;
   }
@@ -229,8 +229,8 @@ export function jump(snapshotID) {
   shaveCounter = 0;
 
   // going backwards in time
-  if (currentSnapShot > snapshotID) {
-    for (let i = currentSnapShot - 1; i >= snapshotID; i--) {
+  if (get(currentSnapShot) > snapshotID) {
+    for (let i = get(currentSnapShot) - 1; i >= snapshotID; i--) {
       if (get(skipArr).includes(i)) {
         continue;
       }
@@ -247,8 +247,8 @@ export function jump(snapshotID) {
   }
 
   // going forwards in time
-  else if (currentSnapShot < snapshotID) {
-    for (let i = currentSnapShot + 1; i <= snapshotID; i++) {
+  else if (get(currentSnapShot) < snapshotID) {
+    for (let i = get(currentSnapShot) + 1; i <= snapshotID; i++) {
       if (get(skipArr).includes(i)) {
         continue;
       }
@@ -264,5 +264,5 @@ export function jump(snapshotID) {
   }
 
   //set our current place in time to where we just traveled to
-  currentSnapShot = snapshotID;
+  currentSnapShot.set(snapshotID);
 }
