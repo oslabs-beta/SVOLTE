@@ -7,17 +7,15 @@
   const treeColors = {
     childrenHidden: '#A0FFA1',
     childrenShown: '#A0FFFE',
-    leafNode: "#D6B0FF",
-    linkStroke: "#FCFFAE",
+    leafNode: '#D6B0FF',
+    linkStroke: '#FCFFAE',
   };
-  
-  
+
   console.log('imported root: ', $rootNodes[0]);
   const rootNode = $rootNodes[0];
 
   /* states and locally defined variables are in ctx property
   props from a parent component are in attributes property */
-  
 
   /* iterates through children array of each node, if a child is a component then 
   calls rootParser on that component to add it as a child object to the parent node's children array.
@@ -164,7 +162,7 @@
             // textLength += `${el.value}`.length;
             textLength = Math.max(textLength, `${el.value}`.length + `${el.key}`.length)
             varTextContent += `${el.key}: ${el.value}<br>`; 
-            elCounter+=1;;
+            elCounter+=1;
           }
         }
         for (const el of d.data.props){
