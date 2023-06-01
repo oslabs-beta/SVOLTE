@@ -11,9 +11,6 @@
     linkStroke: '#FCFFAE',
   };
 
-  console.log('imported root: ', $rootNodes[0]);
-  const rootNode = $rootNodes[0];
-
   /* states and locally defined variables are in ctx property
   props from a parent component are in attributes property */
 
@@ -56,7 +53,6 @@
     const parsedData = rootParser($rootNodes[0]);
     treeData.set(parsedData);
   }
-  console.log('tree data after parsing ', $treeData);
 
   let margin = { top: 20, right: 90, bottom: 20, left: 90 };
   let width = 960 - margin.left - margin.right;
@@ -158,7 +154,6 @@
         if (typeof el.value === 'object') {
           for (const [key, value] of Object.entries(el.value)) {
             if (typeof value === 'string') {
-              // textLength += value.length;
               textLength = Math.max(
                 textLength,
                 `${el.value}`.length + `${el.key}`.length
@@ -168,7 +163,6 @@
             }
           }
         } else {
-          // textLength += `${el.value}`.length;
           textLength = Math.max(
             textLength,
             `${el.value}`.length + `${el.key}`.length
@@ -181,7 +175,6 @@
         if (typeof el.value === 'object') {
           for (const [key, value] of Object.entries(el.value)) {
             if (typeof value === 'string') {
-              // textLength += value.length;
               textLength = Math.max(
                 textLength,
                 `${el.value}`.length + `${el.key}`.length
@@ -191,7 +184,6 @@
             }
           }
         } else {
-          // textLength += `${el.value}`.length;
           textLength = Math.max(
             textLength,
             `${el.value}`.length + `${el.key}`.length
@@ -200,15 +192,6 @@
           elCounter += 1;
         }
       }
-      console.log('d.data.variables: ', d.data.variables);
-      console.log(
-        'd.data.name: ',
-        d.data.name,
-        'textLength: ',
-        textLength,
-        'varTextContent: ',
-        varTextContent
-      );
       d3.select(this.parentNode)
         .select('foreignObject')
         .select('div')
@@ -216,14 +199,7 @@
         .style('padding', '10px 5px 15px 15px')
         .html(`Variables<hr>${varTextContent}Props<hr>${propTextContent}`);
       const rectWidth = Math.ceil(textLength * 12);
-      console.log('this is textLength: ', textLength);
-      const rectHeight = Math.ceil(elCounter * 35);
-      console.log(
-        'this is elCounter: ',
-        elCounter,
-        'this is it *60: ',
-        elCounter * 60
-      );
+
       textDiv.style('width', `${(rectWidth / 945) * 100}vh`);
       textDiv.style('height', `${((rectHeight * 0.9) / 945) * 100}vh`);
       d3.select(this.parentNode)
@@ -237,11 +213,6 @@
         .attr('width', `${((textLength * 10.5) / 945) * 100}vh`);
       d3.select(this.parentNode).select('rect').style('opacity', 1);
       //handling text bug
-      console.log('d3 select this.parentNode: ', d3.select(this.parentNode));
-
-      //older solution, makes all other nodes clear
-      // d3.selectAll('circle').style('opacity', 0);
-      // d3.selectAll('text').style('opacity', 0);
 
       d3.select(this).style('opacity', 1);
       d3.select(this.parentNode).select('text').style('opacity', 1);
@@ -389,7 +360,6 @@
     });
     root.x0 = height / 2;
     root.y0 = 0;
-    console.log('root ', root);
     if ($treeData) {
       svg = d3
         .select('#body')
