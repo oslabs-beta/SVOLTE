@@ -41,7 +41,7 @@ Record the states of your components to see how each state has changed.
 
 ## Download from the Chrome Store
 
-Download the chrome extension [here](https://github.com/rixo/svelte-hmr#svelte-hmr).
+Download the chrome extension [here](#).
 
 This extension is only compatible with Svelte projects running in `development mode`, so be sure to check that configuration if you are not starting up your project with `npm run dev`.
 
