@@ -8,18 +8,20 @@ Svolte is an open source Chrome developer tool for time travel debugging and com
 
 **Developed with**
 
-![Svelte](https://img.shields.io/badge/Svelte-4A4A55?style=for-the-badge&logo=svelte&logoColor=FF3E00)
-![Typescript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
-![D3.js](https://img.shields.io/badge/d3.js-F9A03C?style=for-the-badge&logo=d3.js&logoColor=white)
-![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
-![Vite](https://img.shields.io/badge/Vite-B73BFE?style=for-the-badge&logo=vite&logoColor=FFD62E)
-![Google Chrome](https://img.shields.io/badge/Google_chrome-4285F4?style=for-the-badge&logo=Google-chrome&logoColor=white)
+[![Svelte](https://img.shields.io/badge/Svelte-4A4A55?style=for-the-badge&logo=svelte&logoColor=FF3E00)](#)
+[![Typescript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)](#)
+[![D3.js](https://img.shields.io/badge/d3.js-F9A03C?style=for-the-badge&logo=d3.js&logoColor=white)](#)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](#)
+[![Vite](https://img.shields.io/badge/Vite-B73BFE?style=for-the-badge&logo=vite&logoColor=FFD62E)](#)
+[![Google Chrome](https://img.shields.io/badge/Google_chrome-4285F4?style=for-the-badge&logo=Google-chrome&logoColor=white)](#)
 
 # Features
 
 ## Component Hierarchy and Props Visualization
 
 Visualize the hierarchy of your Svelte app and check the props of each component.
+
+<img src="/assets/treeDemo.gif" alt="tree demo gif"/>
 
 ## Record and Inspect Component State Snapshots
 
@@ -29,9 +31,9 @@ Record the states of your components to see how each state has changed.
 
 ## Jumping and Skipping
 
-* Jump through each snapshot to recreate state changes.
+- Jump through each snapshot to recreate state changes.
 
-* Have a snapshot you want to skip? Simply toggle skip to ignore that snapshot when you jump.
+- Have a snapshot you want to skip? Simply toggle skip to ignore that snapshot when you jump.
 
 <img src="/assets/timeTravel.gif" alt="time travel gif"/>
 
@@ -39,7 +41,7 @@ Record the states of your components to see how each state has changed.
 
 ## Download from the Chrome Store
 
-Download the chrome extension [here](https://github.com/rixo/svelte-hmr#svelte-hmr).
+Download the chrome extension [here](#).
 
 This extension is only compatible with Svelte projects running in `development mode`, so be sure to check that configuration if you are not starting up your project with `npm run dev`.
 
