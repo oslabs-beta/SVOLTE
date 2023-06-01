@@ -11,9 +11,6 @@
     linkStroke: '#FCFFAE',
   };
 
-  console.log('imported root: ', $rootNodes[0]);
-  const rootNode = $rootNodes[0];
-
   /* states and locally defined variables are in ctx property
   props from a parent component are in attributes property */
 
@@ -21,6 +18,7 @@
   calls rootParser on that component to add it as a child object to the parent node's children array.
   If not a component, continues down branch until it reaches a component or a node with no children.
   */
+
   function nodeTraverse(arr, childrenArr = []) {
     if (arr.length === 0) return;
     for (let node of arr) {
@@ -29,7 +27,6 @@
         nodeTraverse(node.children, childrenArr);
       }
     }
-
     return childrenArr;
   }
 
@@ -56,7 +53,6 @@
     const parsedData = rootParser($rootNodes[0]);
     treeData.set(parsedData);
   }
-  console.log('tree data after parsing ', $treeData);
 
   let margin = { top: 20, right: 90, bottom: 20, left: 90 };
   let width = 960 - margin.left - margin.right;
@@ -200,15 +196,7 @@
           elCounter += 1;
         }
       }
-      console.log('d.data.variables: ', d.data.variables);
-      console.log(
-        'd.data.name: ',
-        d.data.name,
-        'textLength: ',
-        textLength,
-        'varTextContent: ',
-        varTextContent
-      );
+    
       d3.select(this.parentNode)
         .select('foreignObject')
         .select('div')
@@ -216,14 +204,7 @@
         .style('padding', '10px 5px 15px 15px')
         .html(`Variables<hr>${varTextContent}Props<hr>${propTextContent}`);
       const rectWidth = Math.ceil(textLength * 12);
-      console.log('this is textLength: ', textLength);
       const rectHeight = Math.ceil(elCounter * 35);
-      console.log(
-        'this is elCounter: ',
-        elCounter,
-        'this is it *60: ',
-        elCounter * 60
-      );
       textDiv.style('width', `${(rectWidth / 945) * 100}vh`);
       textDiv.style('height', `${((rectHeight * 0.9) / 945) * 100}vh`);
       d3.select(this.parentNode)
@@ -237,7 +218,6 @@
         .attr('width', `${((textLength * 10.5) / 945) * 100}vh`);
       d3.select(this.parentNode).select('rect').style('opacity', 1);
       //handling text bug
-      console.log('d3 select this.parentNode: ', d3.select(this.parentNode));
 
       //older solution, makes all other nodes clear
       // d3.selectAll('circle').style('opacity', 0);
@@ -257,10 +237,6 @@
 
     circleSVG.on('mouseout', function (event, d) {
       //handling text bug
-
-      //older solution, makes all other nodes visible on hover (were previously not)
-      // d3.selectAll('circle').style('opacity', 1);
-      // d3.selectAll('text').style('opacity', 1)
 
       //rest of code handling foreign object of current element's opacity
       d3.select(this.parentNode)
@@ -389,7 +365,6 @@
     });
     root.x0 = height / 2;
     root.y0 = 0;
-    console.log('root ', root);
     if ($treeData) {
       svg = d3
         .select('#body')
