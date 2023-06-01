@@ -18,6 +18,7 @@
   calls rootParser on that component to add it as a child object to the parent node's children array.
   If not a component, continues down branch until it reaches a component or a node with no children.
   */
+
   function nodeTraverse(arr, childrenArr = []) {
     if (arr.length === 0) return;
     for (let node of arr) {
@@ -26,7 +27,6 @@
         nodeTraverse(node.children, childrenArr);
       }
     }
-
     return childrenArr;
   }
 
@@ -154,6 +154,7 @@
         if (typeof el.value === 'object') {
           for (const [key, value] of Object.entries(el.value)) {
             if (typeof value === 'string') {
+              // textLength += value.length;
               textLength = Math.max(
                 textLength,
                 `${el.value}`.length + `${el.key}`.length
@@ -163,6 +164,7 @@
             }
           }
         } else {
+          // textLength += `${el.value}`.length;
           textLength = Math.max(
             textLength,
             `${el.value}`.length + `${el.key}`.length
@@ -175,6 +177,7 @@
         if (typeof el.value === 'object') {
           for (const [key, value] of Object.entries(el.value)) {
             if (typeof value === 'string') {
+              // textLength += value.length;
               textLength = Math.max(
                 textLength,
                 `${el.value}`.length + `${el.key}`.length
@@ -184,6 +187,7 @@
             }
           }
         } else {
+          // textLength += `${el.value}`.length;
           textLength = Math.max(
             textLength,
             `${el.value}`.length + `${el.key}`.length
@@ -192,6 +196,7 @@
           elCounter += 1;
         }
       }
+    
       d3.select(this.parentNode)
         .select('foreignObject')
         .select('div')
@@ -199,7 +204,7 @@
         .style('padding', '10px 5px 15px 15px')
         .html(`Variables<hr>${varTextContent}Props<hr>${propTextContent}`);
       const rectWidth = Math.ceil(textLength * 12);
-
+      const rectHeight = Math.ceil(elCounter * 35);
       textDiv.style('width', `${(rectWidth / 945) * 100}vh`);
       textDiv.style('height', `${((rectHeight * 0.9) / 945) * 100}vh`);
       d3.select(this.parentNode)
@@ -213,6 +218,10 @@
         .attr('width', `${((textLength * 10.5) / 945) * 100}vh`);
       d3.select(this.parentNode).select('rect').style('opacity', 1);
       //handling text bug
+
+      //older solution, makes all other nodes clear
+      // d3.selectAll('circle').style('opacity', 0);
+      // d3.selectAll('text').style('opacity', 0);
 
       d3.select(this).style('opacity', 1);
       d3.select(this.parentNode).select('text').style('opacity', 1);
@@ -228,10 +237,6 @@
 
     circleSVG.on('mouseout', function (event, d) {
       //handling text bug
-
-      //older solution, makes all other nodes visible on hover (were previously not)
-      // d3.selectAll('circle').style('opacity', 1);
-      // d3.selectAll('text').style('opacity', 1)
 
       //rest of code handling foreign object of current element's opacity
       d3.select(this.parentNode)
