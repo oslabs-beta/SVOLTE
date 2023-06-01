@@ -1,7 +1,9 @@
 <script>
-	import Counter from './Counter.svelte';
+	import TopCounter from './TopCounter.svelte';
+	import BottomCounter from './BottomCounter.svelte';
 	import welcome from '$lib/images/svelte-welcome.webp';
 	import welcome_fallback from '$lib/images/svelte-welcome.png';
+	let testProp = 'hi';
 </script>
 
 <svelte:head>
@@ -18,14 +20,11 @@
 			</picture>
 		</span>
 
-		to your new<br />SvelteKit app
+		
 	</h1>
 
-	<h2>
-		try editing <strong>src/routes/+page.svelte</strong>
-	</h2>
-
-	<Counter />
+	<TopCounter {testProp} />
+	<BottomCounter {testProp} />
 </section>
 
 <style>

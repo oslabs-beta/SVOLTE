@@ -1,53 +1,72 @@
 <script lang="ts">
-  import CompTree from './components/CompTree.svelte'
-  import Time from './components/Time.svelte'
-  import Counter from './components/Counter.svelte'
-  import Header from './components/Header.svelte'
-  import Body from './components/Body.svelte'
-  import { pathStore } from './store'
-//use the store subscription prefix '$' in order to access the value from a store element
-//this must be done any time you have a reference to the store
+  import ConnectPage from './ConnectPage.svelte';
+  import CompTree from './components/CompTree.svelte';
+  import Time from './components/Time.svelte';
+  import { TabGroup, Tab } from '@skeletonlabs/skeleton';
+  import { AppShell, AppBar } from '@skeletonlabs/skeleton';
+  import { rootNodes } from './store';
+  //use the store subscription prefix '$' in order to access the value from a store element
+  //this must be done any time you have a reference to the store
+  // Your selected Skeleton theme:
+  // import '@skeletonlabs/skeleton/themes/theme-skeleton.css'
+  import '@skeletonlabs/skeleton/themes/theme-hamlindigo.css';
 
+  // This contains the bulk of Skeletons required styles:
+  // NOTE: this will be renamed skeleton.css in the v2.x release.
+  import '@skeletonlabs/skeleton/styles/skeleton.css';
 
-  // sveltekit routing
-  // let url = window.location.pathname;
-  // const setUrl = () =>{
-  //   url = window.location.pathname;
+  // Finally, your application's global stylesheet (sometimes labeled 'app.css')
+  import './app.postcss';
+
+  let tabSet = 0;
+
+  // let isReloading = JSON.parse(localStorage.getItem('isReloading'));
+  // // Reload the page once
+  // if (!isReloading) {
+  //   setTimeout(()=>{
+  //     location.reload();
+  //     isReloading = true;
+  //     localStorage.setItem('isReloading', JSON.stringify(isReloading));
+  //   }, 1000)
+
   // }
-
-  // let path = 'tree';
-  // const setPath = () => {
-  //   if (path === 'tree') path = 'time';
-  //   else path = 'tree';
-  // }
-//   function setPath() {
-//     if ($atTree){
-//         console.log('procced')
-//         atTree.update(string => false);
-//     }
-//     else{
-//         atTree.set(true);
-//     };
-// }
 </script>
 
-<main>
-  <!-- <Header setUrl={setUrl}/> -->
-  <div class="card">
-    <!-- <Counter /> -->
-  </div>
-  <!-- <Body url={url}/> -->
-  <button on:click={$pathStore.setPath}>switch view</button>
-  {#if $pathStore.path === 'tree'}
-    <h1> Component Tree </h1>
-    <CompTree />
-    {:else if $pathStore.path === 'time'}
-    <h1> States </h1>
-  {/if}
-</main>
+{#if $rootNodes.length}
+  <AppShell
+    class="max-h-screen bg-gradient-to-t from-gray-800 to-slate-800 ..."
+  >
+    <svelte:fragment slot="pageHeader">
+      <AppBar class="pl-15 bg-gradient-to-b from-gray-800 to-slate-800 ...">
+        <img src="/images/svolte_banner.png" alt="svolte header" />
+      </AppBar>
+    </svelte:fragment>
+
+    <TabGroup>
+      <Tab bind:group={tabSet} name="tab1" value={0}>Component Tree</Tab>
+      <Tab bind:group={tabSet} name="tab2" value={1}>Time Travel</Tab>
+      <!-- Tab Panels --->
+
+      <svelte:fragment slot="panel">
+        {#if tabSet === 0}
+          <CompTree />
+        {:else if tabSet === 1}
+          <Time />
+        {/if}
+      </svelte:fragment>
+    </TabGroup>
+  </AppShell>
+{:else}
+  <ConnectPage />
+{/if}
 
 <style>
-  /* main {
-    background-color: gray;
-  } */
+  :global(body) {
+    @apply h-screen;
+  }
+
+  img {
+    max-width: 9rem;
+    height: auto;
+  }
 </style>

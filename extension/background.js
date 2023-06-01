@@ -1,45 +1,52 @@
 //SERVICE WORKER
 
-console.log(chrome.runtime.id);
 let ext;
 let tabid;
+let key;
 
 chrome.runtime.onMessage.addListener((message, sender, res) => {
-  console.log(
-    sender.tab
-      ? "from a content script: " + sender.tab.url
-      : "from the extension"
-  );
-  console.log(connections);
-  
-  res({ 
-    source: "background.js",
-    type: "response"
-  });
+  connections[key].postMessage(message);
+  res('success');
 });
 
 const connections = {};
 
 chrome.runtime.onConnect.addListener(function (port) {
-  console.log("On connect add listener");
   const extensionListener = function (message, sender, sendResponse) {
     // The original connection event doesn't include the tab ID of the
     // DevTools page, so we need to send it explicitly.
-    if (message.name == "INIT") {
-      console.log("Source: background.js - message received: ", message);
-      port.postMessage({ 
-        source: "background.js",
-        type: "postMessage"
+    if (message.type === 'INIT') {
+      console.log('message type INIT received in background.js');
+      port.postMessage({
+        source: 'background.js',
+        type: 'postMessage - INIT',
       });
-      connections[message.tabId] = port;
+      key = message.tabId;
+      connections[key] = port;
       tabid = message.tabId;
       ext = sender.id;
       return;
     }
+    if (message.type === 'INJECT') {
+      console.log('message type INJECT received in background.js');
+      port.postMessage({
+        source: 'background.js',
+        type: 'postMessage - INJECT',
+        message: message,
+      });
+      return;
+    }
     // other message handling
+    if (message.type === 'RELOAD') {
+      console.log('RELOADING webpage');
+      chrome.tabs.reload(message.tabId, { bypassCache: true });
+    }
+    return;
   };
+
   // Listen to messages sent from the DevTools page
   port.onMessage.addListener(extensionListener);
+
   // handle disconnect
   port.onDisconnect.addListener(function (port) {
     port.onMessage.removeListener(extensionListener);
