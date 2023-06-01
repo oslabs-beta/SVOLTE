@@ -62,7 +62,6 @@ backgroundPageConnection.onMessage.addListener((message: Message) => {
       node.children = [];
       // node.collapsed = true;
       node.invalidate = noop;
-      // resolveEventBubble(node);
 
       const targetNode = nodeMap.get(message.target);
       nodeMap.set(node.id, node);
@@ -107,7 +106,7 @@ backgroundPageConnection.onMessage.addListener((message: Message) => {
 
       if (!node.parent) break;
 
-      const index = node.parent.children.findIndex((o) => o.id == node.id);
+      const index = node.parent.children.findIndex((obj) => obj.id == node.id);
       node.parent.children.splice(index, 1);
 
       node.parent.invalidate();
@@ -125,7 +124,7 @@ function insertNode(node: Node, target: Node, anchorId: number): void {
   node.parent = target;
 
   let index = -1;
-  if (anchorId) index = target.children.findIndex((o) => o.id == anchorId);
+  if (anchorId) index = target.children.findIndex((obj) => obj.id == anchorId);
 
   if (index != -1) {
     target.children.splice(index, 0, node);
@@ -137,20 +136,6 @@ function insertNode(node: Node, target: Node, anchorId: number): void {
 }
 
 function noop() {}
-
-function eventBubble(node) {
-  //return nearest component parent
-  if (node.type === 'component') {
-    return node;
-  }
-  while (node) {
-    if (node.parent?.type === 'component') {
-      break;
-    }
-    node = node.parent;
-  }
-  return node.parent;
-}
 
 // adds a snapshot of the components state and difference to an array of all our state changes (history)
 function addSnapShot(prevNode, message) {
@@ -166,8 +151,6 @@ function addSnapShot(prevNode, message) {
       node.diff = differences;
       node._id = get(snapShotHistory).length;
       snapShotHistory.update((prev) => [...prev, node]);
-
-      console.log('snap shot history is:', get(snapShotHistory));
       currentSnapShot.set(get(snapShotHistory).length - 1);
     }
     if (shaveCounter) --shaveCounter;
@@ -244,7 +227,6 @@ export function jump(snapshotID) {
       if (get(skipArr).includes(i)) {
         continue;
       }
-      console.log('backwards');
       ++shaveCounter;
       const component_id = get(snapShotHistory)[i].id;
       const targetState = get(snapShotHistory)[i].detail.ctx;
@@ -262,10 +244,8 @@ export function jump(snapshotID) {
       if (get(skipArr).includes(i)) {
         continue;
       }
-      console.log('forwards');
       ++shaveCounter;
       const component_id = get(snapShotHistory)[i].id;
-      console.log(component_id);
       const targetState = get(snapShotHistory)[i].detail.ctx;
       const JSONd_state = JSON.stringify(targetState).replaceAll('\\', '\\\\');
       devtools.inspectedWindow.eval(

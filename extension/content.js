@@ -62,12 +62,12 @@ function processNode(node) {
         processedNode.detail = {};
         break;
       }
-
       const internal = node.detail.$$;
+      // Older versions of Svelte stored props in an array
       const props = Array.isArray(internal.props)
-        ? internal.props // Svelte < 3.13.0 stored props names as an array
+        ? internal.props 
         : Object.keys(internal.props);
-      let ctx = clone(node.detail.$capture_state());
+      let ctx = deepClone(node.detail.$capture_state());
       if (ctx === undefined) ctx = {};
 
       processedNode.detail = {
@@ -80,7 +80,7 @@ function processNode(node) {
         }),
         listeners: Object.entries(internal.callbacks).flatMap(
           ([event, value]) =>
-            value.map((o) => ({ event, handler: o.toString() }))
+            value.map((obj) => ({ event, handler: obj.toString() }))
         ),
         ctx: Object.entries(ctx).map(([key, value]) => ({ key, value })),
       };
@@ -95,9 +95,9 @@ function processNode(node) {
           value: attr.value,
         })),
         listeners: element.__listeners
-          ? element.__listeners.map((o) => ({
-              ...o,
-              handler: o.handler.toString(),
+          ? element.__listeners.map((obj) => ({
+              ...obj,
+              handler: obj.handler.toString(),
             }))
           : [],
       };
@@ -107,7 +107,7 @@ function processNode(node) {
   return processedNode;
 }
 
-function clone(value, seen = new Map()) {
+function deepClone(value, seen = new Map()) {
   switch (typeof value) {
     case 'function':
       return { __isFunction: true, source: value.toString(), name: value.name };
@@ -115,17 +115,17 @@ function clone(value, seen = new Map()) {
       return { __isSymbol: true, name: value.toString() };
     case 'object':
       if (value === window || value === null) return null;
-      if (Array.isArray(value)) return value.map((o) => clone(o, seen));
+      if (Array.isArray(value)) return value.map((obj) => deepClone(obj, seen));
       if (seen.has(value)) return {};
 
-      const o = {};
-      seen.set(value, o);
+      const obj = {};
+      seen.set(value, obj);
 
-      for (const [key, v] of Object.entries(value)) {
-        o[key] = clone(v, seen);
+      for (const [key, val] of Object.entries(value)) {
+        obj[key] = deepClone(val, seen);
       }
 
-      return o;
+      return obj;
     default:
       return value;
   }
@@ -208,10 +208,15 @@ function removeNode(node) {
 // ========================================================================================
 
 let currentBlock;
+
 function EVENT_CALLBACK_SvelteRegisterBlock(e) {
   const { type, id, block, ...detail } = e.detail;
   const tagName = type == 'pending' ? 'await' : type;
   const nodeId = _id++;
+
+  function updateProfile(node, type, fn, ...args) {
+    fn(...args);
+  }
 
   if (block.m) {
     const mountFn = block.m;
@@ -294,33 +299,24 @@ function EVENT_CALLBACK_SvelteRegisterBlock(e) {
     block.p = (changed, ctx) => {
       const parentBlock = currentBlock;
       currentBlock = nodeMap.get(nodeId);
-
       updateViaMessage(currentBlock);
-
       updateProfile(currentBlock, 'patch', patchFn, changed, ctx);
-
       currentBlock = parentBlock;
     };
   }
 
   if (block.d) {
     const detachFn = block.d;
-    block.d = (detaching) => {
+    block.d = (detach) => {
       const node = nodeMap.get(nodeId);
 
       if (node) {
         if (node.tagName == 'await') lastPromiseParent = node.parentBlock;
-
         removeNode(node);
       }
-
-      updateProfile(node, 'detach', detachFn, detaching);
+      updateProfile(node, 'detach', detachFn, detach);
     };
   }
-}
-
-function updateProfile(node, type, fn, ...args) {
-  fn(...args);
 }
 
 //function is called when the 'SvelteRegisterComponent' event is dispatched
@@ -355,7 +351,6 @@ function EVENT_CALLBACK_SvelteDOMInsert(event) {
 }
 
 function EVENT_CALLBACK_SvelteDOMSetData(event) {
-  // sendRoot(rootNodes[0]);
   const node = nodeMap.get(event.detail.node);
   if (!node) return;
 
@@ -366,39 +361,21 @@ function EVENT_CALLBACK_SvelteDOMSetData(event) {
 
 function EVENT_CALLBACK_SvelteDOMRemove(event) {
   const node = nodeMap.get(event.detail.node);
-  if (!node) return;
 
+  if (!node) return;
   removeNode(node);
 }
 
 // ========================================================================================
-//          SETUP
+//          TIME-TRAVEL FUNCTIONS
 // ========================================================================================
-
-function SVOLTE_SETUP(root) {
-  root.addEventListener(
-    'SvelteRegisterBlock',
-    EVENT_CALLBACK_SvelteRegisterBlock
-  );
-  root.addEventListener(
-    'SvelteRegisterComponent',
-    EVENT_CALLBACK_SvelteRegisterComponent
-  );
-  root.addEventListener('SvelteDOMInsert', EVENT_CALLBACK_SvelteDOMInsert);
-  root.addEventListener('SvelteDOMSetData', EVENT_CALLBACK_SvelteDOMSetData);
-  root.addEventListener('SvelteDOMRemove', EVENT_CALLBACK_SvelteDOMRemove);
-}
-
-SVOLTE_SETUP(window.document);
 
 window.SVOLTE_INJECT_STATE = function (component_id, state) {
   const updated_ctx = JSON.parse(state);
   const targetComponentDetail = nodeMap.get(component_id).detail;
   const componentState = targetComponentDetail.$capture_state();
-
   const newState = processState(componentState, updated_ctx);
   targetComponentDetail.$inject_state(newState);
-  console.log('capture state is ', targetComponentDetail.$capture_state());
 };
 
 function processState(state, ctx) {
@@ -422,3 +399,18 @@ function processState(state, ctx) {
 
   return resultState;
 }
+
+
+// ========================================================================================
+//          SETUP
+// ========================================================================================
+
+function SVOLTE_SETUP(root) {
+  root.addEventListener('SvelteRegisterBlock',EVENT_CALLBACK_SvelteRegisterBlock);
+  root.addEventListener('SvelteRegisterComponent',EVENT_CALLBACK_SvelteRegisterComponent);
+  root.addEventListener('SvelteDOMInsert', EVENT_CALLBACK_SvelteDOMInsert);
+  root.addEventListener('SvelteDOMSetData', EVENT_CALLBACK_SvelteDOMSetData);
+  root.addEventListener('SvelteDOMRemove', EVENT_CALLBACK_SvelteDOMRemove);
+}
+
+SVOLTE_SETUP(window.document);

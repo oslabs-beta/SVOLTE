@@ -20,16 +20,6 @@
 
   let tabSet = 0;
 
-  // let isReloading = JSON.parse(localStorage.getItem('isReloading'));
-  // // Reload the page once
-  // if (!isReloading) {
-  //   setTimeout(()=>{
-  //     location.reload();
-  //     isReloading = true;
-  //     localStorage.setItem('isReloading', JSON.stringify(isReloading));
-  //   }, 1000)
-
-  // }
 </script>
 
 {#if $rootNodes.length}
