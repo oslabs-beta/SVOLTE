@@ -29,9 +29,9 @@ Record the states of your components to see how each state has changed.
 
 ## Jumping and Skipping
 
-* Jump through each snapshot to recreate state changes.
+- Jump through each snapshot to recreate state changes.
 
-* Have a snapshot you want to skip? Simply toggle skip to ignore that snapshot when you jump.
+- Have a snapshot you want to skip? Simply toggle skip to ignore that snapshot when you jump.
 
 <img src="/assets/timeTravel.gif" alt="time travel gif"/>
 
