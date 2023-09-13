@@ -3,7 +3,6 @@
   "name": "SVOLTE",
   "version": "1.3.0",
   "description": "Browser devtools extension for debugging Svelte applications.",
-  "permissions": ["activeTab"],
   "content_scripts": [
     {
       "world": "MAIN",
