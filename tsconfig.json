@@ -24,6 +24,6 @@
     "demo/**/*.ts",
     "demo/**/*.js",
     "demo/**/*.svelte"
-  ],
+, "jest/Testing.test.js"  ],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
